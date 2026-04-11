@@ -1,8 +1,9 @@
 import { m } from 'framer-motion'
 import { useMemo, useState } from 'react'
+import ShareCard from '../components/ShareCard'
+import { getPersonalityArtwork } from '../data/personalityArtworks'
 import { QuizAnswer } from '../types/quiz'
 import { calculatePersonality } from '../utils/calculate'
-import ShareCard from '../components/ShareCard'
 import './Result.css'
 
 interface ResultProps {
@@ -18,10 +19,12 @@ function Result({ answers, onRestart }: ResultProps) {
     return calculatePersonality(answers)
   }, [answers])
 
-  const highlights = [
+  const artwork = getPersonalityArtwork(personality.id)
+
+  const profileRows = [
     { label: '人格代码', value: personality.id },
     { label: '维度组合', value: personality.dimensions.join(' · ') },
-    { label: '一句话', value: personality.signature }
+    { label: '核心标签', value: personality.traits.join(' / ') }
   ]
 
   const handleGroupClick = () => {
@@ -36,69 +39,104 @@ function Result({ answers, onRestart }: ResultProps) {
   return (
     <div className="page page-result">
       <div className="page-shell result-shell">
-        <section className="result-hero surface surface-strong">
-          <div className="result-hero-main">
-            <m.div
-              className="personality-badge"
-              initial={{ opacity: 0, scale: 0.92 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ type: 'spring', stiffness: 180, damping: 18 }}
-            >
-              <span className="emoji">{personality.emoji}</span>
-            </m.div>
-
-            <div className="result-hero-copy">
-              <span className="section-label">Your Result</span>
-              <h1 className="personality-type">{personality.name}</h1>
-              <p className="personality-title">{personality.title}</p>
-            </div>
+        <section className="result-canvas">
+          <div className="result-header">
+            <span className="result-kicker">FBTI Result</span>
+            <span className="result-stamp">{personality.id}</span>
           </div>
 
-          <div className="traits">
-            {personality.traits.map((trait, index) => (
-              <span key={index} className="trait">{trait}</span>
-            ))}
+          <div className="result-hero">
+            <m.figure
+              className="result-artwork-card"
+              initial={{ opacity: 0, y: 24, rotate: -1.2 }}
+              animate={{ opacity: 1, y: 0, rotate: -1.2 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div className="result-artwork-frame">
+                <img
+                  src={artwork}
+                  alt={`${personality.name}的场景插画`}
+                  className="result-artwork-image"
+                />
+              </div>
+              <figcaption className="result-artwork-caption">
+                这类人格最像的状态，不是高声解释自己，而是整个人坐进水边的气氛里。
+              </figcaption>
+            </m.figure>
+
+            <m.div
+              className="result-identity"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.58, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <span className="result-overline">你的钓鱼人格</span>
+              <div className="result-name-row">
+                <span className="result-emoji">{personality.emoji}</span>
+                <div>
+                  <h1 className="personality-type">{personality.name}</h1>
+                  <p className="personality-title">{personality.title}</p>
+                </div>
+              </div>
+
+              <p className="result-summary">{personality.description}</p>
+
+              <blockquote className="result-signature">
+                “{personality.signature}”
+              </blockquote>
+
+              <div className="traits">
+                {personality.traits.map((trait) => (
+                  <span key={trait} className="trait">{trait}</span>
+                ))}
+              </div>
+            </m.div>
+          </div>
+
+          <div className="result-detail-grid">
+            <article className="result-note result-note-reading">
+              <span className="content-label">性格解读</span>
+              <h2>你在水边最稳定的状态</h2>
+              <p>{personality.description}</p>
+            </article>
+
+            <article className="result-note result-note-scene">
+              <span className="content-label">代表场景</span>
+              <h2>最像你的那一幕</h2>
+              <p>{personality.scene}</p>
+            </article>
+
+            <article className="result-note result-note-profile">
+              <span className="content-label">人格坐标</span>
+              <div className="result-profile-list">
+                {profileRows.map((item) => (
+                  <div key={item.label} className="result-profile-row">
+                    <span>{item.label}</span>
+                    <strong>{item.value}</strong>
+                  </div>
+                ))}
+              </div>
+            </article>
+          </div>
+
+          {showShare && (
+            <section className="share-section">
+              <ShareCard personality={personality} />
+            </section>
+          )}
+
+          <div className="result-actions">
+            <button className="primary-button" onClick={() => setShowShare(prev => !prev)}>
+              {showShare ? '收起分享区' : '生成分享图'}
+            </button>
+            <button className="secondary-button" onClick={onRestart}>
+              重新测试
+            </button>
+            <button className="ghost-button" onClick={handleGroupClick}>
+              {communityUrl ? '打开入群链接' : '入群链接待配置'}
+            </button>
           </div>
         </section>
-
-        <div className="result-grid">
-          <section className="description-card surface">
-            <span className="content-label">性格解读</span>
-            <p>{personality.description}</p>
-          </section>
-
-          <section className="description-card surface">
-            <span className="content-label">代表场景</span>
-            <p>{personality.scene}</p>
-          </section>
-
-          <section className="highlights-grid">
-            {highlights.map((item) => (
-              <article key={item.label} className="highlight-card surface">
-                <span className="content-label">{item.label}</span>
-                <strong>{item.value}</strong>
-              </article>
-            ))}
-          </section>
-        </div>
-
-        {showShare && (
-          <section className="share-section surface">
-            <ShareCard personality={personality} />
-          </section>
-        )}
-
-        <div className="result-actions">
-          <button className="primary-button" onClick={() => setShowShare(prev => !prev)}>
-            {showShare ? '收起分享区' : '生成分享图'}
-          </button>
-          <button className="secondary-button" onClick={onRestart}>
-            重新测试
-          </button>
-          <button className="ghost-button" onClick={handleGroupClick}>
-            {communityUrl ? '打开入群链接' : '入群链接待配置'}
-          </button>
-        </div>
       </div>
     </div>
   )

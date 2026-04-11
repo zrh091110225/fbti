@@ -60,74 +60,145 @@
   font-size: 16px;
 }
 
-.fish-progress {
+.reel-progress {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 16px;
+  align-items: center;
   margin-top: -2px;
 }
 
-.fish-progress__track {
+.reel-progress__reel {
   position: relative;
-  height: 48px;
-  overflow: visible;
+  width: 92px;
+  height: 68px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.fish-progress__line {
+.reel-progress__reel.is-active {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 24px rgba(197, 238, 211, 0.08);
+}
+
+.reel-progress__spool {
   position: absolute;
-  top: 23px;
-  left: 10px;
-  right: 10px;
-  height: 1px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(197, 238, 211, 0.42), rgba(255, 255, 255, 0.08));
+  top: 14px;
+  left: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center, rgba(197, 238, 211, 0.18) 0%, rgba(197, 238, 211, 0.06) 44%, rgba(255, 255, 255, 0.02) 45%),
+    rgba(7, 16, 25, 0.7);
+  border: 1px solid rgba(197, 238, 211, 0.18);
 }
 
-.fish-progress__track::before,
-.fish-progress__track::after {
+.reel-progress__spool::after {
   content: "";
   position: absolute;
+  inset: 13px;
+  border-radius: 50%;
+  background: rgba(197, 238, 211, 0.76);
+  box-shadow: 0 0 18px rgba(197, 238, 211, 0.35);
+}
+
+.reel-progress__spoke {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 24px;
+  height: 2px;
+  margin-left: -12px;
+  margin-top: -1px;
+  border-radius: 999px;
+  background: rgba(197, 238, 211, 0.56);
+}
+
+.reel-progress__spoke--two {
+  transform: rotate(90deg);
+}
+
+.reel-progress__handle {
+  position: absolute;
   top: 19px;
+  right: 16px;
+  width: 18px;
+  height: 30px;
+  border-right: 2px solid rgba(197, 238, 211, 0.34);
+  border-top: 2px solid rgba(197, 238, 211, 0.34);
+  border-bottom: 2px solid rgba(197, 238, 211, 0.34);
+  border-top-right-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+.reel-progress__handle::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  right: -7px;
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: rgba(197, 238, 211, 0.16);
-  box-shadow: 0 0 0 4px rgba(197, 238, 211, 0.06);
+  background: rgba(197, 238, 211, 0.8);
 }
 
-.fish-progress__track::before {
-  left: 8px;
-}
-
-.fish-progress__track::after {
-  right: 8px;
-}
-
-.fish-progress__swimmer {
-  position: absolute;
-  top: 0;
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
-  max-width: 48px;
-}
-
-.fish-progress__body {
+.reel-progress__lane {
   position: relative;
-  width: 48px;
-  height: 48px;
+  height: 56px;
+  overflow: hidden;
 }
 
-.fish-progress__icon {
+.reel-progress__line {
   position: absolute;
-  top: 4px;
-  left: -8px;
-  width: 64px;
-  height: 40px;
+  top: 28px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(197, 238, 211, 0.28), rgba(255, 255, 255, 0.08));
+}
+
+.reel-progress__tension {
+  position: absolute;
+  top: 27px;
+  left: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(197, 238, 211, 0.88), rgba(197, 238, 211, 0.08));
+  box-shadow: 0 0 14px rgba(197, 238, 211, 0.24);
+}
+
+.reel-progress__fish {
+  position: absolute;
+  top: 6px;
+  width: 72px;
+  height: 42px;
+}
+
+.reel-progress__fish.is-hidden {
+  opacity: 0;
+}
+
+.reel-progress__fish-body {
+  position: relative;
+  width: 72px;
+  height: 42px;
+}
+
+.reel-progress__fish-icon {
+  width: 72px;
+  height: 42px;
   filter: drop-shadow(0 10px 18px rgba(150, 216, 175, 0.24));
 }
 
-.fish-progress__wake {
+.reel-progress__wake {
   position: absolute;
-  top: 18px;
-  left: -16px;
-  width: 20px;
+  top: 15px;
+  left: -18px;
+  width: 22px;
   height: 12px;
   border-radius: 999px;
   background: linear-gradient(90deg, rgba(197, 238, 211, 0.28), transparent);
@@ -334,12 +405,72 @@
 
 .quiz-frame.is-reeling .quiz-card,
 .quiz-frame.is-reeling .quiz-sidebar,
-.quiz-frame.is-reeling .fish-progress {
+.quiz-frame.is-reeling .reel-progress {
   transform: translateY(-8px);
   opacity: 0.94;
   transition:
     transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
     opacity 420ms ease;
+}
+
+.landing-catch {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  overflow: hidden;
+  pointer-events: none;
+  background: radial-gradient(circle at center, rgba(7, 16, 25, 0.08), rgba(7, 16, 25, 0.36));
+}
+
+.landing-catch__line {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.landing-catch__fish {
+  position: absolute;
+  left: 48%;
+  bottom: 88px;
+  width: 112px;
+  height: 68px;
+  margin-left: -56px;
+  filter: drop-shadow(0 24px 42px rgba(0, 0, 0, 0.28));
+}
+
+.landing-catch__fish-icon {
+  width: 112px;
+  height: 68px;
+}
+
+.landing-catch__splash {
+  position: absolute;
+  left: 48%;
+  bottom: 72px;
+  width: 92px;
+  height: 92px;
+  margin-left: -46px;
+  border-radius: 50%;
+  border: 2px solid rgba(197, 238, 211, 0.54);
+  box-shadow:
+    0 0 0 12px rgba(197, 238, 211, 0.12),
+    0 0 0 24px rgba(197, 238, 211, 0.06);
+}
+
+.landing-catch__copy {
+  position: absolute;
+  right: 56px;
+  top: 48px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: rgba(9, 18, 26, 0.76);
+  border: 1px solid rgba(197, 238, 211, 0.18);
+  color: var(--accent-strong);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 @media (max-width: 960px) {
@@ -360,6 +491,14 @@
     align-items: flex-start;
   }
 
+  .reel-progress {
+    grid-template-columns: 1fr;
+  }
+
+  .reel-progress__reel {
+    width: 88px;
+  }
+
   .quiz-sidebar {
     grid-template-columns: 1fr;
   }
@@ -375,13 +514,19 @@
   .option-ripple {
     right: 14px;
   }
+
+  .landing-catch__copy {
+    right: 20px;
+    top: 20px;
+    font-size: 12px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fish-progress__body,
+  .reel-progress__fish-body,
   .quiz-frame.is-reeling .quiz-card,
   .quiz-frame.is-reeling .quiz-sidebar,
-  .quiz-frame.is-reeling .fish-progress {
+  .quiz-frame.is-reeling .reel-progress {
     transition-duration: 120ms;
   }
 }

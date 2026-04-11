@@ -17,18 +17,21 @@ interface QuizProps {
 function Quiz({ currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProps) {
   const question = questions[currentQuestion]
   const prefersReducedMotion = Boolean(useReducedMotion())
-  const reelTimeoutRef = useRef<number | null>(null)
+  const timeoutRefs = useRef<number[]>([])
   const [motionState, setMotionState] = useState<QuizMotionState>({
     castOptionId: null,
     castToken: 0,
-    isReeling: false
+    isReeling: false,
+    isLanding: false,
+    reelToken: 0
   })
 
   if (!question) {
     return null
   }
 
-  const progress = ((currentQuestion + 1) / questions.length) * 100
+  const progress = (currentQuestion / questions.length) * 100
+  const nextProgress = Math.min(((currentQuestion + 1) / questions.length) * 100, 100)
   const selectedAnswer = answers.find(a => a.questionId === question.id)
   const isAnswered = Boolean(selectedAnswer)
 
@@ -36,20 +39,20 @@ function Quiz({ currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProp
     setMotionState({
       castOptionId: selectedAnswer?.answerId ?? null,
       castToken: 0,
-      isReeling: false
+      isReeling: false,
+      isLanding: false,
+      reelToken: 0
     })
   }, [question.id, selectedAnswer?.answerId])
 
   useEffect(() => {
     return () => {
-      if (reelTimeoutRef.current) {
-        window.clearTimeout(reelTimeoutRef.current)
-      }
+      timeoutRefs.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
     }
   }, [])
 
   const handleOptionClick = (optionId: number) => {
-    if (motionState.isReeling) {
+    if (motionState.isReeling || motionState.isLanding) {
       return
     }
 
@@ -62,23 +65,42 @@ function Quiz({ currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProp
   }
 
   const handleNext = () => {
-    if (!isAnswered || motionState.isReeling) {
+    if (!isAnswered || motionState.isReeling || motionState.isLanding) {
       return
     }
 
+    timeoutRefs.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
+    timeoutRefs.current = []
+
+    const isLastQuestion = currentQuestion >= questions.length - 1
+
     setMotionState(prev => ({
       ...prev,
-      isReeling: true
+      isReeling: true,
+      reelToken: prev.reelToken + 1
     }))
 
-    reelTimeoutRef.current = window.setTimeout(() => {
-      if (currentQuestion >= questions.length - 1) {
-        onFinish()
-        return
-      }
+    if (isLastQuestion) {
+      const landingStartDelay = prefersReducedMotion ? 120 : 420
+      const finishDelay = prefersReducedMotion ? 280 : 1280
 
+      timeoutRefs.current.push(window.setTimeout(() => {
+        setMotionState(prev => ({
+          ...prev,
+          isLanding: true
+        }))
+      }, landingStartDelay))
+
+      timeoutRefs.current.push(window.setTimeout(() => {
+        onFinish()
+      }, finishDelay))
+
+      return
+    }
+
+    timeoutRefs.current.push(window.setTimeout(() => {
       onNext()
-    }, prefersReducedMotion ? 120 : 540)
+    }, prefersReducedMotion ? 120 : 540))
   }
 
   return (
@@ -86,6 +108,12 @@ function Quiz({ currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProp
       <ScenicBackdrop variant="quiz" />
       <div className="page-shell quiz-shell">
         <section className={`quiz-frame surface surface-strong ${motionState.isReeling ? 'is-reeling' : ''}`}>
+          <AnimatePresence>
+            {motionState.isLanding && (
+              <LandingCatchOverlay prefersReducedMotion={prefersReducedMotion} />
+            )}
+          </AnimatePresence>
+
           <div className="quiz-header">
             <div className="quiz-heading-group">
               <span className="section-label">Question Flow</span>
@@ -101,7 +129,14 @@ function Quiz({ currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProp
             </div>
           </div>
 
-          <ProgressFish progress={progress} prefersReducedMotion={prefersReducedMotion} />
+          <ProgressFish
+            progress={progress}
+            nextProgress={nextProgress}
+            prefersReducedMotion={prefersReducedMotion}
+            isReeling={motionState.isReeling}
+            isLanding={motionState.isLanding}
+            reelToken={motionState.reelToken}
+          />
 
           <div className="quiz-layout">
             <div className="quiz-card surface">
@@ -154,9 +189,9 @@ function Quiz({ currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProp
                         duration: 0.36,
                         ease: [0.22, 1, 0.36, 1]
                       }}
-                      whileHover={motionState.isReeling ? undefined : { y: -2 }}
+                      whileHover={motionState.isReeling || motionState.isLanding ? undefined : { y: -2 }}
                       whileTap={{ scale: 0.985 }}
-                      disabled={motionState.isReeling}
+                      disabled={motionState.isReeling || motionState.isLanding}
                     >
                       <span className="option-letter">
                         {String.fromCharCode(65 + option.id - 1)}
@@ -232,10 +267,14 @@ function Quiz({ currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProp
           <div className="quiz-footer">
             <p className="quiz-footer-copy">
               {currentQuestion >= questions.length - 1
-                ? '这是最后一题，提交后会立即生成结果。'
+                ? '这是最后一题，收线后会播放起鱼成功过场。'
                 : `完成本题后，还剩 ${questions.length - currentQuestion - 1} 题。`}
             </p>
-            <button className="primary-button next-btn" onClick={handleNext} disabled={!isAnswered || motionState.isReeling}>
+            <button
+              className="primary-button next-btn"
+              onClick={handleNext}
+              disabled={!isAnswered || motionState.isReeling || motionState.isLanding}
+            >
               {currentQuestion >= questions.length - 1 ? '查看结果' : '下一题'}
               <span className="button-arrow">→</span>
             </button>
@@ -248,19 +287,60 @@ function Quiz({ currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProp
 
 function ProgressFish({
   progress,
-  prefersReducedMotion
+  nextProgress,
+  prefersReducedMotion,
+  isReeling,
+  isLanding,
+  reelToken
 }: {
   progress: number
+  nextProgress: number
   prefersReducedMotion: boolean
+  isReeling: boolean
+  isLanding: boolean
+  reelToken: number
 }) {
+  const renderedProgress = isLanding || isReeling ? nextProgress : progress
+
   return (
-    <div className="fish-progress" aria-hidden="true">
-      <div className="fish-progress__track">
-        <div className="fish-progress__line" />
+    <div className="reel-progress" aria-hidden="true">
+      <div className={`reel-progress__reel ${isReeling || isLanding ? 'is-active' : ''}`}>
         <m.div
-          className="fish-progress__swimmer"
+          key={reelToken}
+          className="reel-progress__spool"
+          animate={
+            isReeling || isLanding
+              ? { rotate: prefersReducedMotion ? 0 : [0, 120, 240, 360, 480] }
+              : { rotate: 0 }
+          }
+          transition={
+            prefersReducedMotion
+              ? { duration: 0.01 }
+              : { duration: isLanding ? 1.1 : 0.62, ease: 'linear', repeat: isLanding ? 0 : 1 }
+          }
+        >
+          <span className="reel-progress__spoke reel-progress__spoke--one" />
+          <span className="reel-progress__spoke reel-progress__spoke--two" />
+        </m.div>
+        <span className="reel-progress__handle" />
+      </div>
+
+      <div className="reel-progress__lane">
+        <div className="reel-progress__line" />
+        <m.div
+          className="reel-progress__tension"
           initial={false}
-          animate={{ left: `calc(${progress}% - 24px)` }}
+          animate={{ width: `calc(${100 - renderedProgress}% + 16px)` }}
+          transition={
+            prefersReducedMotion
+              ? { duration: 0.12, ease: 'linear' }
+              : { type: 'spring', stiffness: 170, damping: 26 }
+          }
+        />
+        <m.div
+          className={`reel-progress__fish ${isLanding ? 'is-hidden' : ''}`}
+          initial={false}
+          animate={{ left: `calc(${100 - renderedProgress}% - 36px)` }}
           transition={
             prefersReducedMotion
               ? { duration: 0.12, ease: 'linear' }
@@ -268,16 +348,22 @@ function ProgressFish({
           }
         >
           <m.div
-            className="fish-progress__body"
-            animate={prefersReducedMotion ? { y: 0, rotate: 0 } : { y: [0, -3, 0, 2, 0], rotate: [0, -2, 1, 2, 0] }}
+            className="reel-progress__fish-body"
+            animate={
+              prefersReducedMotion
+                ? { y: 0, rotate: 0 }
+                : isReeling
+                  ? { y: [0, -2, 0, 2, 0], rotate: [0, -4, 0, 4, 0], scale: [1, 1.03, 1] }
+                  : { y: [0, -3, 0, 2, 0], rotate: [0, -2, 1, 2, 0] }
+            }
             transition={
               prefersReducedMotion
                 ? { duration: 0.01 }
-                : { duration: 2.8, repeat: Infinity, ease: 'easeInOut' }
+                : { duration: isReeling ? 0.82 : 2.8, repeat: Infinity, ease: 'easeInOut' }
             }
           >
-            <span className="fish-progress__wake" />
-            <svg viewBox="0 0 72 42" className="fish-progress__icon">
+            <span className="reel-progress__wake" />
+            <svg viewBox="0 0 72 42" className="reel-progress__fish-icon">
               <path d="M7 21C14 13 25 8 37 8C46 8 54 11 61 17L66 14V28L61 25C54 31 46 34 37 34C25 34 14 29 7 21Z" fill="#BFE9CB" />
               <path d="M21 21C25 17 31 15 37 15C42 15 47 16 51 19C47 23 42 27 37 27C31 27 25 25 21 21Z" fill="#6FB98F" />
               <circle cx="49.5" cy="19.5" r="2.5" fill="#0C1C24" />
@@ -286,6 +372,64 @@ function ProgressFish({
         </m.div>
       </div>
     </div>
+  )
+}
+
+function LandingCatchOverlay({ prefersReducedMotion }: { prefersReducedMotion: boolean }) {
+  return (
+    <m.div
+      className="landing-catch"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: prefersReducedMotion ? 0.12 : 0.24 }}
+    >
+      <svg className="landing-catch__line" viewBox="0 0 720 420" preserveAspectRatio="none">
+        <m.path
+          d="M610 22C602 74 580 142 525 190C474 236 395 274 296 330"
+          fill="none"
+          stroke="rgba(197, 238, 211, 0.85)"
+          strokeWidth="3"
+          strokeLinecap="round"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: prefersReducedMotion ? 0.14 : 0.48, ease: 'easeOut' }}
+        />
+      </svg>
+
+      <m.div
+        className="landing-catch__fish"
+        initial={{ x: 120, y: 90, rotate: 6, scale: 0.92, opacity: 0 }}
+        animate={
+          prefersReducedMotion
+            ? { x: 0, y: -120, rotate: -18, scale: 1.08, opacity: 1 }
+            : { x: [120, 48, -26], y: [90, -22, -182], rotate: [6, -12, -28], scale: [0.92, 1.04, 1.14], opacity: [0, 1, 1] }
+        }
+        transition={{ duration: prefersReducedMotion ? 0.24 : 0.84, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <svg viewBox="0 0 112 68" className="landing-catch__fish-icon">
+          <path d="M10 34C21 21 39 12 58 12C72 12 84 16 96 25L104 20V48L96 43C84 52 72 56 58 56C39 56 21 47 10 34Z" fill="#C7F0D2" />
+          <path d="M34 34C41 28 49 25 58 25C65 25 74 27 81 31C74 38 66 43 58 43C49 43 41 40 34 34Z" fill="#71BC91" />
+          <circle cx="76" cy="30" r="4" fill="#0C1C24" />
+        </svg>
+      </m.div>
+
+      <m.div
+        className="landing-catch__splash"
+        initial={{ scale: 0.4, opacity: 0.55 }}
+        animate={{ scale: prefersReducedMotion ? 1 : 1.7, opacity: 0 }}
+        transition={{ duration: prefersReducedMotion ? 0.18 : 0.58, ease: 'easeOut' }}
+      />
+
+      <m.div
+        className="landing-catch__copy"
+        initial={{ y: 14, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: prefersReducedMotion ? 0.04 : 0.22, duration: prefersReducedMotion ? 0.14 : 0.32 }}
+      >
+        起鱼成功
+      </m.div>
+    </m.div>
   )
 }
 
