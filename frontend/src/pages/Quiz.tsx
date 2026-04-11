@@ -251,7 +251,7 @@ function Quiz({ currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProp
                 <strong>{isAnswered ? '已选择答案' : '等待选择'}</strong>
                 <p>
                   {isAnswered
-                    ? '可以收线进入下一题，系统已记录本题答案。'
+                    ? '可以确认收线，系统已记录本题答案。'
                     : '先完成这一题，再继续后面的进度。'}
                 </p>
               </div>
@@ -267,8 +267,8 @@ function Quiz({ currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProp
           <div className="quiz-footer">
             <p className="quiz-footer-copy">
               {currentQuestion >= questions.length - 1
-                ? '这是最后一题，收线后会播放起鱼成功过场。'
-                : `完成本题后，还剩 ${questions.length - currentQuestion - 1} 题，继续收线推进。`}
+                ? '这是最后一题，确认收线后会播放起鱼成功过场。'
+                : `完成本题后，还剩 ${questions.length - currentQuestion - 1} 题，确认收线后继续推进。`}
             </p>
             <button
               className={`quiz-action-button ${motionState.isReeling || motionState.isLanding ? 'is-active' : ''}`}
@@ -277,32 +277,30 @@ function Quiz({ currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProp
             >
               <span className="quiz-action-button__copy">
                 <span className="quiz-action-button__label">
-                  {currentQuestion >= questions.length - 1 ? '查看结果' : '收线进入下一题'}
+                  确认收线
                 </span>
                 <span className="quiz-action-button__meta">
                   {currentQuestion >= questions.length - 1 ? '收线完成，准备起鱼' : '已中鱼讯，继续控鱼'}
                 </span>
               </span>
               <span className="quiz-action-button__tension" aria-hidden="true" />
-              <span className="quiz-action-button__reel" aria-hidden="true">
-                <m.span
-                  className="quiz-action-button__spool"
-                  animate={
-                    motionState.isReeling || motionState.isLanding
-                      ? { rotate: prefersReducedMotion ? 0 : [0, 120, 240, 360] }
-                      : { rotate: 0 }
-                  }
-                  transition={
-                    prefersReducedMotion
-                      ? { duration: 0.01 }
-                      : { duration: 0.68, ease: 'linear', repeat: motionState.isLanding ? 0 : 1 }
-                  }
-                >
-                  <span className="quiz-action-button__spoke quiz-action-button__spoke--one" />
-                  <span className="quiz-action-button__spoke quiz-action-button__spoke--two" />
-                </m.span>
-                <span className="quiz-action-button__handle" />
-              </span>
+              <m.span
+                className="quiz-action-button__confirm"
+                aria-hidden="true"
+                animate={
+                  motionState.isReeling || motionState.isLanding
+                    ? { scale: prefersReducedMotion ? 1 : [1, 1.06, 1], opacity: [0.85, 1, 0.92] }
+                    : { scale: 1, opacity: 0.9 }
+                }
+                transition={
+                  prefersReducedMotion
+                    ? { duration: 0.01 }
+                    : { duration: 0.48, ease: 'easeInOut', repeat: motionState.isLanding ? 0 : 1 }
+                }
+              >
+                <span className="quiz-action-button__confirm-dot" />
+                <span className="quiz-action-button__confirm-text">LOCK</span>
+              </m.span>
             </button>
           </div>
         </section>

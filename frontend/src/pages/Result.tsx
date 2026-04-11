@@ -20,6 +20,7 @@ function Result({ answers, onRestart }: ResultProps) {
   }, [answers])
 
   const artwork = getPersonalityArtwork(personality.id)
+  const resultLead = `这份画像由「${personality.dimensions.join(' / ')}」组成，关键词是${personality.traits.join('、')}。`
 
   const profileRows = [
     { label: '人格代码', value: personality.id },
@@ -79,7 +80,7 @@ function Result({ answers, onRestart }: ResultProps) {
                 </div>
               </div>
 
-              <p className="result-summary">{personality.description}</p>
+              <p className="result-summary">{resultLead}</p>
 
               <blockquote className="result-signature">
                 “{personality.signature}”
