@@ -199,7 +199,7 @@ function Quiz({ currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProp
                       <span className="option-copy">
                         <span className="option-text">{option.text}</span>
                         <span className="option-hint">
-                          {isSelected ? '已落点，准备提竿' : '点击抛竿到这个落点'}
+                          {isSelected ? '已中鱼讯，准备收线' : '选中后触发咬口反馈'}
                         </span>
                       </span>
 
@@ -251,7 +251,7 @@ function Quiz({ currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProp
                 <strong>{isAnswered ? '已选择答案' : '等待选择'}</strong>
                 <p>
                   {isAnswered
-                    ? '可以直接进入下一题，系统已记录本题答案。'
+                    ? '可以收线进入下一题，系统已记录本题答案。'
                     : '先完成这一题，再继续后面的进度。'}
                 </p>
               </div>
@@ -268,15 +268,41 @@ function Quiz({ currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProp
             <p className="quiz-footer-copy">
               {currentQuestion >= questions.length - 1
                 ? '这是最后一题，收线后会播放起鱼成功过场。'
-                : `完成本题后，还剩 ${questions.length - currentQuestion - 1} 题。`}
+                : `完成本题后，还剩 ${questions.length - currentQuestion - 1} 题，继续收线推进。`}
             </p>
             <button
-              className="primary-button next-btn"
+              className={`quiz-action-button ${motionState.isReeling || motionState.isLanding ? 'is-active' : ''}`}
               onClick={handleNext}
               disabled={!isAnswered || motionState.isReeling || motionState.isLanding}
             >
-              {currentQuestion >= questions.length - 1 ? '查看结果' : '下一题'}
-              <span className="button-arrow">→</span>
+              <span className="quiz-action-button__copy">
+                <span className="quiz-action-button__label">
+                  {currentQuestion >= questions.length - 1 ? '查看结果' : '收线进入下一题'}
+                </span>
+                <span className="quiz-action-button__meta">
+                  {currentQuestion >= questions.length - 1 ? '收线完成，准备起鱼' : '已中鱼讯，继续控鱼'}
+                </span>
+              </span>
+              <span className="quiz-action-button__tension" aria-hidden="true" />
+              <span className="quiz-action-button__reel" aria-hidden="true">
+                <m.span
+                  className="quiz-action-button__spool"
+                  animate={
+                    motionState.isReeling || motionState.isLanding
+                      ? { rotate: prefersReducedMotion ? 0 : [0, 120, 240, 360] }
+                      : { rotate: 0 }
+                  }
+                  transition={
+                    prefersReducedMotion
+                      ? { duration: 0.01 }
+                      : { duration: 0.68, ease: 'linear', repeat: motionState.isLanding ? 0 : 1 }
+                  }
+                >
+                  <span className="quiz-action-button__spoke quiz-action-button__spoke--one" />
+                  <span className="quiz-action-button__spoke quiz-action-button__spoke--two" />
+                </m.span>
+                <span className="quiz-action-button__handle" />
+              </span>
             </button>
           </div>
         </section>
