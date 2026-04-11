@@ -104,7 +104,7 @@ function ShareCard({ personality }: ShareCardProps) {
 
     ctx.font = '16px sans-serif'
     ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'
-    ctx.fillText('长按识别二维码测试你的钓鱼人格', centerX, height - 50)
+    ctx.fillText('保存图片，分享你的钓鱼人格结果', centerX, height - 50)
 
     // Return data URL
     return canvas.toDataURL('image/png')

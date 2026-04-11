@@ -1,22 +1,27 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Home from './pages/Home'
 import Quiz from './pages/Quiz'
 import Result from './pages/Result'
+import { questions } from './data/questions'
 import { analytics } from './utils/analytics'
-
-export interface QuizAnswer {
-  questionId: number
-  answerId: number
-}
+import { calculatePersonality } from './utils/calculate'
+import { postQuizResult } from './utils/api'
+import { clearQuizState, loadQuizState, saveQuizState } from './utils/storage'
+import { AppScreen, QuizAnswer } from './types/quiz'
 
 function App() {
-  const [screen, setScreen] = useState<'home' | 'quiz' | 'result'>('home')
-  const [answers, setAnswers] = useState<QuizAnswer[]>([])
-  const [currentQuestion, setCurrentQuestion] = useState(0)
+  const initialState = useMemo(() => loadQuizState(), [])
+  const [screen, setScreen] = useState<AppScreen>(initialState.screen)
+  const [answers, setAnswers] = useState<QuizAnswer[]>(initialState.answers)
+  const [currentQuestion, setCurrentQuestion] = useState(initialState.currentQuestion)
 
   useEffect(() => {
     analytics.trackPageView(screen)
   }, [screen])
+
+  useEffect(() => {
+    saveQuizState({ screen, answers, currentQuestion })
+  }, [screen, answers, currentQuestion])
 
   const handleStart = () => {
     analytics.trackQuizStart()
@@ -31,24 +36,30 @@ function App() {
       const filtered = prev.filter(a => a.questionId !== questionId)
       return [...filtered, { questionId, answerId }]
     })
-    setCurrentQuestion(prev => prev + 1)
   }
 
   const handleFinish = () => {
-    // Calculate personality to track
-    const scores: { [key: string]: number } = {}
-    answers.forEach(answer => {
-      // This is a simplified tracking call
-      analytics.trackQuestionAnswer(answer.questionId, answer.answerId)
+    const personality = calculatePersonality(answers)
+    analytics.trackQuizComplete(personality.id)
+    void postQuizResult({
+      personalityId: personality.id,
+      answers,
+      completedAt: new Date().toISOString()
     })
-    
-    // Track completion (we'll determine personality type based on answers)
-    // For now just track that quiz was completed
-    analytics.track('quiz_submit', { answerCount: answers.length })
     setScreen('result')
   }
 
+  const handleNextQuestion = () => {
+    if (currentQuestion >= questions.length - 1) {
+      handleFinish()
+      return
+    }
+
+    setCurrentQuestion(prev => prev + 1)
+  }
+
   const handleRestart = () => {
+    clearQuizState()
     setScreen('home')
     setAnswers([])
     setCurrentQuestion(0)
@@ -62,6 +73,7 @@ function App() {
           currentQuestion={currentQuestion}
           answers={answers}
           onAnswer={handleAnswer}
+          onNext={handleNextQuestion}
           onFinish={handleFinish}
         />
       )}

@@ -1,16 +1,23 @@
-import { questions, QuizAnswer } from '../data/questions'
+import { questions } from '../data/questions'
+import { QuizAnswer } from '../types/quiz'
 import './Quiz.css'
 
 interface QuizProps {
   currentQuestion: number
   answers: QuizAnswer[]
   onAnswer: (questionId: number, answerId: number) => void
+  onNext: () => void
   onFinish: () => void
 }
 
-function Quiz({ currentQuestion, answers, onAnswer, onFinish }: QuizProps) {
+function Quiz({ currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProps) {
   const question = questions[currentQuestion]
-  const progress = ((currentQuestion) / questions.length) * 100
+
+  if (!question) {
+    return null
+  }
+
+  const progress = ((currentQuestion + 1) / questions.length) * 100
   const isAnswered = answers.some(a => a.questionId === question.id)
 
   const handleOptionClick = (optionId: number) => {
@@ -20,11 +27,9 @@ function Quiz({ currentQuestion, answers, onAnswer, onFinish }: QuizProps) {
   const handleNext = () => {
     if (currentQuestion >= questions.length - 1) {
       onFinish()
+      return
     }
-  }
-
-  if (currentQuestion >= questions.length) {
-    return null
+    onNext()
   }
 
   return (

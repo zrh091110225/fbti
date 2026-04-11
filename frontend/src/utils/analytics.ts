@@ -1,5 +1,6 @@
 // Simple local tracking utility
-// In production, this would send to an analytics backend
+// Events are cached locally first, then sent to the backend when available.
+import { postAnalyticsEvent } from './api'
 
 interface TrackEvent {
   event: string
@@ -44,6 +45,7 @@ class Analytics {
     
     this.events.push(trackEvent)
     this.saveToStorage()
+    void postAnalyticsEvent(trackEvent)
     
     // Log in development
     if (import.meta.env.DEV) {

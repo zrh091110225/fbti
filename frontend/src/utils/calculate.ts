@@ -1,5 +1,6 @@
-import { questions, QuizAnswer } from '../data/questions'
+import { questions } from '../data/questions'
 import { personalities, PersonalityType } from '../data/personalities'
+import { QuizAnswer } from '../types/quiz'
 
 export function calculatePersonality(answers: QuizAnswer[]): PersonalityType {
   const scores: { [key: string]: number } = {

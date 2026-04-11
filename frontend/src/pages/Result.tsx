@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
-import { QuizAnswer } from '../data/questions'
-import { personalities } from '../data/personalities'
+import { QuizAnswer } from '../types/quiz'
 import { calculatePersonality } from '../utils/calculate'
 import ShareCard from '../components/ShareCard'
 import './Result.css'
@@ -12,14 +11,19 @@ interface ResultProps {
 
 function Result({ answers, onRestart }: ResultProps) {
   const [showShare, setShowShare] = useState(false)
+  const communityUrl = import.meta.env.VITE_COMMUNITY_URL?.trim()
   
   const personality = useMemo(() => {
     return calculatePersonality(answers)
   }, [answers])
 
   const handleGroupClick = () => {
-    // This would be replaced with actual QR code
-    alert('群二维码功能开发中...')
+    if (!communityUrl) {
+      window.alert('暂未配置入群链接，请先设置 VITE_COMMUNITY_URL。')
+      return
+    }
+
+    window.open(communityUrl, '_blank', 'noopener,noreferrer')
   }
 
   return (
@@ -84,7 +88,7 @@ function Result({ answers, onRestart }: ResultProps) {
           🔄 重新测试
         </button>
         <button className="group-btn" onClick={handleGroupClick}>
-          💬 扫码进群交流
+          💬 {communityUrl ? '打开入群链接' : '入群链接待配置'}
         </button>
       </div>
     </div>
