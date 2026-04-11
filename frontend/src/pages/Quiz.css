@@ -62,7 +62,7 @@
 
 .reel-progress {
   display: grid;
-  grid-template-columns: 92px 1fr;
+  grid-template-columns: 1fr 92px;
   gap: 16px;
   align-items: center;
   margin-top: -2px;
@@ -164,10 +164,10 @@
 .reel-progress__tension {
   position: absolute;
   top: 27px;
-  left: 0;
+  right: 0;
   height: 2px;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgba(197, 238, 211, 0.88), rgba(197, 238, 211, 0.08));
+  background: linear-gradient(270deg, rgba(197, 238, 211, 0.88), rgba(197, 238, 211, 0.08));
   box-shadow: 0 0 14px rgba(197, 238, 211, 0.24);
 }
 

@@ -304,27 +304,6 @@ function ProgressFish({
 
   return (
     <div className="reel-progress" aria-hidden="true">
-      <div className={`reel-progress__reel ${isReeling || isLanding ? 'is-active' : ''}`}>
-        <m.div
-          key={reelToken}
-          className="reel-progress__spool"
-          animate={
-            isReeling || isLanding
-              ? { rotate: prefersReducedMotion ? 0 : [0, 120, 240, 360, 480] }
-              : { rotate: 0 }
-          }
-          transition={
-            prefersReducedMotion
-              ? { duration: 0.01 }
-              : { duration: isLanding ? 1.1 : 0.62, ease: 'linear', repeat: isLanding ? 0 : 1 }
-          }
-        >
-          <span className="reel-progress__spoke reel-progress__spoke--one" />
-          <span className="reel-progress__spoke reel-progress__spoke--two" />
-        </m.div>
-        <span className="reel-progress__handle" />
-      </div>
-
       <div className="reel-progress__lane">
         <div className="reel-progress__line" />
         <m.div
@@ -340,7 +319,7 @@ function ProgressFish({
         <m.div
           className={`reel-progress__fish ${isLanding ? 'is-hidden' : ''}`}
           initial={false}
-          animate={{ left: `calc(${100 - renderedProgress}% - 36px)` }}
+          animate={{ left: `calc(${renderedProgress}% - 36px)` }}
           transition={
             prefersReducedMotion
               ? { duration: 0.12, ease: 'linear' }
@@ -370,6 +349,27 @@ function ProgressFish({
             </svg>
           </m.div>
         </m.div>
+      </div>
+
+      <div className={`reel-progress__reel ${isReeling || isLanding ? 'is-active' : ''}`}>
+        <m.div
+          key={reelToken}
+          className="reel-progress__spool"
+          animate={
+            isReeling || isLanding
+              ? { rotate: prefersReducedMotion ? 0 : [0, 120, 240, 360, 480] }
+              : { rotate: 0 }
+          }
+          transition={
+            prefersReducedMotion
+              ? { duration: 0.01 }
+              : { duration: isLanding ? 1.1 : 0.62, ease: 'linear', repeat: isLanding ? 0 : 1 }
+          }
+        >
+          <span className="reel-progress__spoke reel-progress__spoke--one" />
+          <span className="reel-progress__spoke reel-progress__spoke--two" />
+        </m.div>
+        <span className="reel-progress__handle" />
       </div>
     </div>
   )
