@@ -1,4 +1,6 @@
 import { m } from 'framer-motion'
+import ScenicBackdrop from '../components/ScenicBackdrop'
+import { questions } from '../data/questions'
 import './Home.css'
 
 interface HomeProps {
@@ -8,6 +10,7 @@ interface HomeProps {
 function Home({ onStart }: HomeProps) {
   return (
     <div className="page page-home">
+      <ScenicBackdrop variant="home" />
       <div className="page-shell home-shell">
         <div className="home-grid">
           <m.section
@@ -19,9 +22,10 @@ function Home({ onStart }: HomeProps) {
             <span className="section-label">Fishing Behavior Type Indicator</span>
 
             <div className="brand-mark">FBTI</div>
+            <div className="home-hero-fishing-line" />
 
             <h1 className="home-title">
-              用 <span className="eyebrow-number">16</span> 个问题，
+              用 <span className="eyebrow-number">{questions.length}</span> 个问题，
               测出你的钓鱼人格。
             </h1>
 
@@ -36,8 +40,8 @@ function Home({ onStart }: HomeProps) {
                 <span className="metric-label">完成测试</span>
               </div>
               <div className="metric-chip">
-                <span className="metric-value">16 型人格</span>
-                <span className="metric-label">即时生成</span>
+                <span className="metric-value">{questions.length} 题</span>
+                <span className="metric-label">完整作答</span>
               </div>
               <div className="metric-chip">
                 <span className="metric-value">中断可续</span>
@@ -64,7 +68,7 @@ function Home({ onStart }: HomeProps) {
               <span className="section-label">What You Get</span>
               <div className="sidebar-stat-grid">
                 <div className="sidebar-stat-card">
-                  <span className="sidebar-stat-value">16</span>
+                  <span className="sidebar-stat-value">{questions.length}</span>
                   <span className="sidebar-stat-title">道问题</span>
                   <p>每个维度 4 题，专门测投入、社交、玩法和价值导向。</p>
                 </div>

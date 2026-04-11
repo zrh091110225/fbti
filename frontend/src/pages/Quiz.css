@@ -3,11 +3,15 @@
 }
 
 .quiz-frame {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 24px;
   padding: clamp(24px, 4vw, 36px);
   border-radius: var(--radius-xl);
+  background:
+    linear-gradient(180deg, rgba(11, 20, 29, 0.58), rgba(11, 20, 29, 0.82)),
+    rgba(11, 20, 29, 0.68);
 }
 
 .quiz-header {
@@ -56,18 +60,78 @@
   font-size: 16px;
 }
 
-.progress-bar {
-  height: 8px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  overflow: hidden;
+.fish-progress {
+  margin-top: -2px;
 }
 
-.progress-fill {
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-strong) 100%);
-  box-shadow: 0 0 24px rgba(150, 216, 175, 0.45);
+.fish-progress__track {
+  position: relative;
+  height: 48px;
+  overflow: visible;
+}
+
+.fish-progress__line {
+  position: absolute;
+  top: 23px;
+  left: 10px;
+  right: 10px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.08), rgba(197, 238, 211, 0.42), rgba(255, 255, 255, 0.08));
+}
+
+.fish-progress__track::before,
+.fish-progress__track::after {
+  content: "";
+  position: absolute;
+  top: 19px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(197, 238, 211, 0.16);
+  box-shadow: 0 0 0 4px rgba(197, 238, 211, 0.06);
+}
+
+.fish-progress__track::before {
+  left: 8px;
+}
+
+.fish-progress__track::after {
+  right: 8px;
+}
+
+.fish-progress__swimmer {
+  position: absolute;
+  top: 0;
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  max-width: 48px;
+}
+
+.fish-progress__body {
+  position: relative;
+  width: 48px;
+  height: 48px;
+}
+
+.fish-progress__icon {
+  position: absolute;
+  top: 4px;
+  left: -8px;
+  width: 64px;
+  height: 40px;
+  filter: drop-shadow(0 10px 18px rgba(150, 216, 175, 0.24));
+}
+
+.fish-progress__wake {
+  position: absolute;
+  top: 18px;
+  left: -16px;
+  width: 20px;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(197, 238, 211, 0.28), transparent);
+  filter: blur(2px);
 }
 
 .quiz-layout {
@@ -82,7 +146,12 @@
 }
 
 .quiz-card {
+  position: relative;
   padding: clamp(24px, 4vw, 36px);
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(17, 30, 42, 0.68), rgba(10, 18, 27, 0.84)),
+    rgba(14, 24, 35, 0.72);
 }
 
 .question-label,
@@ -117,6 +186,7 @@
 }
 
 .option {
+  position: relative;
   width: 100%;
   display: flex;
   align-items: center;
@@ -127,6 +197,7 @@
   background: rgba(255, 255, 255, 0.03);
   color: var(--text);
   text-align: left;
+  overflow: hidden;
 }
 
 .option:hover {
@@ -164,6 +235,46 @@
   line-height: 1.6;
 }
 
+.option-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.option-hint {
+  font-size: 12px;
+  color: var(--subtle);
+  line-height: 1.4;
+}
+
+.option-cast-effect {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.option-cast-line {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.option-ripple {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(197, 238, 211, 0.5);
+  transform: translateY(-50%);
+  box-shadow:
+    0 0 0 6px rgba(197, 238, 211, 0.09),
+    0 0 0 12px rgba(197, 238, 211, 0.05);
+}
+
 .quiz-sidebar {
   display: flex;
   flex-direction: column;
@@ -172,6 +283,9 @@
 
 .quiz-side-card {
   padding: 20px;
+  background:
+    linear-gradient(180deg, rgba(14, 24, 35, 0.56), rgba(10, 18, 27, 0.76)),
+    rgba(14, 24, 35, 0.62);
 }
 
 .quiz-side-card strong {
@@ -204,6 +318,30 @@
   min-width: 172px;
 }
 
+.quiz-reel-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.quiz-reel-line {
+  position: absolute;
+  inset: auto 0 72px auto;
+  width: 44%;
+  height: 42%;
+}
+
+.quiz-frame.is-reeling .quiz-card,
+.quiz-frame.is-reeling .quiz-sidebar,
+.quiz-frame.is-reeling .fish-progress {
+  transform: translateY(-8px);
+  opacity: 0.94;
+  transition:
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 420ms ease;
+}
+
 @media (max-width: 960px) {
   .quiz-layout {
     grid-template-columns: 1fr;
@@ -232,5 +370,18 @@
 
   .option {
     padding: 16px 18px;
+  }
+
+  .option-ripple {
+    right: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fish-progress__body,
+  .quiz-frame.is-reeling .quiz-card,
+  .quiz-frame.is-reeling .quiz-sidebar,
+  .quiz-frame.is-reeling .fish-progress {
+    transition-duration: 120ms;
   }
 }

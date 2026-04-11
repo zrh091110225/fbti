@@ -1,0 +1,157 @@
+.scenic-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.scenic-backdrop__viewport {
+  position: absolute;
+  inset: -3%;
+}
+
+.scenic-backdrop__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+}
+
+.scenic-backdrop__water {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0.95;
+  transform: translateZ(0);
+}
+
+.scenic-backdrop__water-wave {
+  position: absolute;
+  inset: 0;
+  background-repeat: repeat-x;
+  background-size: 52% auto;
+  mix-blend-mode: screen;
+}
+
+.scenic-backdrop__water-wave--primary {
+  opacity: 0.24;
+  animation:
+    water-drift-primary 14s linear infinite,
+    water-breathe 9.5s ease-in-out infinite;
+}
+
+.scenic-backdrop__water-wave--secondary {
+  opacity: 0.14;
+  background-position: 20% 58%;
+  transform: scale(1.08);
+  animation:
+    water-drift-secondary 11s linear infinite,
+    water-breathe 12s ease-in-out infinite reverse;
+}
+
+.scenic-backdrop__water-sheen {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 38%),
+    radial-gradient(circle at 50% 40%, rgba(214, 245, 241, 0.18), transparent 45%);
+  opacity: 0.28;
+  animation: water-sheen 13s ease-in-out infinite;
+}
+
+.scenic-backdrop__veil {
+  position: absolute;
+  inset: 0;
+}
+
+.scenic-backdrop__veil--top {
+  background: linear-gradient(180deg, rgba(6, 14, 20, 0.18) 0%, transparent 34%);
+}
+
+.scenic-backdrop__veil--bottom {
+  background: linear-gradient(180deg, transparent 54%, rgba(5, 12, 18, 0.52) 100%);
+}
+
+.scenic-backdrop__veil--side {
+  background: radial-gradient(circle at center, transparent 58%, rgba(4, 10, 14, 0.22) 100%);
+}
+
+.scenic-backdrop__grain {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at center, rgba(255, 255, 255, 0.08) 0, transparent 1px);
+  background-size: 22px 22px;
+  opacity: 0.08;
+}
+
+.scenic-backdrop--quiz .scenic-backdrop__viewport {
+  transform: scale(1.03) translateY(-1.2%);
+}
+
+.scenic-backdrop--quiz .scenic-backdrop__veil--top {
+  background: linear-gradient(180deg, rgba(5, 11, 16, 0.34) 0%, rgba(5, 11, 16, 0.08) 36%, transparent 58%);
+}
+
+.scenic-backdrop--quiz .scenic-backdrop__veil--bottom {
+  background: linear-gradient(180deg, transparent 45%, rgba(4, 10, 14, 0.62) 100%);
+}
+
+.scenic-backdrop--quiz .scenic-backdrop__veil--side {
+  background: radial-gradient(circle at center, transparent 52%, rgba(4, 10, 14, 0.3) 100%);
+}
+
+@keyframes water-drift-primary {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-4%, 1.4%, 0) scale(1.02);
+  }
+  100% {
+    transform: translate3d(-8%, 0, 0) scale(1);
+  }
+}
+
+@keyframes water-drift-secondary {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1.08);
+  }
+  50% {
+    transform: translate3d(6%, -1.2%, 0) scale(1.1);
+  }
+  100% {
+    transform: translate3d(12%, 0, 0) scale(1.08);
+  }
+}
+
+@keyframes water-breathe {
+  0%,
+  100% {
+    opacity: 0.18;
+  }
+  50% {
+    opacity: 0.32;
+  }
+}
+
+@keyframes water-sheen {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 0.34;
+    transform: translateY(1.2%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scenic-backdrop__water-wave,
+  .scenic-backdrop__water-sheen {
+    animation: none;
+  }
+}

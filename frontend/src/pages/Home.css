@@ -1,7 +1,7 @@
 .home-shell {
   display: flex;
-  align-items: center;
-  min-height: calc(100vh - 80px);
+  align-items: flex-end;
+  min-height: calc(100vh - 48px);
 }
 
 .home-grid {
@@ -9,6 +9,7 @@
   grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
   gap: 24px;
   width: 100%;
+  align-items: end;
 }
 
 .home-hero,
@@ -17,7 +18,15 @@
 }
 
 .home-hero {
+  position: relative;
   padding: clamp(32px, 5vw, 56px);
+  background:
+    linear-gradient(180deg, rgba(11, 20, 29, 0.62), rgba(11, 20, 29, 0.76)),
+    rgba(11, 20, 29, 0.66);
+}
+
+.page-home .page-shell {
+  z-index: 2;
 }
 
 .brand-mark {
@@ -34,6 +43,30 @@
   font-weight: 700;
   letter-spacing: 0.34em;
   text-indent: 0.34em;
+}
+
+.home-hero-fishing-line {
+  position: absolute;
+  top: 42px;
+  right: 54px;
+  width: 180px;
+  height: 96px;
+  border-top: 2px solid rgba(197, 238, 211, 0.34);
+  border-right: 2px solid rgba(197, 238, 211, 0.24);
+  border-top-right-radius: 120px;
+  opacity: 0.9;
+}
+
+.home-hero-fishing-line::after {
+  content: "";
+  position: absolute;
+  right: -7px;
+  bottom: -14px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(197, 238, 211, 0.84);
+  box-shadow: 0 0 20px rgba(150, 216, 175, 0.55);
 }
 
 .home-title {
@@ -116,6 +149,9 @@
   justify-content: space-between;
   gap: 24px;
   padding: 28px;
+  background:
+    linear-gradient(180deg, rgba(11, 20, 29, 0.52), rgba(11, 20, 29, 0.78)),
+    rgba(14, 24, 35, 0.66);
 }
 
 .sidebar-block {
@@ -200,6 +236,11 @@
   .home-title {
     max-width: 12ch;
   }
+
+  .home-shell {
+    align-items: stretch;
+    min-height: auto;
+  }
 }
 
 @media (max-width: 640px) {
@@ -220,6 +261,10 @@
     font-size: 16px;
     letter-spacing: 0.24em;
     text-indent: 0.24em;
+  }
+
+  .home-hero-fishing-line {
+    display: none;
   }
 
   .home-actions {
