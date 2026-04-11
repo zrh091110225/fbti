@@ -3,8 +3,15 @@ import { personalities, PersonalityType } from '../data/personalities'
 import { QuizAnswer } from '../types/quiz'
 
 export function calculatePersonality(answers: QuizAnswer[]): PersonalityType {
-  const scores: { [key: string]: number } = {
-    A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0, H: 0
+  const scores: Record<string, number> = {
+    H: 0,
+    C: 0,
+    S: 0,
+    O: 0,
+    T: 0,
+    G: 0,
+    R: 0,
+    E: 0
   }
 
   answers.forEach(answer => {
@@ -19,16 +26,13 @@ export function calculatePersonality(answers: QuizAnswer[]): PersonalityType {
     })
   })
 
-  // Find personality with highest score
-  let maxScore = 0
-  let resultId = 'A'
-
-  Object.entries(scores).forEach(([key, value]) => {
-    if (value > maxScore) {
-      maxScore = value
-      resultId = key
-    }
-  })
+  // 文档没有定义平分规则；当前默认平分时落到更松弛的一侧。
+  const resultId = [
+    scores.H > scores.C ? 'H' : 'C',
+    scores.S > scores.O ? 'S' : 'O',
+    scores.T > scores.G ? 'T' : 'G',
+    scores.R > scores.E ? 'R' : 'E'
+  ].join('')
 
   const personality = personalities.find(p => p.id === resultId)
   return personality || personalities[0]

@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react'
+import { useCallback, useRef } from 'react'
 import { PersonalityType } from '../data/personalities'
 import { analytics } from '../utils/analytics'
 import './ShareCard.css'
@@ -23,90 +23,112 @@ function ShareCard({ personality }: ShareCardProps) {
     canvas.width = width
     canvas.height = height
 
-    // Background gradient
-    const gradient = ctx.createLinearGradient(0, 0, width, height)
-    gradient.addColorStop(0, '#1a3a4a')
-    gradient.addColorStop(1, '#0d2137')
-    ctx.fillStyle = gradient
+    const background = ctx.createLinearGradient(0, 0, width, height)
+    background.addColorStop(0, '#0c1620')
+    background.addColorStop(1, '#071019')
+    ctx.fillStyle = background
     ctx.fillRect(0, 0, width, height)
 
-    // Add decorative bubbles
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.03)'
-    for (let i = 0; i < 15; i++) {
-      const x = Math.random() * width
-      const y = Math.random() * height
-      const r = Math.random() * 60 + 20
+    const glow = ctx.createRadialGradient(width - 80, 80, 20, width - 80, 80, 260)
+    glow.addColorStop(0, 'rgba(150, 216, 175, 0.24)')
+    glow.addColorStop(1, 'rgba(150, 216, 175, 0)')
+    ctx.fillStyle = glow
+    ctx.fillRect(0, 0, width, height)
+
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)'
+    ctx.lineWidth = 1
+    for (let x = 0; x < width; x += 54) {
       ctx.beginPath()
-      ctx.arc(x, y, r, 0, Math.PI * 2)
-      ctx.fill()
+      ctx.moveTo(x, 0)
+      ctx.lineTo(x, height)
+      ctx.stroke()
+    }
+    for (let y = 0; y < height; y += 54) {
+      ctx.beginPath()
+      ctx.moveTo(0, y)
+      ctx.lineTo(width, y)
+      ctx.stroke()
     }
 
-    // Title
-    ctx.fillStyle = '#fff'
-    ctx.font = 'bold 48px sans-serif'
-    ctx.textAlign = 'center'
-    ctx.fillText('FBTI', width / 2, 120)
-
-    ctx.font = '24px sans-serif'
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
-    ctx.fillText('钓鱼人大性格测试', width / 2, 160)
-
-    // Personality badge circle
-    const centerX = width / 2
-    const badgeY = 320
-    const badgeR = 100
-
-    ctx.beginPath()
-    ctx.arc(centerX, badgeY, badgeR, 0, Math.PI * 2)
-    ctx.fillStyle = 'rgba(96, 211, 148, 0.2)'
+    roundRect(ctx, 36, 36, width - 72, height - 72, 36)
+    ctx.fillStyle = 'rgba(10, 18, 26, 0.74)'
     ctx.fill()
-    ctx.strokeStyle = '#60d394'
-    ctx.lineWidth = 4
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)'
+    ctx.lineWidth = 1
     ctx.stroke()
 
-    // Emoji
-    ctx.font = '80px sans-serif'
+    ctx.textAlign = 'left'
+    ctx.textBaseline = 'alphabetic'
+    ctx.fillStyle = '#c5eed3'
+    ctx.font = '600 16px sans-serif'
+    ctx.fillText('FISHING BEHAVIOR TYPE', 72, 98)
+
+    ctx.fillStyle = '#f4f7fb'
+    ctx.font = '700 54px sans-serif'
+    ctx.fillText('FBTI', 72, 154)
+
+    ctx.fillStyle = 'rgba(223, 231, 239, 0.7)'
+    ctx.font = '24px sans-serif'
+    ctx.fillText('钓鱼人格结果卡', 72, 194)
+
+    roundRect(ctx, 72, 236, 132, 132, 34)
+    ctx.fillStyle = 'rgba(150, 216, 175, 0.12)'
+    ctx.fill()
+    ctx.strokeStyle = 'rgba(150, 216, 175, 0.28)'
+    ctx.lineWidth = 2
+    ctx.stroke()
+
+    ctx.font = '72px sans-serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.fillText(personality.emoji, centerX, badgeY)
+    ctx.fillStyle = '#f4f7fb'
+    ctx.fillText(personality.emoji, 138, 302)
 
-    // Personality name
-    ctx.font = 'bold 44px sans-serif'
-    ctx.fillStyle = '#60d394'
-    ctx.fillText(personality.name, centerX, 500)
+    ctx.textAlign = 'left'
+    ctx.textBaseline = 'alphabetic'
+    ctx.font = '700 42px sans-serif'
+    ctx.fillStyle = '#f4f7fb'
+    ctx.fillText(personality.name, 232, 286)
 
-    // Personality title
-    ctx.font = '28px sans-serif'
-    ctx.fillStyle = '#fff'
-    ctx.fillText(personality.title, centerX, 560)
+    ctx.font = '24px sans-serif'
+    ctx.fillStyle = '#96d8af'
+    ctx.fillText(personality.title, 232, 326)
 
-    // Description
-    ctx.font = '20px sans-serif'
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'
-    const lines = wrapText(ctx, personality.description, width - 80)
+    ctx.fillStyle = 'rgba(223, 231, 239, 0.82)'
+    ctx.font = '22px sans-serif'
+    const lines = wrapText(ctx, personality.description, 396)
     lines.forEach((line, index) => {
-      ctx.fillText(line, centerX, 640 + index * 32)
+      ctx.fillText(line, 72, 446 + index * 36)
     })
 
-    // Traits
-    const traitsY = 780
-    ctx.font = '18px sans-serif'
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.6)'
-    ctx.fillText('性格标签', centerX, traitsY)
+    drawInfoCard(ctx, {
+      x: 72,
+      y: 674,
+      width: 396,
+      height: 86,
+      label: '人格代码',
+      value: personality.id
+    })
 
-    const traitText = personality.traits.join(' · ')
-    ctx.fillStyle = '#60d394'
-    ctx.fillText(traitText, centerX, traitsY + 36)
+    drawInfoCard(ctx, {
+      x: 72,
+      y: 780,
+      width: 396,
+      height: 86,
+      label: '维度组合',
+      value: personality.dimensions.join(' · ')
+    })
 
-    // Bottom decoration
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)'
-    ctx.fillRect(0, height - 100, width, 100)
-
+    ctx.textAlign = 'left'
+    ctx.fillStyle = 'rgba(223, 231, 239, 0.54)'
     ctx.font = '16px sans-serif'
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'
-    ctx.fillText('保存图片，分享你的钓鱼人格结果', centerX, height - 50)
+    ctx.fillText(personality.signature, 72, 900)
 
-    // Return data URL
+    ctx.textAlign = 'center'
+    ctx.fillStyle = 'rgba(223, 231, 239, 0.4)'
+    ctx.font = '15px sans-serif'
+    ctx.fillText('保存图片，分享你的钓鱼人格结果', width / 2, 930)
+
     return canvas.toDataURL('image/png')
   }, [personality])
 
@@ -126,11 +148,57 @@ function ShareCard({ personality }: ShareCardProps) {
   return (
     <div className="share-card-container">
       <canvas ref={canvasRef} style={{ display: 'none' }} />
-      <button className="generate-btn" onClick={handleGenerate}>
-        📥 保存分享图
+      <div className="share-card-copy">
+        <span className="content-label">分享图</span>
+        <p>会生成一张竖版结果卡，适合发给朋友或贴进钓友群。</p>
+      </div>
+      <button className="primary-button generate-btn" onClick={handleGenerate}>
+        保存分享图
       </button>
     </div>
   )
+}
+
+function roundRect(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number
+) {
+  ctx.beginPath()
+  ctx.moveTo(x + radius, y)
+  ctx.lineTo(x + width - radius, y)
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius)
+  ctx.lineTo(x + width, y + height - radius)
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height)
+  ctx.lineTo(x + radius, y + height)
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius)
+  ctx.lineTo(x, y + radius)
+  ctx.quadraticCurveTo(x, y, x + radius, y)
+  ctx.closePath()
+}
+
+function drawInfoCard(
+  ctx: CanvasRenderingContext2D,
+  options: { x: number; y: number; width: number; height: number; label: string; value: string }
+) {
+  roundRect(ctx, options.x, options.y, options.width, options.height, 24)
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.04)'
+  ctx.fill()
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)'
+  ctx.lineWidth = 1
+  ctx.stroke()
+
+  ctx.textAlign = 'left'
+  ctx.fillStyle = 'rgba(223, 231, 239, 0.48)'
+  ctx.font = '16px sans-serif'
+  ctx.fillText(options.label, options.x + 20, options.y + 28)
+
+  ctx.fillStyle = '#f4f7fb'
+  ctx.font = '600 24px sans-serif'
+  ctx.fillText(options.value, options.x + 20, options.y + 62)
 }
 
 function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] {

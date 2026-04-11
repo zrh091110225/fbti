@@ -1,3 +1,4 @@
+import { m } from 'framer-motion'
 import { useMemo, useState } from 'react'
 import { QuizAnswer } from '../types/quiz'
 import { calculatePersonality } from '../utils/calculate'
@@ -12,10 +13,16 @@ interface ResultProps {
 function Result({ answers, onRestart }: ResultProps) {
   const [showShare, setShowShare] = useState(false)
   const communityUrl = import.meta.env.VITE_COMMUNITY_URL?.trim()
-  
+
   const personality = useMemo(() => {
     return calculatePersonality(answers)
   }, [answers])
+
+  const highlights = [
+    { label: '人格代码', value: personality.id },
+    { label: '维度组合', value: personality.dimensions.join(' · ') },
+    { label: '一句话', value: personality.signature }
+  ]
 
   const handleGroupClick = () => {
     if (!communityUrl) {
@@ -27,69 +34,71 @@ function Result({ answers, onRestart }: ResultProps) {
   }
 
   return (
-    <div className="result">
-      <div className="result-header">
-        <div className="personality-badge">
-          <span className="emoji">{personality.emoji}</span>
-        </div>
-        <h1 className="personality-type">{personality.name}</h1>
-        <p className="personality-title">{personality.title}</p>
-      </div>
+    <div className="page page-result">
+      <div className="page-shell result-shell">
+        <section className="result-hero surface surface-strong">
+          <div className="result-hero-main">
+            <m.div
+              className="personality-badge"
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: 'spring', stiffness: 180, damping: 18 }}
+            >
+              <span className="emoji">{personality.emoji}</span>
+            </m.div>
 
-      <div className="result-content">
-        <div className="description-card">
-          <p>{personality.description}</p>
-        </div>
+            <div className="result-hero-copy">
+              <span className="section-label">Your Result</span>
+              <h1 className="personality-type">{personality.name}</h1>
+              <p className="personality-title">{personality.title}</p>
+            </div>
+          </div>
 
-        <div className="traits-section">
-          <h3>性格标签</h3>
           <div className="traits">
             {personality.traits.map((trait, index) => (
               <span key={index} className="trait">{trait}</span>
             ))}
           </div>
-        </div>
+        </section>
 
-        <div className="suggestions">
-          <div className="suggestion-card">
-            <span className="suggestion-icon">🎣</span>
-            <div className="suggestion-content">
-              <h4>最佳饵料</h4>
-              <p>{personality.suitableBait}</p>
-            </div>
-          </div>
-          <div className="suggestion-card">
-            <span className="suggestion-icon">📍</span>
-            <div className="suggestion-content">
-              <h4>适合钓点</h4>
-              <p>{personality.suitableSpot}</p>
-            </div>
-          </div>
+        <div className="result-grid">
+          <section className="description-card surface">
+            <span className="content-label">性格解读</span>
+            <p>{personality.description}</p>
+          </section>
+
+          <section className="description-card surface">
+            <span className="content-label">代表场景</span>
+            <p>{personality.scene}</p>
+          </section>
+
+          <section className="highlights-grid">
+            {highlights.map((item) => (
+              <article key={item.label} className="highlight-card surface">
+                <span className="content-label">{item.label}</span>
+                <strong>{item.value}</strong>
+              </article>
+            ))}
+          </section>
         </div>
 
         {showShare && (
-          <div className="share-section">
+          <section className="share-section surface">
             <ShareCard personality={personality} />
-          </div>
+          </section>
         )}
-      </div>
 
-      <div className="result-footer">
-        {!showShare ? (
-          <button className="share-btn" onClick={() => setShowShare(true)}>
-            📤 生成分享图
+        <div className="result-actions">
+          <button className="primary-button" onClick={() => setShowShare(prev => !prev)}>
+            {showShare ? '收起分享区' : '生成分享图'}
           </button>
-        ) : (
-          <button className="share-btn" onClick={() => setShowShare(false)}>
-            🔙 返回结果
+          <button className="secondary-button" onClick={onRestart}>
+            重新测试
           </button>
-        )}
-        <button className="restart-btn" onClick={onRestart}>
-          🔄 重新测试
-        </button>
-        <button className="group-btn" onClick={handleGroupClick}>
-          💬 {communityUrl ? '打开入群链接' : '入群链接待配置'}
-        </button>
+          <button className="ghost-button" onClick={handleGroupClick}>
+            {communityUrl ? '打开入群链接' : '入群链接待配置'}
+          </button>
+        </div>
       </div>
     </div>
   )

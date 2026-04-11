@@ -1,27 +1,30 @@
 .share-card-container {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 16px;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.share-card-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.share-card-copy p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.75;
 }
 
 .generate-btn {
-  background: linear-gradient(135deg, #60d394 0%, #3da07a 100%);
-  color: #fff;
-  border: none;
-  padding: 14px 32px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: 50px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(96, 211, 148, 0.4);
+  min-width: 180px;
 }
 
-.generate-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 30px rgba(96, 211, 148, 0.5);
+@media (max-width: 640px) {
+  .share-card-container {
+    align-items: stretch;
+  }
 }
