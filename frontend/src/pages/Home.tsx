@@ -1,5 +1,6 @@
 import { m } from 'framer-motion'
 import ScenicBackdrop from '../components/ScenicBackdrop'
+import { personalities } from '../data/personalities'
 import { questions } from '../data/questions'
 import './Home.css'
 
@@ -7,94 +8,316 @@ interface HomeProps {
   onStart: () => void
 }
 
+const dimensionCards = [
+  {
+    id: 'I',
+    title: '投入强度',
+    value: '狂热 / 松弛',
+    description: '看你会不会为了鱼口调整生活节奏，把钓鱼当成要认真安排的正事，还是一个轻松插入生活的爱好。'
+  },
+  {
+    id: 'S',
+    title: '相处方式',
+    value: '社交 / 独处',
+    description: '判断你更享受组局、交流和带节奏，还是把水边当作自己的安静区域。'
+  },
+  {
+    id: 'T',
+    title: '偏好路径',
+    value: '技术 / 装备',
+    description: '区分你更相信手法、判断和复盘，还是更依赖器材配置、系统搭建和 setup。'
+  },
+  {
+    id: 'R',
+    title: '价值取向',
+    value: '结果 / 体验',
+    description: '衡量你更在意鱼获和胜负，还是把舒服、氛围和当天状态放在更前面。'
+  }
+]
+
+const testHighlights = [
+  '共 16 题，四个维度各 4 题，整体作答约 2 分钟。',
+  '自动保存答题进度，中途退出后再次进入可以继续。',
+  '结果会给出人格名称、性格描述、典型场景和核心标签。',
+  '支持一键生成分享图，适合发到钓友群或朋友圈。',
+  '结果仅供娱乐，不构成心理学或行为学专业判断。'
+]
+
+const faqItems = [
+  {
+    question: 'FBTI 是什么？',
+    answer:
+      'FBTI 是 Fishing Behavior Type Indicator 的缩写，用四组钓鱼行为偏好来判断你更像哪一型钓鱼人。它是娱乐向测试，不是专业人格量表。'
+  },
+  {
+    question: '测试需要多久？',
+    answer:
+      '当前版本一共 16 题，正常情况下 2 分钟左右可以做完。如果你中途离开，系统会自动保存进度。'
+  },
+  {
+    question: '结果是怎么得出的？',
+    answer:
+      '每道题都会为四个维度的一侧累计分数，最后把四个维度的偏好拼成 16 种人格类型，例如“狂热 × 社交 × 技术 × 结果”。'
+  },
+  {
+    question: '答题数据会上传吗？',
+    answer:
+      '首页文案层面延续当前产品能力说明：测试支持本地保存与恢复。最终是否上传结果，还取决于你当前部署环境中的接口配置。'
+  },
+  {
+    question: '为什么适合先凭直觉作答？',
+    answer:
+      '这个测试测的是你在真实钓鱼场景里的稳定倾向，不是理想中的自己。按第一反应选，结果通常会更贴近你的平时状态。'
+  }
+]
+
 function Home({ onStart }: HomeProps) {
+  const scrollToSection = (sectionId: string) => {
+    document.getElementById(sectionId)?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start'
+    })
+  }
+
   return (
     <div className="page page-home">
       <ScenicBackdrop variant="home" />
       <div className="page-shell home-shell">
-        <div className="home-grid">
+        <div className="home-stack">
+          <header className="home-topbar surface">
+            <button className="home-brand" type="button" onClick={() => scrollToSection('hero')}>
+              <span className="home-brand-mark">F</span>
+              <span className="home-brand-copy">
+                <strong>FBTI</strong>
+                <span>钓鱼人大性格测试</span>
+              </span>
+            </button>
+
+            <nav className="home-nav" aria-label="首页导航">
+              <button type="button" onClick={() => scrollToSection('dimensions')}>
+                测试维度
+              </button>
+              <button type="button" onClick={() => scrollToSection('overview')}>
+                关于测试
+              </button>
+              <button type="button" onClick={() => scrollToSection('atlas')}>
+                人格图谱
+              </button>
+              <button type="button" onClick={() => scrollToSection('faq')}>
+                常见问题
+              </button>
+            </nav>
+          </header>
+
           <m.section
+            id="hero"
             className="home-hero surface surface-strong"
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <span className="section-label">Fishing Behavior Type Indicator</span>
+            <div className="home-hero-copy">
+              <span className="section-label">Fishing Behavior Type Indicator</span>
+              <div className="brand-mark">FBTI TEST</div>
+              <div className="home-hero-fishing-line" />
 
-            <div className="brand-mark">FBTI</div>
-            <div className="home-hero-fishing-line" />
+              <h1 className="home-title">FBTI 钓鱼人格测试，你是哪一型钓鱼人？</h1>
 
-            <h1 className="home-title">
-              用 <span className="eyebrow-number">{questions.length}</span> 个问题，
-              测出你的钓鱼人格。
-            </h1>
+              <p className="home-description">
+                用 {questions.length} 道问题，从投入强度、相处方式、偏好路径和价值取向四个维度，
+                识别你在水边最稳定的行为模式，最后生成一份 16 型钓鱼人格画像。
+              </p>
 
-            <p className="home-description">
-              围绕投入方式、社交取向、玩法偏好和价值导向四个维度，
-              整理出你在水边最稳定的行为模式，最后拼成一份 16 型人格画像。
-            </p>
-
-            <div className="home-metrics">
-              <div className="metric-chip">
-                <span className="metric-value">2 分钟</span>
-                <span className="metric-label">完成测试</span>
+              <div className="home-actions">
+                <button className="primary-button home-start-button" type="button" onClick={onStart}>
+                  开始测试
+                  <span className="button-arrow">→</span>
+                </button>
+                <button
+                  className="secondary-button home-preview-button"
+                  type="button"
+                  onClick={() => scrollToSection('atlas')}
+                >
+                  查看人格图谱
+                  <span className="button-arrow">→</span>
+                </button>
               </div>
-              <div className="metric-chip">
-                <span className="metric-value">{questions.length} 题</span>
-                <span className="metric-label">完整作答</span>
-              </div>
-              <div className="metric-chip">
-                <span className="metric-value">中断可续</span>
-                <span className="metric-label">自动保存</span>
-              </div>
+
+              <p className="home-footnote">仅供娱乐，建议按第一直觉作答，结果会更稳定。</p>
             </div>
 
-            <div className="home-actions">
-              <button className="primary-button home-start-button" onClick={onStart}>
-                开始测试
-                <span className="button-arrow">→</span>
-              </button>
-              <p className="home-footnote">建议用第一直觉作答，结果会更稳定。</p>
+            <div className="home-hero-panel">
+              <div className="home-metrics">
+                <div className="metric-chip">
+                  <span className="metric-value">{questions.length} 题</span>
+                  <span className="metric-label">完整作答</span>
+                </div>
+                <div className="metric-chip">
+                  <span className="metric-value">4 维度</span>
+                  <span className="metric-label">交叉判断</span>
+                </div>
+                <div className="metric-chip">
+                  <span className="metric-value">{personalities.length} 型</span>
+                  <span className="metric-label">人格结果</span>
+                </div>
+              </div>
+
+              <div className="hero-note-card">
+                <span className="content-label">你会得到什么</span>
+                <ul>
+                  <li>你的核心人格标签与一句话总结</li>
+                  <li>适合你的作钓状态、氛围和行动方式</li>
+                  <li>可直接分享给钓友的测试结果海报</li>
+                </ul>
+              </div>
             </div>
           </m.section>
 
-          <m.aside
-            className="home-sidebar surface"
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.58, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+          <m.section
+            id="dimensions"
+            className="home-section surface"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.5 }}
           >
-            <div className="sidebar-block">
-              <span className="section-label">What You Get</span>
-              <div className="sidebar-stat-grid">
-                <div className="sidebar-stat-card">
-                  <span className="sidebar-stat-value">{questions.length}</span>
-                  <span className="sidebar-stat-title">道问题</span>
-                  <p>每个维度 4 题，专门测投入、社交、玩法和价值导向。</p>
-                </div>
-                <div className="sidebar-stat-card">
-                  <span className="sidebar-stat-value">16</span>
-                  <span className="sidebar-stat-title">种人格</span>
-                  <p>从黑坑控局人到快乐搭子，每一型都由四维组合生成。</p>
-                </div>
-              </div>
+            <div className="section-heading">
+              <span className="section-label">四大维度</span>
+              <h2>不是泛泛测性格，而是专门测你怎么钓鱼。</h2>
+              <p>
+                开始测试前先把判断逻辑讲清楚，让你知道系统会从哪些钓鱼行为里识别你的稳定倾向，而不是盲测完才看结果。
+              </p>
             </div>
 
-            <div className="sidebar-block sidebar-list">
-              <div className="sidebar-list-item">
-                <span>01</span>
-                <p>结果页会给出你的核心标签与推荐作钓方向。</p>
+            <div className="dimension-grid">
+              {dimensionCards.map(card => (
+                <article key={card.id} className="dimension-card">
+                  <span className="dimension-id">{card.id}</span>
+                  <h3>{card.title}</h3>
+                  <strong>{card.value}</strong>
+                  <p>{card.description}</p>
+                </article>
+              ))}
+            </div>
+          </m.section>
+
+          <m.section
+            id="overview"
+            className="home-section surface"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="section-heading">
+              <span className="section-label">关于测试</span>
+              <h2>在开始测试前，先把玩法、耗时和结果形式说明白。</h2>
+            </div>
+
+            <div className="overview-grid">
+              <div className="overview-card">
+                <span className="content-label">测试说明</span>
+                <ul className="overview-list">
+                  {testHighlights.map(item => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
               </div>
-              <div className="sidebar-list-item">
-                <span>02</span>
-                <p>支持一键生成分享图，方便转发到钓友群。</p>
-              </div>
-              <div className="sidebar-list-item">
-                <span>03</span>
-                <p>整体流程以移动端优先设计，单手浏览也顺畅。</p>
+
+              <div className="overview-card overview-card-strong">
+                <span className="content-label">结果结构</span>
+                <div className="result-formula">
+                  <span>投入强度</span>
+                  <span>×</span>
+                  <span>相处方式</span>
+                  <span>×</span>
+                  <span>偏好路径</span>
+                  <span>×</span>
+                  <span>价值取向</span>
+                </div>
+                <p>
+                  每个维度都只有两侧取向，最终组合成 {personalities.length} 种类型。你看到的不只是一个代号，还会有完整的人格描述、关键词和典型场景。
+                </p>
+                <button className="ghost-button overview-cta" type="button" onClick={onStart}>
+                  直接开始测试
+                </button>
               </div>
             </div>
-          </m.aside>
+          </m.section>
+
+          <m.section
+            id="atlas"
+            className="home-section surface"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="section-heading">
+              <span className="section-label">人格图谱</span>
+              <h2>共 {personalities.length} 种钓鱼人格，先看看你可能会落在哪一类。</h2>
+              <p>首页先展示全部人格预览，方便你在开始前快速感受这套人格图谱的大致分布。</p>
+            </div>
+
+            <div className="personality-grid">
+              {personalities.map(personality => (
+                <article key={personality.id} className="personality-card">
+                  <div className="personality-card-head">
+                    <span className="personality-emoji" aria-hidden="true">
+                      {personality.emoji}
+                    </span>
+                    <div>
+                      <h3>{personality.name}</h3>
+                      <p>{personality.title}</p>
+                    </div>
+                  </div>
+                  <p className="personality-signature">{personality.signature}</p>
+                </article>
+              ))}
+            </div>
+          </m.section>
+
+          <m.section
+            id="faq"
+            className="home-section surface"
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="section-heading">
+              <span className="section-label">常见问题</span>
+              <h2>用户在开始前最常问的几件事，提前回答。</h2>
+            </div>
+
+            <div className="faq-list">
+              {faqItems.map(item => (
+                <details key={item.question} className="faq-item">
+                  <summary>{item.question}</summary>
+                  <p>{item.answer}</p>
+                </details>
+              ))}
+            </div>
+          </m.section>
+
+          <footer className="home-footer surface">
+            <div>
+              <strong>FBTI 钓鱼人大性格测试</strong>
+              <p>先看清测试逻辑，再开始作答，你会更容易理解结果为什么会落在这个人格上。</p>
+            </div>
+
+            <div className="home-footer-links">
+              <button type="button" onClick={() => scrollToSection('dimensions')}>
+                测试维度
+              </button>
+              <button type="button" onClick={() => scrollToSection('atlas')}>
+                人格图谱
+              </button>
+              <button type="button" onClick={onStart}>
+                开始测试
+              </button>
+            </div>
+          </footer>
         </div>
       </div>
     </div>
