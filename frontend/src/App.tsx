@@ -118,6 +118,14 @@ function App() {
     setQuestionOrder([])
   }
 
+  const handleExitQuiz = () => {
+    clearQuizState()
+    setScreen('home')
+    setAnswers([])
+    setCurrentQuestion(0)
+    setQuestionOrder([])
+  }
+
   return (
     <LazyMotion features={domAnimation}>
       <div className="app-shell">
@@ -137,6 +145,7 @@ function App() {
                 currentQuestion={currentQuestion}
                 answers={answers}
                 onAnswer={handleAnswer}
+                onExit={handleExitQuiz}
                 onPrevious={handlePreviousQuestion}
                 onNext={handleNextQuestion}
                 onFinish={handleFinish}

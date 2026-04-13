@@ -11,15 +11,17 @@ interface QuizProps {
   currentQuestion: number
   answers: QuizAnswer[]
   onAnswer: (questionId: number, answerId: number) => void
+  onExit: () => void
   onPrevious: () => void
   onNext: () => void
   onFinish: () => void
 }
 
-function Quiz({ questions, currentQuestion, answers, onAnswer, onPrevious, onNext, onFinish }: QuizProps) {
+function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPrevious, onNext, onFinish }: QuizProps) {
   const question = questions[currentQuestion]
   const prefersReducedMotion = Boolean(useReducedMotion())
   const timeoutRefs = useRef<number[]>([])
+  const [isExitPromptOpen, setIsExitPromptOpen] = useState(false)
   const [motionState, setMotionState] = useState<QuizMotionState>({
     castOptionId: null,
     castToken: 0,
@@ -36,6 +38,8 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onPrevious, onNex
   const nextProgress = Math.min(((currentQuestion + 1) / questions.length) * 100, 100)
   const selectedAnswer = answers.find(a => a.questionId === question.id)
   const isAnswered = Boolean(selectedAnswer)
+  const answeredCount = answers.length
+  const currentProgress = Math.max(Math.round((answeredCount / questions.length) * 100), Math.round(progress))
 
   const triggerAdvance = () => {
     timeoutRefs.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
@@ -124,12 +128,42 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onPrevious, onNex
     onPrevious()
   }
 
+  const handleOpenExitPrompt = () => {
+    if (motionState.isReeling || motionState.isLanding) {
+      return
+    }
+
+    timeoutRefs.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
+    timeoutRefs.current = []
+    setIsExitPromptOpen(true)
+  }
+
+  const handleCloseExitPrompt = () => {
+    setIsExitPromptOpen(false)
+  }
+
+  const handleConfirmExit = () => {
+    setIsExitPromptOpen(false)
+    onExit()
+  }
+
   return (
     <div className="page page-quiz">
       <ScenicBackdrop variant="quiz" />
       <div className="page-shell quiz-shell">
         <section className={`quiz-frame surface surface-strong ${motionState.isReeling ? 'is-reeling' : ''}`}>
           <AnimatePresence>
+            {isExitPromptOpen && (
+              <ExitPrompt
+                answeredCount={answeredCount}
+                totalQuestions={questions.length}
+                currentQuestion={currentQuestion + 1}
+                progress={currentProgress}
+                prefersReducedMotion={prefersReducedMotion}
+                onCancel={handleCloseExitPrompt}
+                onConfirm={handleConfirmExit}
+              />
+            )}
             {motionState.isLanding && (
               <LandingCatchOverlay prefersReducedMotion={prefersReducedMotion} />
             )}
@@ -138,9 +172,9 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onPrevious, onNex
           <div className="quiz-header">
             <div className="quiz-heading-group">
               <span className="section-label">Question Flow</span>
-              <h1 className="quiz-heading">保持第一直觉，别把题目做成策略题。</h1>
+              <h1 className="quiz-heading">跟着自己内心和自觉选择</h1>
               <p className="quiz-subtitle">
-                每题只选一个最像你的答案，系统会自动记录当前进度。
+                每题只选一个最贴且的答案，就像去钓鱼一样自然~
               </p>
             </div>
             <div className="question-counter">
@@ -191,7 +225,7 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onPrevious, onNex
                 第 {currentQuestion + 1} 题
               </span>
               <h2 className="question-text">{question.text}</h2>
-              <p className="question-note">选择你最可能做出的反应，而不是理想答案。</p>
+              
 
               <div className="options">
                 {question.options.map((option, index) => {
@@ -270,6 +304,14 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onPrevious, onNex
           <div className="quiz-footer">
             <div className="quiz-action-group">
               <button
+                className="quiz-nav-button quiz-nav-button-home"
+                onClick={handleOpenExitPrompt}
+                disabled={motionState.isReeling || motionState.isLanding}
+              >
+                回到首页
+              </button>
+
+              <button
                 className="quiz-nav-button quiz-nav-button-secondary"
                 onClick={handlePrevious}
                 disabled={currentQuestion <= 0 || motionState.isReeling || motionState.isLanding}
@@ -304,6 +346,73 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onPrevious, onNex
         </section>
       </div>
     </div>
+  )
+}
+
+function ExitPrompt({
+  answeredCount,
+  totalQuestions,
+  currentQuestion,
+  progress,
+  prefersReducedMotion,
+  onCancel,
+  onConfirm
+}: {
+  answeredCount: number
+  totalQuestions: number
+  currentQuestion: number
+  progress: number
+  prefersReducedMotion: boolean
+  onCancel: () => void
+  onConfirm: () => void
+}) {
+  return (
+    <m.div
+      className="quiz-dialog-backdrop"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: prefersReducedMotion ? 0.12 : 0.2 }}
+    >
+      <m.div
+        className="quiz-dialog surface"
+        initial={{ opacity: 0, y: prefersReducedMotion ? 0 : 12, scale: prefersReducedMotion ? 1 : 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: prefersReducedMotion ? 0 : 8, scale: prefersReducedMotion ? 1 : 0.98 }}
+        transition={{ duration: prefersReducedMotion ? 0.12 : 0.24, ease: [0.22, 1, 0.36, 1] }}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="quiz-exit-title"
+      >
+        <span className="question-label">退出确认</span>
+        <h2 id="quiz-exit-title" className="quiz-dialog__title">是否放弃当前测试进度？</h2>
+        <p className="quiz-dialog__copy">回到首页后，当前答题记录和随机题序都会被清空。</p>
+
+        <div className="quiz-dialog__stats">
+          <div className="quiz-dialog__stat">
+            <span>当前进度</span>
+            <strong>{progress}%</strong>
+          </div>
+          <div className="quiz-dialog__stat">
+            <span>已答题数</span>
+            <strong>{answeredCount} / {totalQuestions}</strong>
+          </div>
+          <div className="quiz-dialog__stat">
+            <span>当前题目</span>
+            <strong>第 {currentQuestion} 题</strong>
+          </div>
+        </div>
+
+        <div className="quiz-dialog__actions">
+          <button className="quiz-nav-button quiz-nav-button-secondary" onClick={onCancel}>
+            继续测试
+          </button>
+          <button className="quiz-nav-button quiz-nav-button-home" onClick={onConfirm}>
+            确认放弃
+          </button>
+        </div>
+      </m.div>
+    </m.div>
   )
 }
 
