@@ -214,10 +214,14 @@
   letter-spacing: -0.03em;
 }
 
-.traits {
+.result-chip-group {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.result-chip-group-secondary {
+  margin-top: -6px;
 }
 
 .trait {
@@ -228,6 +232,11 @@
   color: #3b4c44;
   font-size: 14px;
   font-weight: 600;
+}
+
+.trait-secondary {
+  background: rgba(255, 255, 255, 0.26);
+  color: rgba(59, 76, 68, 0.78);
 }
 
 .result-detail-grid {
@@ -311,6 +320,45 @@
   font-size: 20px;
   line-height: 1.6;
   letter-spacing: -0.03em;
+}
+
+.axis-breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.axis-breakdown-row {
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(93, 111, 102, 0.08);
+}
+
+.axis-breakdown-row__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.axis-breakdown-row__header span {
+  color: rgba(41, 53, 47, 0.56);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.axis-breakdown-row__header strong {
+  color: #2c3833;
+  font-size: 16px;
+}
+
+.axis-breakdown-row p {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.7;
 }
 
 .share-section {

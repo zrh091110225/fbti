@@ -9,4 +9,5 @@ export interface PersistedQuizState {
   screen: AppScreen
   answers: QuizAnswer[]
   currentQuestion: number
+  questionOrder: number[]
 }

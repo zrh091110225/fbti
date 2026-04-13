@@ -3,10 +3,11 @@ import { AnimatePresence, LazyMotion, domAnimation, m } from 'framer-motion'
 import Home from './pages/Home'
 import Quiz from './pages/Quiz'
 import Result from './pages/Result'
-import { questions } from './data/questions'
+import { Question, questions } from './data/questions'
 import { analytics } from './utils/analytics'
 import { calculatePersonality } from './utils/calculate'
 import { postQuizResult } from './utils/api'
+import { generateQuestionOrder, normalizeQuestionOrder } from './utils/questionOrder'
 import { clearQuizState, loadQuizState, saveQuizState } from './utils/storage'
 import { AppScreen, QuizAnswer } from './types/quiz'
 
@@ -37,20 +38,40 @@ function App() {
   const [screen, setScreen] = useState<AppScreen>(initialState.screen)
   const [answers, setAnswers] = useState<QuizAnswer[]>(initialState.answers)
   const [currentQuestion, setCurrentQuestion] = useState(initialState.currentQuestion)
+  const [questionOrder, setQuestionOrder] = useState<number[]>(() => normalizeQuestionOrder(initialState.questionOrder))
+
+  const orderedQuestions = useMemo(() => {
+    const questionMap = new Map<number, Question>(questions.map(question => [question.id, question]))
+    return questionOrder
+      .map(questionId => questionMap.get(questionId))
+      .filter((question): question is Question => Boolean(question))
+  }, [questionOrder])
 
   useEffect(() => {
     analytics.trackPageView(screen)
   }, [screen])
 
   useEffect(() => {
-    saveQuizState({ screen, answers, currentQuestion })
-  }, [screen, answers, currentQuestion])
+    saveQuizState({ screen, answers, currentQuestion, questionOrder })
+  }, [screen, answers, currentQuestion, questionOrder])
+
+  useEffect(() => {
+    if (!orderedQuestions.length) {
+      return
+    }
+
+    if (currentQuestion > orderedQuestions.length - 1) {
+      setCurrentQuestion(orderedQuestions.length - 1)
+    }
+  }, [currentQuestion, orderedQuestions.length])
 
   const handleStart = () => {
     analytics.trackQuizStart()
+    const nextQuestionOrder = generateQuestionOrder(questions)
     setScreen('quiz')
     setAnswers([])
     setCurrentQuestion(0)
+    setQuestionOrder(nextQuestionOrder)
   }
 
   const handleAnswer = (questionId: number, answerId: number) => {
@@ -62,10 +83,10 @@ function App() {
   }
 
   const handleFinish = () => {
-    const personality = calculatePersonality(answers)
-    analytics.trackQuizComplete(personality.id)
+    const result = calculatePersonality(answers)
+    analytics.trackQuizComplete(result.personalityId)
     void postQuizResult({
-      personalityId: personality.id,
+      personalityId: result.personalityId,
       answers,
       completedAt: new Date().toISOString()
     })
@@ -73,7 +94,7 @@ function App() {
   }
 
   const handleNextQuestion = () => {
-    if (currentQuestion >= questions.length - 1) {
+    if (currentQuestion >= orderedQuestions.length - 1) {
       handleFinish()
       return
     }
@@ -86,6 +107,7 @@ function App() {
     setScreen('home')
     setAnswers([])
     setCurrentQuestion(0)
+    setQuestionOrder([])
   }
 
   return (
@@ -103,6 +125,7 @@ function App() {
             {screen === 'home' && <Home onStart={handleStart} />}
             {screen === 'quiz' && (
               <Quiz
+                questions={orderedQuestions}
                 currentQuestion={currentQuestion}
                 answers={answers}
                 onAnswer={handleAnswer}

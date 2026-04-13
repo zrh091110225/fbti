@@ -15,17 +15,19 @@ function Result({ answers, onRestart }: ResultProps) {
   const [showShare, setShowShare] = useState(false)
   const communityUrl = import.meta.env.VITE_COMMUNITY_URL?.trim()
 
-  const personality = useMemo(() => {
+  const result = useMemo(() => {
     return calculatePersonality(answers)
   }, [answers])
 
+  const { personality, axisBreakdown, topFacetTags } = result
+  const dynamicTags = topFacetTags.length ? topFacetTags : personality.traits.slice(0, 3)
   const artwork = getPersonalityArtwork(personality.id)
-  const resultLead = `这份画像由「${personality.dimensions.join(' / ')}」组成，关键词是${personality.traits.join('、')}。`
+  const resultLead = `这份画像由「${personality.dimensions.join(' / ')}」组成，这次更明显的行为标签是${dynamicTags.join('、')}。`
 
   const profileRows = [
     { label: '人格代码', value: personality.id },
-    { label: '维度组合', value: personality.dimensions.join(' · ') },
-    { label: '核心标签', value: personality.traits.join(' / ') }
+    { label: '四轴落点', value: axisBreakdown.map((axis) => axis.resolvedLabel).join(' · ') },
+    { label: '本次标签', value: dynamicTags.join(' / ') }
   ]
 
   const handleGroupClick = () => {
@@ -86,9 +88,15 @@ function Result({ answers, onRestart }: ResultProps) {
                 “{personality.signature}”
               </blockquote>
 
-              <div className="traits">
-                {personality.traits.map((trait) => (
+              <div className="result-chip-group">
+                {dynamicTags.map((trait) => (
                   <span key={trait} className="trait">{trait}</span>
+                ))}
+              </div>
+
+              <div className="result-chip-group result-chip-group-secondary">
+                {personality.traits.map((trait) => (
+                  <span key={trait} className="trait trait-secondary">{trait}</span>
                 ))}
               </div>
             </m.div>
@@ -114,6 +122,20 @@ function Result({ answers, onRestart }: ResultProps) {
                   <div key={item.label} className="result-profile-row">
                     <span>{item.label}</span>
                     <strong>{item.value}</strong>
+                  </div>
+                ))}
+              </div>
+
+              <div className="axis-breakdown-list">
+                {axisBreakdown.map((axis) => (
+                  <div key={axis.axis} className="axis-breakdown-row">
+                    <div className="axis-breakdown-row__header">
+                      <span>{axis.title}</span>
+                      <strong>{axis.resolvedLabel}</strong>
+                    </div>
+                    <p>
+                      {axis.leftLabel} {axis.leftScore} 分 / {axis.rightLabel} {axis.rightScore} 分
+                    </p>
                   </div>
                 ))}
               </div>

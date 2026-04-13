@@ -1,12 +1,13 @@
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import ScenicBackdrop from '../components/ScenicBackdrop'
-import { questions } from '../data/questions'
+import { Question } from '../data/questions'
 import { QuizMotionState } from '../types/motion'
 import { QuizAnswer } from '../types/quiz'
 import './Quiz.css'
 
 interface QuizProps {
+  questions: Question[]
   currentQuestion: number
   answers: QuizAnswer[]
   onAnswer: (questionId: number, answerId: number) => void
@@ -14,7 +15,7 @@ interface QuizProps {
   onFinish: () => void
 }
 
-function Quiz({ currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProps) {
+function Quiz({ questions, currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProps) {
   const question = questions[currentQuestion]
   const prefersReducedMotion = Boolean(useReducedMotion())
   const timeoutRefs = useRef<number[]>([])
@@ -259,7 +260,7 @@ function Quiz({ currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProp
               <div className="quiz-side-card surface">
                 <span className="side-card-label">测试节奏</span>
                 <strong>{Math.round(progress)}% 已完成</strong>
-                <p>共 16 题，越凭直觉作答，结果越像你真实的作钓风格。</p>
+                <p>共 {questions.length} 题，越凭直觉作答，结果越像你真实的作钓风格。</p>
               </div>
             </aside>
           </div>

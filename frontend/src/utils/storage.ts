@@ -5,7 +5,8 @@ const STORAGE_KEY = 'fbti_quiz_state'
 const DEFAULT_STATE: PersistedQuizState = {
   screen: 'home',
   answers: [],
-  currentQuestion: 0
+  currentQuestion: 0,
+  questionOrder: []
 }
 
 export function loadQuizState(): PersistedQuizState {
@@ -19,6 +20,9 @@ export function loadQuizState(): PersistedQuizState {
     const answers = Array.isArray(parsed.answers) ? parsed.answers : []
     const currentQuestion = typeof parsed.currentQuestion === 'number' ? parsed.currentQuestion : 0
     const screen = parsed.screen === 'quiz' || parsed.screen === 'result' ? parsed.screen : 'home'
+    const questionOrder = Array.isArray(parsed.questionOrder)
+      ? parsed.questionOrder.filter((questionId): questionId is number => typeof questionId === 'number')
+      : []
 
     if (!answers.length && screen === 'result') {
       return DEFAULT_STATE
@@ -27,7 +31,8 @@ export function loadQuizState(): PersistedQuizState {
     return {
       screen,
       answers,
-      currentQuestion
+      currentQuestion,
+      questionOrder
     }
   } catch (error) {
     console.warn('Failed to load quiz state from storage', error)
