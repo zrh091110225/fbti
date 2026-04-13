@@ -102,6 +102,14 @@ function App() {
     setCurrentQuestion(prev => prev + 1)
   }
 
+  const handlePreviousQuestion = () => {
+    if (currentQuestion <= 0) {
+      return
+    }
+
+    setCurrentQuestion(prev => prev - 1)
+  }
+
   const handleRestart = () => {
     clearQuizState()
     setScreen('home')
@@ -129,6 +137,7 @@ function App() {
                 currentQuestion={currentQuestion}
                 answers={answers}
                 onAnswer={handleAnswer}
+                onPrevious={handlePreviousQuestion}
                 onNext={handleNextQuestion}
                 onFinish={handleFinish}
               />

@@ -11,11 +11,12 @@ interface QuizProps {
   currentQuestion: number
   answers: QuizAnswer[]
   onAnswer: (questionId: number, answerId: number) => void
+  onPrevious: () => void
   onNext: () => void
   onFinish: () => void
 }
 
-function Quiz({ questions, currentQuestion, answers, onAnswer, onNext, onFinish }: QuizProps) {
+function Quiz({ questions, currentQuestion, answers, onAnswer, onPrevious, onNext, onFinish }: QuizProps) {
   const question = questions[currentQuestion]
   const prefersReducedMotion = Boolean(useReducedMotion())
   const timeoutRefs = useRef<number[]>([])
@@ -36,40 +37,7 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onNext, onFinish 
   const selectedAnswer = answers.find(a => a.questionId === question.id)
   const isAnswered = Boolean(selectedAnswer)
 
-  useEffect(() => {
-    setMotionState({
-      castOptionId: selectedAnswer?.answerId ?? null,
-      castToken: 0,
-      isReeling: false,
-      isLanding: false,
-      reelToken: 0
-    })
-  }, [question.id, selectedAnswer?.answerId])
-
-  useEffect(() => {
-    return () => {
-      timeoutRefs.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
-    }
-  }, [])
-
-  const handleOptionClick = (optionId: number) => {
-    if (motionState.isReeling || motionState.isLanding) {
-      return
-    }
-
-    onAnswer(question.id, optionId)
-    setMotionState(prev => ({
-      ...prev,
-      castOptionId: optionId,
-      castToken: prev.castToken + 1
-    }))
-  }
-
-  const handleNext = () => {
-    if (!isAnswered || motionState.isReeling || motionState.isLanding) {
-      return
-    }
-
+  const triggerAdvance = () => {
     timeoutRefs.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
     timeoutRefs.current = []
 
@@ -101,7 +69,59 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onNext, onFinish 
 
     timeoutRefs.current.push(window.setTimeout(() => {
       onNext()
-    }, prefersReducedMotion ? 120 : 540))
+    }, prefersReducedMotion ? 180 : 620))
+  }
+
+  useEffect(() => {
+    setMotionState({
+      castOptionId: selectedAnswer?.answerId ?? null,
+      castToken: 0,
+      isReeling: false,
+      isLanding: false,
+      reelToken: 0
+    })
+  }, [question.id, selectedAnswer?.answerId])
+
+  useEffect(() => {
+    return () => {
+      timeoutRefs.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
+    }
+  }, [])
+
+  const handleOptionClick = (optionId: number) => {
+    if (motionState.isReeling || motionState.isLanding) {
+      return
+    }
+
+    onAnswer(question.id, optionId)
+    setMotionState(prev => ({
+      ...prev,
+      castOptionId: optionId,
+      castToken: prev.castToken + 1
+    }))
+
+    timeoutRefs.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
+    timeoutRefs.current = []
+    timeoutRefs.current.push(window.setTimeout(() => {
+      triggerAdvance()
+    }, prefersReducedMotion ? 90 : 300))
+  }
+
+  const handleNext = () => {
+    if (!isAnswered || motionState.isReeling || motionState.isLanding) {
+      return
+    }
+    triggerAdvance()
+  }
+
+  const handlePrevious = () => {
+    if (currentQuestion <= 0 || motionState.isReeling || motionState.isLanding) {
+      return
+    }
+
+    timeoutRefs.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
+    timeoutRefs.current = []
+    onPrevious()
   }
 
   return (
@@ -248,43 +268,38 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onNext, onFinish 
           </div>
 
           <div className="quiz-footer">
-            <p className="quiz-footer-copy">
-              {currentQuestion >= questions.length - 1
-                ? '这是最后一题，确认收线后会播放起鱼成功过场。'
-                : `完成本题后，还剩 ${questions.length - currentQuestion - 1} 题，确认收线后继续推进。`}
-            </p>
-            <button
-              className={`quiz-action-button ${motionState.isReeling || motionState.isLanding ? 'is-active' : ''}`}
-              onClick={handleNext}
-              disabled={!isAnswered || motionState.isReeling || motionState.isLanding}
-            >
-              <span className="quiz-action-button__copy">
-                <span className="quiz-action-button__label">
-                  确认收线
-                </span>
-                <span className="quiz-action-button__meta">
-                  {currentQuestion >= questions.length - 1 ? '收线完成，准备起鱼' : '已中鱼讯，继续控鱼'}
-                </span>
-              </span>
-              <span className="quiz-action-button__tension" aria-hidden="true" />
-              <m.span
-                className="quiz-action-button__confirm"
-                aria-hidden="true"
-                animate={
-                  motionState.isReeling || motionState.isLanding
-                    ? { scale: prefersReducedMotion ? 1 : [1, 1.06, 1], opacity: [0.85, 1, 0.92] }
-                    : { scale: 1, opacity: 0.9 }
-                }
-                transition={
-                  prefersReducedMotion
-                    ? { duration: 0.01 }
-                    : { duration: 0.48, ease: 'easeInOut', repeat: motionState.isLanding ? 0 : 1 }
-                }
+            <div className="quiz-action-group">
+              <button
+                className="quiz-nav-button quiz-nav-button-secondary"
+                onClick={handlePrevious}
+                disabled={currentQuestion <= 0 || motionState.isReeling || motionState.isLanding}
               >
-                <span className="quiz-action-button__confirm-dot" />
-                <span className="quiz-action-button__confirm-text">LOCK</span>
-              </m.span>
-            </button>
+                放线(上一题)
+              </button>
+
+              <button
+                className={`quiz-nav-button quiz-nav-button-primary ${motionState.isReeling || motionState.isLanding ? 'is-active' : ''}`}
+                onClick={handleNext}
+                disabled={!isAnswered || motionState.isReeling || motionState.isLanding}
+              >
+                <m.span
+                  className="quiz-nav-button__label"
+                  aria-hidden="true"
+                  animate={
+                    motionState.isReeling || motionState.isLanding
+                      ? { scale: prefersReducedMotion ? 1 : [1, 1.03, 1], opacity: [0.88, 1, 0.92] }
+                      : { scale: 1, opacity: 1 }
+                  }
+                  transition={
+                    prefersReducedMotion
+                      ? { duration: 0.01 }
+                      : { duration: 0.42, ease: 'easeInOut', repeat: motionState.isLanding ? 0 : 1 }
+                  }
+                >
+                  收线(下一题)
+                </m.span>
+              </button>
+            </div>
           </div>
         </section>
       </div>
