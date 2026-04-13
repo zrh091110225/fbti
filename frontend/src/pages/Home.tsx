@@ -184,9 +184,9 @@ function Home({ onStart }: HomeProps) {
           >
             <div className="section-heading">
               <span className="section-label">四大维度</span>
-              <h2>不是泛泛测性格，而是专门测你怎么钓鱼。</h2>
+              <h2>一款专门针对钓鱼人的人格测试，你属于哪一种？</h2>
               <p>
-                开始测试前先把判断逻辑讲清楚，让你知道系统会从哪些钓鱼行为里识别你的稳定倾向，而不是盲测完才看结果。
+                系统会从投入强度/相处方式/偏好路径/价值取向了解你钓鱼行为里识别你的稳定倾向，测试结果一定会让你更了解你是那种钓鱼佬。
               </p>
             </div>
 
@@ -212,7 +212,7 @@ function Home({ onStart }: HomeProps) {
           >
             <div className="section-heading">
               <span className="section-label">关于测试</span>
-              <h2>在开始测试前，先把玩法、耗时和结果形式说明白。</h2>
+              <h2>包含：玩法 & 耗时 & 结果形式</h2>
             </div>
 
             <div className="overview-grid">
@@ -256,8 +256,8 @@ function Home({ onStart }: HomeProps) {
           >
             <div className="section-heading">
               <span className="section-label">人格图谱</span>
-              <h2>共 {personalities.length} 种钓鱼人格，先看看你可能会落在哪一类。</h2>
-              <p>首页先展示全部人格预览，方便你在开始前快速感受这套人格图谱的大致分布。</p>
+              <h2>FBTI 测试结果一共 {personalities.length} 种钓鱼人格</h2>
+              <p>下面是全部人格预览，开始前快速感受这套人格图谱的大致分布</p>
             </div>
 
             <div className="personality-grid">
@@ -288,7 +288,7 @@ function Home({ onStart }: HomeProps) {
           >
             <div className="section-heading">
               <span className="section-label">常见问题</span>
-              <h2>用户在开始前最常问的几件事，提前回答。</h2>
+              <h2>最常问的几件事</h2>
             </div>
 
             <div className="faq-list">

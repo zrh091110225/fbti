@@ -225,7 +225,7 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
                 第 {currentQuestion + 1} 题
               </span>
               <h2 className="question-text">{question.text}</h2>
-              
+
 
               <div className="options">
                 {question.options.map((option, index) => {
@@ -385,9 +385,9 @@ function ExitPrompt({
         aria-labelledby="quiz-exit-title"
       >
         <span className="question-label">退出确认</span>
-        <h2 id="quiz-exit-title" className="quiz-dialog__title">是否放弃当前测试进度？</h2>
-        <p className="quiz-dialog__copy">回到首页后，当前答题记录和随机题序都会被清空。</p>
-
+        <h2 id="quiz-exit-title" className="quiz-dialog__title">是否放弃当前 FBTI 测试？</h2>
+        <p className="quiz-dialog__copy">放弃后，当前答题记录和随机题序都会被清空。</p>
+        <p className="quiz-dialog__copy">不过也没关系，再测一次就像钓鱼一样再甩一杆简单。</p>
         <div className="quiz-dialog__stats">
           <div className="quiz-dialog__stat">
             <span>当前进度</span>
