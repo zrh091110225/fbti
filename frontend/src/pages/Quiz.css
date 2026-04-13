@@ -206,27 +206,23 @@
 }
 
 .quiz-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 260px;
-  gap: 24px;
-}
-
-.quiz-card,
-.quiz-side-card {
-  border-radius: var(--radius-xl);
+  display: block;
 }
 
 .quiz-card {
   position: relative;
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
   padding: clamp(24px, 4vw, 36px);
+  border-radius: var(--radius-xl);
   overflow: hidden;
   background:
     linear-gradient(180deg, rgba(17, 30, 42, 0.68), rgba(10, 18, 27, 0.84)),
     rgba(14, 24, 35, 0.72);
 }
 
-.question-label,
-.side-card-label {
+.question-label {
   display: inline-flex;
   align-items: center;
   color: var(--subtle);
@@ -346,39 +342,14 @@
     0 0 0 12px rgba(197, 238, 211, 0.05);
 }
 
-.quiz-sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.quiz-side-card {
-  padding: 20px;
-  background:
-    linear-gradient(180deg, rgba(14, 24, 35, 0.56), rgba(10, 18, 27, 0.76)),
-    rgba(14, 24, 35, 0.62);
-}
-
-.quiz-side-card strong {
-  display: block;
-  margin-top: 14px;
-  font-size: 22px;
-  letter-spacing: -0.03em;
-}
-
-.quiz-side-card p {
-  margin: 10px 0 0;
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.7;
-}
-
 .quiz-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 24px;
   padding-top: 4px;
+  max-width: 920px;
+  margin: 0 auto;
 }
 
 .quiz-footer-copy {
@@ -536,7 +507,6 @@
 }
 
 .quiz-frame.is-reeling .quiz-card,
-.quiz-frame.is-reeling .quiz-sidebar,
 .quiz-frame.is-reeling .reel-progress {
   transform: translateY(-8px);
   opacity: 0.94;
@@ -606,13 +576,9 @@
 }
 
 @media (max-width: 960px) {
-  .quiz-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .quiz-sidebar {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .quiz-card,
+  .quiz-footer {
+    max-width: none;
   }
 }
 
@@ -629,10 +595,6 @@
 
   .reel-progress__reel {
     width: 88px;
-  }
-
-  .quiz-sidebar {
-    grid-template-columns: 1fr;
   }
 
   .question-counter .current {
@@ -672,7 +634,6 @@
 @media (prefers-reduced-motion: reduce) {
   .reel-progress__fish-body,
   .quiz-frame.is-reeling .quiz-card,
-  .quiz-frame.is-reeling .quiz-sidebar,
   .quiz-frame.is-reeling .reel-progress {
     transition-duration: 120ms;
   }

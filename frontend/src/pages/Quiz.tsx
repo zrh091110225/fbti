@@ -245,24 +245,6 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onNext, onFinish 
                 })}
               </div>
             </div>
-
-            <aside className="quiz-sidebar">
-              <div className="quiz-side-card surface">
-                <span className="side-card-label">当前状态</span>
-                <strong>{isAnswered ? '已选择答案' : '等待选择'}</strong>
-                <p>
-                  {isAnswered
-                    ? '可以确认收线，系统已记录本题答案。'
-                    : '先完成这一题，再继续后面的进度。'}
-                </p>
-              </div>
-
-              <div className="quiz-side-card surface">
-                <span className="side-card-label">测试节奏</span>
-                <strong>{Math.round(progress)}% 已完成</strong>
-                <p>共 {questions.length} 题，越凭直觉作答，结果越像你真实的作钓风格。</p>
-              </div>
-            </aside>
           </div>
 
           <div className="quiz-footer">
