@@ -184,7 +184,7 @@ function Home({ onStart }: HomeProps) {
           >
             <div className="section-heading">
               <span className="section-label">四大维度</span>
-              <h2>一款专门针对钓鱼人的人格测试，你属于哪一种？</h2>
+              <h2>一个专门针对钓鱼人的人格测试</h2>
               <p>
                 系统会从投入强度/相处方式/偏好路径/价值取向了解你钓鱼行为里识别你的稳定倾向，测试结果一定会让你更了解你是那种钓鱼佬。
               </p>
@@ -256,8 +256,8 @@ function Home({ onStart }: HomeProps) {
           >
             <div className="section-heading">
               <span className="section-label">人格图谱</span>
-              <h2>FBTI 测试结果一共 {personalities.length} 种钓鱼人格</h2>
-              <p>下面是全部人格预览，开始前快速感受这套人格图谱的大致分布</p>
+              <h2>钓鱼人格图鉴</h2>
+              <p>下面是{personalities.length} 种人图鉴预览，先猜猜你自己属于哪种？</p>
             </div>
 
             <div className="personality-grid">
