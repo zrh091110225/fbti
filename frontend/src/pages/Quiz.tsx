@@ -1,5 +1,6 @@
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
+import processFish from '../assets/process-fish.png'
 import ScenicBackdrop from '../components/ScenicBackdrop'
 import { Question } from '../data/questions'
 import { QuizMotionState } from '../types/motion'
@@ -421,11 +422,7 @@ function ProgressFish({
             }
           >
             <span className="reel-progress__wake" />
-            <svg viewBox="0 0 72 42" className="reel-progress__fish-icon">
-              <path d="M7 21C14 13 25 8 37 8C46 8 54 11 61 17L66 14V28L61 25C54 31 46 34 37 34C25 34 14 29 7 21Z" fill="#BFE9CB" />
-              <path d="M21 21C25 17 31 15 37 15C42 15 47 16 51 19C47 23 42 27 37 27C31 27 25 25 21 21Z" fill="#6FB98F" />
-              <circle cx="49.5" cy="19.5" r="2.5" fill="#0C1C24" />
-            </svg>
+            <img src={processFish} alt="" className="reel-progress__fish-icon" draggable={false} />
           </m.div>
         </m.div>
       </div>
