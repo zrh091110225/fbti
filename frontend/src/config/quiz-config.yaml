@@ -482,7 +482,7 @@ resultTypes:
     scene: 傍晚湖边，你慢慢擦拭钓竿，把每个部件摆放整齐，像在照看一件只属于自己的作品。
   - id: HSTR
     name: 坑冠
-    image: /results/sample-personality-result.png
+    image: /results/坑冠.png
     emoji: "👑"
     title: 狂热 × 社交 × 技术 × 结果
     description: 你不只是会钓，还很会带节奏。技术、判断和存在感同时在线，别人会下意识把你的状态当成场上的风向标。
@@ -492,7 +492,7 @@ resultTypes:
     scene: 钓场中央，周围围着人，你一边上鱼一边点评鱼情，整场气氛和节奏都在跟着你走。
   - id: HSTE
     name: 水边讲师
-    image: /results/sample-personality-result.png
+    image: /results/水边讲师.png
     emoji: "🎙️"
     title: 狂热 × 社交 × 技术 × 体验
     description: 你把钓鱼当成一场可以不断交流和拆解的认知活动。你很享受分享判断、讨论变化、把一件事讲明白的过程，而不是单纯比谁鱼多。
@@ -502,7 +502,7 @@ resultTypes:
     scene: 湖边草地上，你一边抛竿一边讲鱼情变化，朋友还没上鱼，先被你上了一课。
   - id: HSGR
     name: 满配钓王
-    image: /results/sample-personality-result.png
+    image: /results/满配钓王.png
     emoji: "🚀"
     title: 狂热 × 社交 × 装备 × 结果
     description: 你最擅长把资源和装备配置变成整队的优势。自己上鱼当然重要，但更爽的是你一出手，朋友们也跟着一起爆护。
@@ -582,7 +582,7 @@ resultTypes:
     scene: 河边两三人，鱼竿插着，人却一直在聊天，笑声和梗一个接一个。
   - id: CSGR
     name: 装备显眼包
-    image: /results/sample-personality-result.png
+    image: /results/装备显眼包.png
     emoji: "✨"
     title: 松弛 × 社交 × 装备 × 结果
     description: 你喜欢展示自己的器材系统，也希望它们别只是好看。你不一定最拼，但在朋友面前，装备得体面，成绩也得多少说得过去。
