@@ -1,4 +1,5 @@
 import { m } from 'framer-motion'
+import fbtiLogo from '../assets/fbti-logo.png'
 import ScenicBackdrop from '../components/ScenicBackdrop'
 import { getPersonalityArtwork } from '../data/personalityArtworks'
 import { personalities } from '../data/personalities'
@@ -88,7 +89,7 @@ function Home({ onStart }: HomeProps) {
         <div className="home-stack">
           <header className="home-topbar surface">
             <button className="home-brand" type="button" onClick={() => scrollToSection('hero')}>
-              <span className="home-brand-mark">F</span>
+              <img className="home-brand-logo" src={fbtiLogo} alt="FBTI logo" />
               <span className="home-brand-copy">
                 <strong>FBTI</strong>
                 <span>钓鱼人大性格测试</span>
@@ -120,8 +121,6 @@ function Home({ onStart }: HomeProps) {
           >
             <div className="home-hero-copy">
               <span className="section-label">Fishing Behavior Type Indicator</span>
-              <div className="brand-mark">FBTI TEST</div>
-              <div className="home-hero-fishing-line" />
 
               <h1 className="home-title">FBTI 钓鱼人格测试，你是哪一型钓鱼人？</h1>
 

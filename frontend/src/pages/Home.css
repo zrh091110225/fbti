@@ -30,7 +30,7 @@
 .home-brand {
   display: inline-flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   border: none;
   background: transparent;
   color: var(--text);
@@ -39,18 +39,13 @@
   text-align: left;
 }
 
-.home-brand-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
+.home-brand-logo {
+  display: block;
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  flex-shrink: 0;
   border-radius: 14px;
-  background: linear-gradient(180deg, rgba(197, 238, 211, 0.28), rgba(150, 216, 175, 0.1));
-  border: 1px solid rgba(197, 238, 211, 0.24);
-  color: var(--accent-strong);
-  font-size: 18px;
-  font-weight: 700;
 }
 
 .home-brand-copy {
@@ -576,6 +571,11 @@
     font-size: clamp(32px, 9.5vw, 40px);
     line-height: 1.02;
     letter-spacing: -0.05em;
+  }
+
+  .home-brand-logo {
+    width: 46px;
+    height: 46px;
   }
 
   .brand-mark {
