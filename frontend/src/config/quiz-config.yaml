@@ -441,7 +441,7 @@ questions:
 
 resultTypes:
   - id: HOTR
-    name: 八级钓帝
+    name: 钓帝
     image: /results/sample-personality-result.png
     emoji: "🎯"
     title: 狂热 × 独处 × 技术 × 结果
@@ -591,7 +591,7 @@ resultTypes:
     signature: 成绩可以慢慢来，排面不能先输。
     scene: 你打开装备箱，一件件展示给朋友看，语气克制，眼里的兴奋却藏不住。
   - id: CSGE
-    name: 岸边萌新
+    name: 岸边搭子
     image: /results/sample-personality-result.png
     emoji: "😄"
     title: 松弛 × 社交 × 装备 × 体验
