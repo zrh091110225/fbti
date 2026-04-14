@@ -399,7 +399,7 @@ function ProgressFish({
         <m.div
           className={`reel-progress__fish ${isLanding ? 'is-hidden' : ''}`}
           initial={false}
-          animate={{ left: `calc(${renderedProgress}% - 36px)` }}
+          animate={{ left: `calc(${renderedProgress}% - 40px)` }}
           transition={
             prefersReducedMotion
               ? { duration: 0.12, ease: 'linear' }
@@ -422,6 +422,9 @@ function ProgressFish({
             }
           >
             <span className="reel-progress__wake" />
+            <span className="reel-progress__bubble reel-progress__bubble--one" />
+            <span className="reel-progress__bubble reel-progress__bubble--two" />
+            <span className="reel-progress__bubble reel-progress__bubble--three" />
             <img src={processFish} alt="" className="reel-progress__fish-icon" draggable={false} />
           </m.div>
         </m.div>
