@@ -155,11 +155,11 @@ questions:
         facetScores: { 随缘: 2 }
   - id: 6
     axis: S
-    text: 到钓点第一件事：
+    text: 达到钓点后：
     options:
       - id: 1
         position: left
-        text: 先看看有没有钓友，顺便去聊聊，兄弟口咋样啊。
+        text: 先看看有没有钓友，去聊聊口咋样。
         scores: { S: 2 }
         facetScores: { 组局: 2 }
       - id: 2
@@ -250,7 +250,7 @@ questions:
         facetScores: { 守界: 2 }
   - id: 11
     axis: T
-    text: 陌生水域下杆半小时没动静，你会？
+    text: 在陌生水域下杆半小时没动静，你会？
     options:
       - id: 1
         position: left
@@ -273,7 +273,7 @@ questions:
     options:
       - id: 1
         position: left
-        text: 买些能帮我练判断和提升打法的东西，最好直接作用在技术上。（待改）
+        text: 提升各种钓鱼技术
         scores: { T: 2 }
         facetScores: { 调校: 2 }
       - id: 2
@@ -283,7 +283,7 @@ questions:
         facetScores: { 省事: 2 }
       - id: 3
         position: right
-        text: 终于可以升级一直想换的竿、轮、箱、包了。
+        text: 终于可以升级新的竿、轮、箱、包了。
         scores: { G: 2 }
         facetScores: { 配装: 2 }
   - id: 13
@@ -421,21 +421,21 @@ questions:
         facetScores: { 舒服: 2 }
   - id: 20
     axis: R
-    text: 什么决定你下次还来这个钓点：
+    text: 群里或朋友圈你会发什么内容：
     options:
       - id: 1
         position: left
-        text: 这里有没有机会让我爆护
+        text: 鱼获
         scores: { R: 2 }
         facetScores: { 胜负: 2 }
       - id: 2
         position: middle
-        text: 今天这趟整体状态是不是在线，值不值得再来一次类似的局。（待改）
+        text: 美好的瞬间
         scores: { R: 1, E: 1 }
         facetScores: { 氛围: 2 }
       - id: 3
         position: right
-        text: 这里待着舒不舒服、顺不顺手，愿不愿意再来放松一天。（待改）
+        text: 钓鱼的风景
         scores: { E: 2 }
         facetScores: { 舒服: 2 }
 
