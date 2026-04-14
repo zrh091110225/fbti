@@ -1,6 +1,5 @@
 import { useCallback, useRef } from 'react'
 import { PersonalityType } from '../data/personalities'
-import { analytics } from '../utils/analytics'
 import './ShareCard.css'
 
 interface ShareCardProps {
@@ -10,7 +9,7 @@ interface ShareCardProps {
 function ShareCard({ personality }: ShareCardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
-  const generateShareImage = useCallback(() => {
+  const generateShareImage = useCallback(async () => {
     const canvas = canvasRef.current
     if (!canvas) return
 
@@ -71,18 +70,39 @@ function ShareCard({ personality }: ShareCardProps) {
     ctx.font = '24px sans-serif'
     ctx.fillText('钓鱼人格结果卡', 72, 194)
 
-    roundRect(ctx, 72, 236, 132, 132, 34)
+    const artworkX = 72
+    const artworkY = 236
+    const artworkSize = 132
+
+    roundRect(ctx, artworkX, artworkY, artworkSize, artworkSize, 34)
     ctx.fillStyle = 'rgba(150, 216, 175, 0.12)'
     ctx.fill()
     ctx.strokeStyle = 'rgba(150, 216, 175, 0.28)'
     ctx.lineWidth = 2
     ctx.stroke()
 
-    ctx.font = '72px sans-serif'
+    try {
+      const artwork = await loadImage(personality.image)
+      drawCoverImage(ctx, artwork, artworkX, artworkY, artworkSize, artworkSize, 34)
+    } catch {
+      ctx.font = '72px sans-serif'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+      ctx.fillStyle = '#f4f7fb'
+      ctx.fillText(personality.emoji, 138, 302)
+    }
+
+    roundRect(ctx, 150, 326, 40, 40, 20)
+    ctx.fillStyle = 'rgba(10, 18, 26, 0.82)'
+    ctx.fill()
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)'
+    ctx.lineWidth = 1
+    ctx.stroke()
+    ctx.font = '24px sans-serif'
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillStyle = '#f4f7fb'
-    ctx.fillText(personality.emoji, 138, 302)
+    ctx.fillText(personality.emoji, 170, 346)
 
     ctx.textAlign = 'left'
     ctx.textBaseline = 'alphabetic'
@@ -132,11 +152,9 @@ function ShareCard({ personality }: ShareCardProps) {
     return canvas.toDataURL('image/png')
   }, [personality])
 
-  const handleGenerate = () => {
-    analytics.trackShareGenerate(personality.id)
-    const dataUrl = generateShareImage()
+  const handleGenerate = async () => {
+    const dataUrl = await generateShareImage()
     if (dataUrl) {
-      analytics.trackShareDownload(personality.id)
       // Create download link
       const link = document.createElement('a')
       link.download = `fbti-${personality.id}.png`
@@ -159,6 +177,15 @@ function ShareCard({ personality }: ShareCardProps) {
   )
 }
 
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => resolve(image)
+    image.onerror = () => reject(new Error(`Failed to load image: ${src}`))
+    image.src = src
+  })
+}
+
 function roundRect(
   ctx: CanvasRenderingContext2D,
   x: number,
@@ -178,6 +205,28 @@ function roundRect(
   ctx.lineTo(x, y + radius)
   ctx.quadraticCurveTo(x, y, x + radius, y)
   ctx.closePath()
+}
+
+function drawCoverImage(
+  ctx: CanvasRenderingContext2D,
+  image: HTMLImageElement,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number
+) {
+  const scale = Math.max(width / image.width, height / image.height)
+  const drawWidth = image.width * scale
+  const drawHeight = image.height * scale
+  const offsetX = x + (width - drawWidth) / 2
+  const offsetY = y + (height - drawHeight) / 2
+
+  ctx.save()
+  roundRect(ctx, x, y, width, height, radius)
+  ctx.clip()
+  ctx.drawImage(image, offsetX, offsetY, drawWidth, drawHeight)
+  ctx.restore()
 }
 
 function drawInfoCard(

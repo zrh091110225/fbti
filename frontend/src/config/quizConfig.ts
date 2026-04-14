@@ -115,6 +115,10 @@ function validateQuizConfig(config: QuizConfig) {
     }
     resultTypeIds.add(resultType.id)
 
+    if (typeof resultType.image !== 'string' || !resultType.image.trim()) {
+      throw new Error(`Result type ${resultType.id} is missing image`)
+    }
+
     if (config.validation.resultIdMustMatchAxisCodeOrder) {
       const codeParts = resultType.id.split('')
 

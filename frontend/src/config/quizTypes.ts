@@ -35,6 +35,7 @@ export interface Question {
 export interface PersonalityType {
   id: string
   name: string
+  image: string
   emoji: string
   title: string
   description: string

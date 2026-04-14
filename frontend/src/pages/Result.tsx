@@ -75,7 +75,6 @@ function Result({ answers, onRestart }: ResultProps) {
             >
               <span className="result-overline">你的钓鱼人格</span>
               <div className="result-name-row">
-                <span className="result-emoji">{personality.emoji}</span>
                 <div>
                   <h1 className="personality-type">{personality.name}</h1>
                   <p className="personality-title">{personality.title}</p>

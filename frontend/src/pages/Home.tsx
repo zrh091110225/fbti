@@ -1,5 +1,6 @@
 import { m } from 'framer-motion'
 import ScenicBackdrop from '../components/ScenicBackdrop'
+import { getPersonalityArtwork } from '../data/personalityArtworks'
 import { personalities } from '../data/personalities'
 import { questions } from '../data/questions'
 import './Home.css'
@@ -264,15 +265,20 @@ function Home({ onStart }: HomeProps) {
               {personalities.map(personality => (
                 <article key={personality.id} className="personality-card">
                   <div className="personality-card-head">
-                    <span className="personality-emoji" aria-hidden="true">
-                      {personality.emoji}
-                    </span>
                     <div>
                       <h3>{personality.name}</h3>
                       <p>{personality.title}</p>
                     </div>
                   </div>
-                  <p className="personality-signature">{personality.signature}</p>
+
+                  <div className="personality-visual">
+                    <img
+                      src={getPersonalityArtwork(personality.id)}
+                      alt={`${personality.name}的人格插画`}
+                      className="personality-visual-image"
+                    />
+                    <p className="personality-signature">{personality.signature}</p>
+                  </div>
                 </article>
               ))}
             </div>

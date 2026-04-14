@@ -7,14 +7,12 @@
 ```
 fbti/
 ├── frontend/    # React + Vite 前端
-├── backend/     # Node.js + MySQL 后端
 └── docs/        # 项目文档
 ```
 
 ## 技术栈
 
 - **前端**: React + Vite
-- **后端**: Node.js + Express（可继续接 MySQL）
 - **分享**: Canvas 生成分享图
 
 ## 功能特性
@@ -24,7 +22,6 @@ fbti/
 - 16型人格结果
 - Canvas 分享图
 - 可配置入群链接
-- 基础埋点上报
 - 本地存档恢复
 
 ## 开发
@@ -32,11 +29,6 @@ fbti/
 ```bash
 # 前端开发
 cd frontend
-npm install
-npm run dev
-
-# 后端开发
-cd backend
 npm install
 npm run dev
 ```

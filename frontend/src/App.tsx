@@ -4,9 +4,6 @@ import Home from './pages/Home'
 import Quiz from './pages/Quiz'
 import Result from './pages/Result'
 import { Question, questions } from './data/questions'
-import { analytics } from './utils/analytics'
-import { calculatePersonality } from './utils/calculate'
-import { postQuizResult } from './utils/api'
 import { generateQuestionOrder, normalizeQuestionOrder } from './utils/questionOrder'
 import { clearQuizState, loadQuizState, saveQuizState } from './utils/storage'
 import { AppScreen, QuizAnswer } from './types/quiz'
@@ -48,10 +45,6 @@ function App() {
   }, [questionOrder])
 
   useEffect(() => {
-    analytics.trackPageView(screen)
-  }, [screen])
-
-  useEffect(() => {
     saveQuizState({ screen, answers, currentQuestion, questionOrder })
   }, [screen, answers, currentQuestion, questionOrder])
 
@@ -66,7 +59,6 @@ function App() {
   }, [currentQuestion, orderedQuestions.length])
 
   const handleStart = () => {
-    analytics.trackQuizStart()
     const nextQuestionOrder = generateQuestionOrder(questions)
     setScreen('quiz')
     setAnswers([])
@@ -75,7 +67,6 @@ function App() {
   }
 
   const handleAnswer = (questionId: number, answerId: number) => {
-    analytics.trackQuestionAnswer(questionId, answerId)
     setAnswers(prev => {
       const filtered = prev.filter(a => a.questionId !== questionId)
       return [...filtered, { questionId, answerId }]
@@ -83,13 +74,6 @@ function App() {
   }
 
   const handleFinish = () => {
-    const result = calculatePersonality(answers)
-    analytics.trackQuizComplete(result.personalityId)
-    void postQuizResult({
-      personalityId: result.personalityId,
-      answers,
-      completedAt: new Date().toISOString()
-    })
     setScreen('result')
   }
 

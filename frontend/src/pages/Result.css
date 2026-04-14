@@ -163,22 +163,7 @@
 }
 
 .result-name-row {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 18px;
-  align-items: start;
-}
-
-.result-emoji {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 74px;
-  height: 74px;
-  border-radius: 24px;
-  background: rgba(128, 150, 144, 0.12);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
-  font-size: 38px;
+  display: block;
 }
 
 .personality-type {
