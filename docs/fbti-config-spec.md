@@ -1,0 +1,876 @@
+# FBTI 题库与结果配置文档
+
+## 1. 目标
+
+这份文档定义 FBTI 题库、选项、分型规则和结果文案的统一配置格式。目标是把当前散落在代码中的静态内容，收敛为一个可长期维护的配置源设计。
+
+推荐后续采用 **YAML** 作为配置载体。只要保持稳定的 `id` 和分值映射不变，就可以安全调整题干、选项文案和结果描述，而不需要再去改业务代码。
+
+当前文档覆盖：
+
+- 题库内容
+- 选项分值映射
+- 维度定义
+- tie-break 判定规则
+- 16 型结果文案
+- 配置校验约束
+
+当前文档不包含：
+
+- YAML 读取器实现
+- 前端运行时改造
+- CMS / 后台编辑器
+
+## 2. 顶层结构
+
+统一配置对象命名为 `QuizConfig`，顶层块如下：
+
+```yaml
+meta:
+axes:
+rules:
+questions:
+resultTypes:
+validation:
+```
+
+各块职责：
+
+- `meta`：配置元信息，版本、语言、说明。
+- `axes`：四个维度轴的定义，包含标题、编码、标签和 facet 映射。
+- `rules`：分型规则、tie-break 顺序、结果 ID 拼接顺序。
+- `questions`：题库定义，题目与选项都显式配置。
+- `resultTypes`：16 种结果类型的展示文案。
+- `validation`：编辑和导入配置时必须满足的约束。
+
+## 3. 公共接口
+
+下面的接口概念建议在后续读取器或校验器中直接映射使用。
+
+```ts
+interface QuizConfig {
+  meta: MetaConfig
+  axes: AxisConfig[]
+  rules: RulesConfig
+  questions: QuestionConfig[]
+  resultTypes: ResultTypeConfig[]
+  validation: ValidationConfig
+}
+
+interface MetaConfig {
+  version: number
+  name: string
+  locale: string
+  description: string
+}
+
+interface AxisConfig {
+  axis: 'I' | 'S' | 'T' | 'R'
+  title: string
+  leftCode: string
+  rightCode: string
+  leftLabel: string
+  rightLabel: string
+  defaultCode: string
+  facetMapping: FacetMapping
+}
+
+interface FacetMapping {
+  left: string
+  middle: string
+  right: string
+}
+
+interface RulesConfig {
+  resultIdAxisOrder: Array<'I' | 'S' | 'T' | 'R'>
+  tieBreakOrder: TieBreakRule[]
+  allowedScoreKeys: string[]
+  allowedFacetTags: string[]
+  optionPositions: Array<'left' | 'middle' | 'right'>
+}
+
+type TieBreakRule = 'score' | 'strong' | 'facet' | 'default'
+
+interface QuestionConfig {
+  id: number
+  axis: 'I' | 'S' | 'T' | 'R'
+  text: string
+  options: QuestionOptionConfig[]
+}
+
+interface QuestionOptionConfig {
+  id: number
+  position: 'left' | 'middle' | 'right'
+  text: string
+  scores: Record<string, number>
+  facetScores: Record<string, number>
+}
+
+interface ResultTypeConfig {
+  id: string
+  name: string
+  emoji: string
+  title: string
+  description: string
+  traits: string[]
+  dimensions: string[]
+  signature: string
+  scene: string
+}
+
+interface ValidationConfig {
+  requireUniqueQuestionIds: boolean
+  requireUniqueOptionIdsWithinQuestion: boolean
+  optionsPerQuestion: number
+  requiredOptionPositions: Array<'left' | 'middle' | 'right'>
+  questionsPerAxis: Record<'I' | 'S' | 'T' | 'R', number>
+  resultTypeCount: number
+  resultIdMustMatchAxisCodeOrder: boolean
+}
+```
+
+## 4. 字段说明
+
+### 4.1 `meta`
+
+- `version`：配置版本号，建议整数递增。
+- `name`：配置名称，建议稳定。
+- `locale`：配置语言，例如 `zh-CN`。
+- `description`：这份配置的用途说明。
+
+### 4.2 `axes`
+
+每个轴定义一组二元维度，并给出当前系统中的默认判定方向。
+
+- `axis`：逻辑轴 ID，不直接展示给用户。
+- `title`：该轴在结果页中的标题。
+- `leftCode` / `rightCode`：该轴两侧编码，会参与结果 ID 拼接。
+- `leftLabel` / `rightLabel`：展示标签。
+- `defaultCode`：当前轴完全打平时的默认落点。
+- `facetMapping`：该轴的左中右选项，对应的行为标签。
+
+### 4.3 `rules`
+
+- `resultIdAxisOrder`：结果 ID 的拼接顺序，当前固定为 `I -> S -> T -> R`。
+- `tieBreakOrder`：当前判定优先级，固定为：
+  `score > strong > facet > default`。
+- `allowedScoreKeys`：当前允许出现的分值键。
+- `allowedFacetTags`：当前允许出现的 facet 标签。
+- `optionPositions`：选项位置枚举。
+
+### 4.4 `questions`
+
+问题配置必须显式写出分值，不再依赖代码按 `left/middle/right` 自动生成。
+
+- `id`：题目稳定 ID，后续改文案时不要改。
+- `axis`：题目所属维度。
+- `text`：题干文案。
+- `options`：该题的三个选项。
+
+选项字段说明：
+
+- `id`：题内稳定选项 ID，建议继续保持 `1/2/3`。
+- `position`：`left`、`middle`、`right` 之一。
+- `text`：选项文案。
+- `scores`：该选项对编码分值的贡献。
+- `facetScores`：该选项对 facet 标签的贡献。
+
+### 4.5 `resultTypes`
+
+每个结果类型都必须完整给出展示文案，避免运行时再拼补说明。
+
+- `id`：四轴编码组合，例如 `HOTR`、`CSGE`。
+- `name`：人格名称。
+- `emoji`：结果主视觉符号。
+- `title`：短标题，通常是四轴标签组合。
+- `description`：性格解读文案。
+- `traits`：结果标签列表。
+- `dimensions`：四轴落点对应的人类可读标签。
+- `signature`：一句话签名。
+- `scene`：代表场景文案。
+
+### 4.6 `validation`
+
+这一块不是展示内容，而是约束规则的配置表达，用来保证未来修改不会破坏数据结构。
+
+## 5. 编辑规范
+
+### 5.1 文案微调
+
+允许直接修改以下字段：
+
+- `questions[].text`
+- `questions[].options[].text`
+- `resultTypes[].title`
+- `resultTypes[].description`
+- `resultTypes[].signature`
+- `resultTypes[].scene`
+
+这类修改默认 **不应改变**：
+
+- `questions[].id`
+- `questions[].options[].id`
+- `questions[].axis`
+- `questions[].options[].scores`
+- `questions[].options[].facetScores`
+- `resultTypes[].id`
+
+### 5.2 规则微调
+
+如果要调整分型逻辑，可以修改：
+
+- `axes[].defaultCode`
+- `rules.tieBreakOrder`
+- `questions[].options[].scores`
+- `questions[].options[].facetScores`
+
+这类修改属于行为变更，必须同步复核结果是否符合预期。
+
+### 5.3 结构调整
+
+如果要新增题目、下线题目、扩展结果类型，必须同时更新：
+
+- `questions`
+- `resultTypes`
+- `validation`
+
+并保证：
+
+- 题目 ID 唯一
+- 每题选项 ID 唯一
+- 每题仍满足必需位置约束
+- 结果 ID 仍能被 `axes` 的编码体系解释
+
+## 6. 校验清单
+
+导入或维护配置时，建议至少校验以下内容：
+
+- 题目 `id` 全局唯一
+- 同一题内选项 `id` 唯一
+- 每题恰好 3 个选项
+- 每题必须覆盖 `left`、`middle`、`right`
+- `axis` 只能取 `I/S/T/R`
+- `scores` 中的 key 必须属于 `allowedScoreKeys`
+- `facetScores` 中的 key 必须属于 `allowedFacetTags`
+- `resultTypes` 数量必须与预期一致
+- `resultTypes[].id` 必须符合 `resultIdAxisOrder`
+- `resultTypes[].dimensions` 应与 `axes` 中的展示标签一致
+
+## 7. 完整 YAML 示例
+
+下面这份 YAML 是当前线上题库和结果数据的完整映射，可作为未来实现配置文件时的起点。
+
+```yaml
+meta:
+  version: 1
+  name: fbti-question-bank
+  locale: zh-CN
+  description: FBTI 题库、分型规则与 16 型结果文案统一配置
+
+axes:
+  - axis: I
+    title: 投入强度
+    leftCode: H
+    rightCode: C
+    leftLabel: 狂热型
+    rightLabel: 松弛型
+    defaultCode: C
+    facetMapping:
+      left: 抢口
+      middle: 复盘
+      right: 随缘
+  - axis: S
+    title: 相处方式
+    leftCode: S
+    rightCode: O
+    leftLabel: 群体型
+    rightLabel: 独处型
+    defaultCode: O
+    facetMapping:
+      left: 组局
+      middle: 搭子
+      right: 守界
+  - axis: T
+    title: 偏好路径
+    leftCode: T
+    rightCode: G
+    leftLabel: 技术流
+    rightLabel: 装备流
+    defaultCode: T
+    facetMapping:
+      left: 调校
+      middle: 省事
+      right: 配装
+  - axis: R
+    title: 价值取向
+    leftCode: R
+    rightCode: E
+    leftLabel: 结果派
+    rightLabel: 体验派
+    defaultCode: E
+    facetMapping:
+      left: 胜负
+      middle: 氛围
+      right: 舒服
+
+rules:
+  resultIdAxisOrder: [I, S, T, R]
+  tieBreakOrder: [score, strong, facet, default]
+  allowedScoreKeys: [H, C, S, O, T, G, R, E]
+  allowedFacetTags: [抢口, 复盘, 随缘, 组局, 搭子, 守界, 调校, 配装, 省事, 胜负, 舒服, 氛围]
+  optionPositions: [left, middle, right]
+
+questions:
+  - id: 1
+    axis: I
+    text: 周末只有半天空着，你前一晚通常会怎么准备？
+    options:
+      - id: 1
+        position: left
+        text: 前一晚就把闹钟、钓位和装备全安排好，最好一睁眼就能走。
+        scores: { H: 2 }
+        facetScores: { 抢口: 2 }
+      - id: 2
+        position: middle
+        text: 大方向先想好，真出门前再看天气和精神状态决定细节。
+        scores: { H: 1, C: 1 }
+        facetScores: { 复盘: 2 }
+      - id: 3
+        position: right
+        text: 先睡饱再说，醒来有感觉就去，没感觉就改天。
+        scores: { C: 2 }
+        facetScores: { 随缘: 2 }
+  - id: 2
+    axis: I
+    text: 工作日突然出现一个傍晚黄金鱼口，你更像哪种人？
+    options:
+      - id: 1
+        position: left
+        text: 能推的局就推，饭也能晚点吃，先去占这个窗口。
+        scores: { H: 2 }
+        facetScores: { 抢口: 2 }
+      - id: 2
+        position: middle
+        text: 如果本来没硬安排，我会去；真有事也不会为了鱼口硬改。
+        scores: { H: 1, C: 1 }
+        facetScores: { 复盘: 2 }
+      - id: 3
+        position: right
+        text: 算了，今天就按原计划走，钓鱼留给更从容的时候。
+        scores: { C: 2 }
+        facetScores: { 随缘: 2 }
+  - id: 3
+    axis: I
+    text: 连续两次空军回来，你回家后的状态更像：
+    options:
+      - id: 1
+        position: left
+        text: 越想越上头，回去就开始查天气、水情和别人怎么打的。
+        scores: { H: 2 }
+        facetScores: { 抢口: 2 }
+      - id: 2
+        position: middle
+        text: 会回想一下哪里不对，但不会立刻把自己拧进复盘模式。
+        scores: { H: 1, C: 1 }
+        facetScores: { 复盘: 2 }
+      - id: 3
+        position: right
+        text: 先放着，空军就空军，过两天想去了再说。
+        scores: { C: 2 }
+        facetScores: { 随缘: 2 }
+  - id: 4
+    axis: I
+    text: 明知第二天可能降温走水，但有人说清晨会有短口，你会：
+    options:
+      - id: 1
+        position: left
+        text: 还是去，哪怕只赌那一小段时间，也值得试。
+        scores: { H: 2 }
+        facetScores: { 抢口: 2 }
+      - id: 2
+        position: middle
+        text: 看起床状态，起来了就去，不起来也不强求自己。
+        scores: { H: 1, C: 1 }
+        facetScores: { 复盘: 2 }
+      - id: 3
+        position: right
+        text: 直接不折腾，天气都这样了，不如等更稳的天。
+        scores: { C: 2 }
+        facetScores: { 随缘: 2 }
+  - id: 5
+    axis: I
+    text: 一场钓完回到家，什么最容易让你忍不住继续想着这件事？
+    options:
+      - id: 1
+        position: left
+        text: 哪个环节差一点就能更好，我会反复琢磨。
+        scores: { H: 2 }
+        facetScores: { 抢口: 2 }
+      - id: 2
+        position: middle
+        text: 会顺手记一下感受，但不会让它占满后半天。
+        scores: { H: 1, C: 1 }
+        facetScores: { 复盘: 2 }
+      - id: 3
+        position: right
+        text: 洗完装备这事基本就翻篇了，今天过去就过去。
+        scores: { C: 2 }
+        facetScores: { 随缘: 2 }
+  - id: 6
+    axis: S
+    text: 你到钓点刚把车停好，第一反应通常是：
+    options:
+      - id: 1
+        position: left
+        text: 先看看熟人都在哪，顺便打个招呼，场子热起来再说。
+        scores: { S: 2 }
+        facetScores: { 组局: 2 }
+      - id: 2
+        position: middle
+        text: 跟认识的人点个头，聊两句，但还是先把自己位置安顿好。
+        scores: { S: 1, O: 1 }
+        facetScores: { 搭子: 2 }
+      - id: 3
+        position: right
+        text: 先找个安静钓位把自己放进去，不太想一到场就社交。
+        scores: { O: 2 }
+        facetScores: { 守界: 2 }
+  - id: 7
+    axis: S
+    text: 朋友说“明天一起钓，我跟着你走”，你一般会：
+    options:
+      - id: 1
+        position: left
+        text: 直接开始张罗时间、地点、谁带什么，顺手把局组起来。
+        scores: { S: 2 }
+        facetScores: { 组局: 2 }
+      - id: 2
+        position: middle
+        text: 可以一起，但更像各钓各的，路上和收杆后再慢慢聊。
+        scores: { S: 1, O: 1 }
+        facetScores: { 搭子: 2 }
+      - id: 3
+        position: right
+        text: 更想分开行动，到点见或者各玩各的都行。
+        scores: { O: 2 }
+        facetScores: { 守界: 2 }
+  - id: 8
+    axis: S
+    text: 你发现自己这边有口，旁边朋友一直没动静，你会：
+    options:
+      - id: 1
+        position: left
+        text: 马上喊他过来，顺手把漂深、饵料和点位都讲给他。
+        scores: { S: 2 }
+        facetScores: { 组局: 2 }
+      - id: 2
+        position: middle
+        text: 会提醒一句关键变化，剩下让他自己判断怎么接。
+        scores: { S: 1, O: 1 }
+        facetScores: { 搭子: 2 }
+      - id: 3
+        position: right
+        text: 大多时候先不打断彼此节奏，除非他主动来问。
+        scores: { O: 2 }
+        facetScores: { 守界: 2 }
+  - id: 9
+    axis: S
+    text: 钓着钓着，旁边人开始一直跟你聊天，你的真实反应更像：
+    options:
+      - id: 1
+        position: left
+        text: 挺好，边聊边钓更有感觉，气氛起来了口差点也无所谓。
+        scores: { S: 2 }
+        facetScores: { 组局: 2 }
+      - id: 2
+        position: middle
+        text: 短聊没问题，但真到关键窗口我还是会把注意力收回来。
+        scores: { S: 1, O: 1 }
+        facetScores: { 搭子: 2 }
+      - id: 3
+        position: right
+        text: 会有点烦，我来水边就是想安静待着，不想一直接话。
+        scores: { O: 2 }
+        facetScores: { 守界: 2 }
+  - id: 10
+    axis: S
+    text: 收杆之后，如果大家说找地方坐坐继续聊，你通常会：
+    options:
+      - id: 1
+        position: left
+        text: 大概率加入，钓完再聊一轮，整天才算完整。
+        scores: { S: 2 }
+        facetScores: { 组局: 2 }
+      - id: 2
+        position: middle
+        text: 看当天状态，有兴致就坐一会儿，没兴致就先撤。
+        scores: { S: 1, O: 1 }
+        facetScores: { 搭子: 2 }
+      - id: 3
+        position: right
+        text: 更想直接回家，今天的社交额度在水边差不多已经用完了。
+        scores: { O: 2 }
+        facetScores: { 守界: 2 }
+  - id: 11
+    axis: T
+    text: 陌生水域下杆半小时没动静，你最先会动哪一块？
+    options:
+      - id: 1
+        position: left
+        text: 先从线组、饵料、层次和手法一点点试，找问题在哪。
+        scores: { T: 2 }
+        facetScores: { 调校: 2 }
+      - id: 2
+        position: middle
+        text: 先做最省事的微调，能不大拆就不大拆，边钓边试。
+        scores: { T: 1, G: 1 }
+        facetScores: { 省事: 2 }
+      - id: 3
+        position: right
+        text: 先检查是不是装备配置不对，必要时直接换更合适的家伙。
+        scores: { G: 2 }
+        facetScores: { 配装: 2 }
+  - id: 12
+    axis: T
+    text: 手里突然多出一笔钓鱼预算，你第一反应是：
+    options:
+      - id: 1
+        position: left
+        text: 买些能帮我练判断和提升打法的东西，最好直接作用在技术上。
+        scores: { T: 2 }
+        facetScores: { 调校: 2 }
+      - id: 2
+        position: middle
+        text: 先补最缺的那点，别让装备和打法哪边拖后腿。
+        scores: { T: 1, G: 1 }
+        facetScores: { 省事: 2 }
+      - id: 3
+        position: right
+        text: 终于可以升级一直想换的竿轮箱包了，配置先到位再说。
+        scores: { G: 2 }
+        facetScores: { 配装: 2 }
+  - id: 13
+    axis: T
+    text: 你平时最愿意反复刷的内容，更像是：
+    options:
+      - id: 1
+        position: left
+        text: 拆鱼情、讲思路、教怎么判断的内容。
+        scores: { T: 2 }
+        facetScores: { 调校: 2 }
+      - id: 2
+        position: middle
+        text: 那种既讲打法也讲配置，能直接抄回去用的内容。
+        scores: { T: 1, G: 1 }
+        facetScores: { 省事: 2 }
+      - id: 3
+        position: right
+        text: 开箱、评测、器材搭配和 setup 展示。
+        scores: { G: 2 }
+        facetScores: { 配装: 2 }
+  - id: 14
+    axis: T
+    text: 第一次去新钓点，你开局更像哪种人？
+    options:
+      - id: 1
+        position: left
+        text: 先观察水色、风向、深浅和别人节奏，再决定怎么打。
+        scores: { T: 2 }
+        facetScores: { 调校: 2 }
+      - id: 2
+        position: middle
+        text: 先用自己最熟的一套开局，感觉不对再逐步调整。
+        scores: { T: 1, G: 1 }
+        facetScores: { 省事: 2 }
+      - id: 3
+        position: right
+        text: 先把最适合这个场子的装备方案上齐，别一开始就吃配置亏。
+        scores: { G: 2 }
+        facetScores: { 配装: 2 }
+  - id: 15
+    axis: T
+    text: 一趟钓完收拾装备时，你更容易把注意力放在：
+    options:
+      - id: 1
+        position: left
+        text: 今天哪些判断是对的，哪些动作还要修。
+        scores: { T: 2 }
+        facetScores: { 调校: 2 }
+      - id: 2
+        position: middle
+        text: 先把东西收顺手，能复用的经验记住就够了，不用过度上纲。
+        scores: { T: 1, G: 1 }
+        facetScores: { 省事: 2 }
+      - id: 3
+        position: right
+        text: 哪件装备顺不顺手、哪里该升级，下一次怎么搭更舒服。
+        scores: { G: 2 }
+        facetScores: { 配装: 2 }
+  - id: 16
+    axis: R
+    text: 天色开始暗了，今天鱼获一般，你决定收不收杆时最看重：
+    options:
+      - id: 1
+        position: left
+        text: 再守一会儿，说不定最后还能把结果拉回来。
+        scores: { R: 2 }
+        facetScores: { 胜负: 2 }
+      - id: 2
+        position: middle
+        text: 看当下感觉，今天要是已经尽兴了，早点收也没什么。
+        scores: { R: 1, E: 1 }
+        facetScores: { 氛围: 2 }
+      - id: 3
+        position: right
+        text: 差不多就行，别把自己耗得太累，舒服收工更重要。
+        scores: { E: 2 }
+        facetScores: { 舒服: 2 }
+  - id: 17
+    axis: R
+    text: 旁边钓友突然连杆，你心里第一反应更像：
+    options:
+      - id: 1
+        position: left
+        text: 我会立刻紧起来，想知道问题出在哪，最好把差距追回来。
+        scores: { R: 2 }
+        facetScores: { 胜负: 2 }
+      - id: 2
+        position: middle
+        text: 会看看他在干嘛，也会调一调，但不至于马上进入较劲状态。
+        scores: { R: 1, E: 1 }
+        facetScores: { 氛围: 2 }
+      - id: 3
+        position: right
+        text: 替他开心一下就行，各有各的节奏，没必要把自己搞紧。
+        scores: { E: 2 }
+        facetScores: { 舒服: 2 }
+  - id: 18
+    axis: R
+    text: 今天一直没什么口，但天气、风和人都挺舒服，你会：
+    options:
+      - id: 1
+        position: left
+        text: 舒服归舒服，没结果还是不甘心，想再咬牙试一阵。
+        scores: { R: 2 }
+        facetScores: { 胜负: 2 }
+      - id: 2
+        position: middle
+        text: 如果同行的人状态也不错，我可能就顺着这份氛围慢慢收尾。
+        scores: { R: 1, E: 1 }
+        facetScores: { 氛围: 2 }
+      - id: 3
+        position: right
+        text: 那就当出来放空了，今天待得舒服本身就算赚到。
+        scores: { E: 2 }
+        facetScores: { 舒服: 2 }
+  - id: 19
+    axis: R
+    text: 回想一场“不错的出钓”，你最容易先记住的是：
+    options:
+      - id: 1
+        position: left
+        text: 最后到底钓了多少、有没有把目标打出来。
+        scores: { R: 2 }
+        facetScores: { 胜负: 2 }
+      - id: 2
+        position: middle
+        text: 那天整体节奏很顺，人和场子都对，回想起来很完整。
+        scores: { R: 1, E: 1 }
+        facetScores: { 氛围: 2 }
+      - id: 3
+        position: right
+        text: 那天人很松、风景很对、待着就是舒服，鱼反而没那么关键。
+        scores: { E: 2 }
+        facetScores: { 舒服: 2 }
+  - id: 20
+    axis: R
+    text: 如果问你“下次还想不想来这个钓点”，最影响答案的是：
+    options:
+      - id: 1
+        position: left
+        text: 这里有没有机会让我把成绩再往上拉。
+        scores: { R: 2 }
+        facetScores: { 胜负: 2 }
+      - id: 2
+        position: middle
+        text: 今天这趟整体状态是不是在线，值不值得再来一次类似的局。
+        scores: { R: 1, E: 1 }
+        facetScores: { 氛围: 2 }
+      - id: 3
+        position: right
+        text: 这里待着舒不舒服、顺不顺手，愿不愿意再来放松一天。
+        scores: { E: 2 }
+        facetScores: { 舒服: 2 }
+
+resultTypes:
+  - id: HOTR
+    name: 黑坑控局人
+    emoji: "🎯"
+    title: 狂热 × 独处 × 技术 × 结果
+    description: 你对钓鱼有很强的掌控欲，喜欢把鱼情、节奏和手法拆成一套能复盘的系统。你愿意投入时间独自打磨细节，目标很明确，就是把结果握在自己手里。
+    traits: [控场型, 复盘脑, 独处专注, 胜负明确]
+    dimensions: [狂热型, 独处型, 技术流, 结果派]
+    signature: 我不赌运气，我只相信控制感。
+    scene: 清晨黑坑边，你把装备一字排开，低头调漂、抬头盯水，像在指挥一场只属于自己的战斗。
+  - id: HOTE
+    name: 水边修行者
+    emoji: "🌫️"
+    title: 狂热 × 独处 × 技术 × 体验
+    description: 你对钓鱼同样认真，但认真并不一定指向爆护。你更在意观察水、理解鱼情、感受节奏，技术是你和环境建立连接的方式。
+    traits: [沉浸型, 观察欲强, 独处感知, 过程优先]
+    dimensions: [狂热型, 独处型, 技术流, 体验派]
+    signature: 我不是来征服鱼的，我是来靠近水的。
+    scene: 山间溪流薄雾未散，你一个人坐在石头上守着浮漂，周围安静得只剩水声和呼吸。
+  - id: HOGR
+    name: 装备堆满人
+    emoji: "🧰"
+    title: 狂热 × 独处 × 装备 × 结果
+    description: 你相信好结果不是等来的，而是靠整套装备体系一点点堆出来的。器材、配件、线组和细节优化都服务于同一件事，那就是提高胜率。
+    traits: [体系控, 配置党, 独处执行, 稳定输出]
+    dimensions: [狂热型, 独处型, 装备流, 结果派]
+    signature: 这不是乱花钱，这是把胜率拉满。
+    scene: 钓位前高端装备整齐展开，鱼护满满，你站在中间，像把一整套战斗体系铺在水边。
+  - id: HOGE
+    name: 孤独收藏家
+    emoji: "🪞"
+    title: 狂热 × 独处 × 装备 × 体验
+    description: 你迷恋的不只是鱼口，更是器材、搭配和氛围组成的完整 setup。对你来说，钓鱼是一种精致的个人秩序，鱼获只是这套秩序里的附加奖励。
+    traits: [审美控, 收藏欲, 独处沉迷, 氛围优先]
+    dimensions: [狂热型, 独处型, 装备流, 体验派]
+    signature: 鱼只是背景，这套装备才是主角。
+    scene: 傍晚湖边，你慢慢擦拭钓竿，把每个部件摆放整齐，像在照看一件只属于自己的作品。
+  - id: HSTR
+    name: 钓场教父
+    emoji: "👑"
+    title: 狂热 × 社交 × 技术 × 结果
+    description: 你不只是会钓，还很会带节奏。技术、判断和存在感同时在线，别人会下意识把你的状态当成场上的风向标。
+    traits: [带局型, 技术压制, 社交核心, 结果拉满]
+    dimensions: [狂热型, 群体型, 技术流, 结果派]
+    signature: 你们钓鱼，我控局。
+    scene: 钓场中央，周围围着人，你一边上鱼一边点评鱼情，整场气氛和节奏都在跟着你走。
+  - id: HSTE
+    name: 水边讲师
+    emoji: "🎙️"
+    title: 狂热 × 社交 × 技术 × 体验
+    description: 你把钓鱼当成一场可以不断交流和拆解的认知活动。你很享受分享判断、讨论变化、把一件事讲明白的过程，而不是单纯比谁鱼多。
+    traits: [分享型, 表达欲强, 技术交流, 认知驱动]
+    dimensions: [狂热型, 群体型, 技术流, 体验派]
+    signature: 鱼获会过去，认知会留下来。
+    scene: 湖边草地上，你一边抛竿一边讲鱼情变化，朋友还没上鱼，先被你上了一课。
+  - id: HSGR
+    name: 装备带飞王
+    emoji: "🚀"
+    title: 狂热 × 社交 × 装备 × 结果
+    description: 你最擅长把资源和装备配置变成整队的优势。自己上鱼当然重要，但更爽的是你一出手，朋友们也跟着一起爆护。
+    traits: [资源型, 带飞欲强, 装备输出, 团队结果]
+    dimensions: [狂热型, 群体型, 装备流, 结果派]
+    signature: 你们负责开竿，我负责把胜率配齐。
+    scene: 你给朋友分装备、配线组、盯细节，最后一群人鱼护都满了，你笑得比谁都早。
+  - id: HSGE
+    name: 空军撑局人
+    emoji: "🔥"
+    title: 狂热 × 社交 × 装备 × 体验
+    description: 你对一场局的投入一点不轻，只是你最在意的不是鱼，而是气氛、排面和参与感。对你来说，钓鱼是载体，把人聚舒服才是正事。
+    traits: [组局型, 氛围担当, 装备排面, 情绪价值]
+    dimensions: [狂热型, 群体型, 装备流, 体验派]
+    signature: 鱼可以空，局不能垮。
+    scene: 夕阳下，一群人围坐笑个不停，鱼竿只是道具，真正被你撑起来的是整场气氛。
+  - id: COTR
+    name: 死磕鱼口人
+    emoji: "⚡"
+    title: 松弛 × 独处 × 技术 × 结果
+    description: 你不一定天天钓，但只要出手就讲究效率。你会用最短的时间判断鱼情、做出调整，然后把有限的时间尽量换成清晰的结果。
+    traits: [效率型, 独处执行, 判断快, 目标明确]
+    dimensions: [松弛型, 独处型, 技术流, 结果派]
+    signature: 我不常卷，但出手就得见效。
+    scene: 城市河道边，你快速选点、下杆、收杆，动作利落得像在跑一套高效流程。
+  - id: COTE
+    name: 随缘钓客
+    emoji: "🍃"
+    title: 松弛 × 独处 × 技术 × 体验
+    description: 你并不是不会钓，相反，你懂得不少，只是不会把每次出钓都变成成绩考核。你喜欢松一点、慢一点，让技术服务于放松，而不是服务于压力。
+    traits: [松感型, 独处放空, 技术在手, 情绪稳定]
+    dimensions: [松弛型, 独处型, 技术流, 体验派]
+    signature: 有口当然好，没口也不妨碍我待一会儿。
+    scene: 午后野河边，你半躺着看水面，偶尔收杆，更多时候只是把时间慢慢过掉。
+  - id: COGR
+    name: 轻量玩家
+    emoji: "🎒"
+    title: 松弛 × 独处 × 装备 × 结果
+    description: 你对装备有要求，但不会让它变成负担。你更偏爱轻便、顺手、稳定那一套，希望用刚刚好的配置换来刚刚好的成果。
+    traits: [轻配置, 独处舒适, 装备务实, 稳定收获]
+    dimensions: [松弛型, 独处型, 装备流, 结果派]
+    signature: 不追极致，但该稳的地方我不会省。
+    scene: 简单装备、一人一竿、收纳干净，整套配置不夸张，却处处顺手。
+  - id: COGE
+    name: 美学钓鱼人
+    emoji: "📷"
+    title: 松弛 × 独处 × 装备 × 体验
+    description: 你会把钓鱼过成一种生活方式。环境、光线、器材、穿着和当下的状态一样重要，你要的不是任务完成，而是这一刻足够好看也足够舒服。
+    traits: [生活流, 审美敏感, 独处舒服, 记录欲强]
+    dimensions: [松弛型, 独处型, 装备流, 体验派]
+    signature: 我在钓鱼，也在认真过这一天。
+    scene: 溪流、光影、鱼竿与自然构成一幅画面，你时不时拿起手机，把这一刻留住。
+  - id: CSTR
+    name: 周末战队长
+    emoji: "🧭"
+    title: 松弛 × 社交 × 技术 × 结果
+    description: 你平时节奏不算重，但真到周末就会迅速进入带队模式。你擅长安排位置、分配节奏、盯关键节点，是那种能把一群人拉成战队的人。
+    traits: [周末爆发, 组织型, 技术安排, 团队导向]
+    dimensions: [松弛型, 群体型, 技术流, 结果派]
+    signature: 平时随意，真开局就得像样。
+    scene: 周末钓场，一群人统一时间到达，你负责安排位置、节奏和整场行动顺序。
+  - id: CSTE
+    name: 聊天型钓友
+    emoji: "💬"
+    title: 松弛 × 社交 × 技术 × 体验
+    description: 你并不排斥技术，甚至还挺懂，但你真正喜欢的是这件事让人自然聚在一起。钓鱼对你来说是一张门票，让聊天、放松和陪伴都变得很成立。
+    traits: [社交型, 会接话, 懂门道, 陪伴感强]
+    dimensions: [松弛型, 群体型, 技术流, 体验派]
+    signature: 鱼可以不上，聊天不能冷场。
+    scene: 河边两三人，鱼竿插着，人却一直在聊天，笑声和梗一个接一个。
+  - id: CSGR
+    name: 装备展示官
+    emoji: "✨"
+    title: 松弛 × 社交 × 装备 × 结果
+    description: 你喜欢展示自己的器材系统，也希望它们别只是好看。你不一定最拼，但在朋友面前，装备得体面，成绩也得多少说得过去。
+    traits: [展示型, 装备升级, 社交体面, 结果适中]
+    dimensions: [松弛型, 群体型, 装备流, 结果派]
+    signature: 成绩可以慢慢来，排面不能先输。
+    scene: 你打开装备箱，一件件展示给朋友看，语气克制，眼里的兴奋却藏不住。
+  - id: CSGE
+    name: 快乐搭子
+    emoji: "😄"
+    title: 松弛 × 社交 × 装备 × 体验
+    description: 你是最轻松也最有陪伴感的一类。对你来说，钓鱼不是任务，而是一个把朋友、零食、天气和好心情装进同一天的理由。
+    traits: [轻松型, 朋友优先, 氛围感强, 情绪价值高]
+    dimensions: [松弛型, 群体型, 装备流, 体验派]
+    signature: 只要是一起待着，钓不钓都开心。
+    scene: 朋友们一起坐在水边，偶尔抛几竿，更多时候在互相调侃、分享零食和当天的好心情。
+
+validation:
+  requireUniqueQuestionIds: true
+  requireUniqueOptionIdsWithinQuestion: true
+  optionsPerQuestion: 3
+  requiredOptionPositions: [left, middle, right]
+  questionsPerAxis:
+    I: 5
+    S: 5
+    T: 5
+    R: 5
+  resultTypeCount: 16
+  resultIdMustMatchAxisCodeOrder: true
+```
+
+## 8. 测试建议
+
+未来如果开始实现 YAML 读取器，建议至少覆盖这些场景：
+
+- 当前 20 题、4 轴、16 结果可被完整读取并生成与现有代码一致的数据结构。
+- 重复题目 `id` 会报错。
+- 同题重复选项 `id` 会报错。
+- 缺失 `left/middle/right` 任一位置会报错。
+- 非法 `axis`、`ScoreKey`、`FacetTag` 会报错。
+- 结果 `id` 与轴编码顺序不一致会报错。
+- 只改题干或结果描述、不改分值时，最终分型逻辑保持不变。
+- 修改 `defaultCode` 或选项分值后，结果变化可被清楚追踪。

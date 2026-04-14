@@ -1,25 +1,18 @@
 import {
-  Axis,
   axisFacetTags,
-  FacetTag,
-  Question,
-  questions,
-  ScoreKey
-} from '../data/questions'
-import { personalities, PersonalityType } from '../data/personalities'
+  axisMap,
+  getEmptyFacetTotals,
+  getEmptyScoreTotals,
+  getEmptyStrongCounts,
+  personalities,
+  questionMap,
+  quizConfig
+} from '../config/quizConfig'
+import { Axis, FacetTag, ScoreKey, TieBreakRule } from '../config/quizTypes'
+import { PersonalityType } from '../data/personalities'
 import { QuizAnswer } from '../types/quiz'
 
-type TieBreakerReason = 'score' | 'strong' | 'facet' | 'default'
-
-interface AxisMeta {
-  axis: Axis
-  title: string
-  leftCode: ScoreKey
-  rightCode: ScoreKey
-  leftLabel: string
-  rightLabel: string
-  defaultCode: ScoreKey
-}
+type TieBreakerReason = TieBreakRule
 
 export interface AxisBreakdown {
   axis: Axis
@@ -47,84 +40,53 @@ export interface CalculatedPersonalityResult {
   facetScores: Record<FacetTag, number>
 }
 
-const axisMetaList: AxisMeta[] = [
-  {
-    axis: 'I',
-    title: '投入强度',
-    leftCode: 'H',
-    rightCode: 'C',
-    leftLabel: '狂热型',
-    rightLabel: '松弛型',
-    defaultCode: 'C'
-  },
-  {
-    axis: 'S',
-    title: '相处方式',
-    leftCode: 'S',
-    rightCode: 'O',
-    leftLabel: '群体型',
-    rightLabel: '独处型',
-    defaultCode: 'O'
-  },
-  {
-    axis: 'T',
-    title: '偏好路径',
-    leftCode: 'T',
-    rightCode: 'G',
-    leftLabel: '技术流',
-    rightLabel: '装备流',
-    defaultCode: 'T'
-  },
-  {
-    axis: 'R',
-    title: '价值取向',
-    leftCode: 'R',
-    rightCode: 'E',
-    leftLabel: '结果派',
-    rightLabel: '体验派',
-    defaultCode: 'E'
+function resolveAxisByRule(
+  leftScore: number,
+  rightScore: number,
+  leftStrongCount: number,
+  rightStrongCount: number,
+  leftFacetScore: number,
+  rightFacetScore: number,
+  leftCode: ScoreKey,
+  rightCode: ScoreKey,
+  defaultCode: ScoreKey
+) {
+  let resolvedTo: ScoreKey = defaultCode
+  let reason: TieBreakerReason = 'default'
+
+  for (const tieBreakRule of quizConfig.rules.tieBreakOrder) {
+    if (tieBreakRule === 'score' && leftScore !== rightScore) {
+      resolvedTo = leftScore > rightScore ? leftCode : rightCode
+      reason = 'score'
+      break
+    }
+
+    if (tieBreakRule === 'strong' && leftStrongCount !== rightStrongCount) {
+      resolvedTo = leftStrongCount > rightStrongCount ? leftCode : rightCode
+      reason = 'strong'
+      break
+    }
+
+    if (tieBreakRule === 'facet' && leftFacetScore !== rightFacetScore) {
+      resolvedTo = leftFacetScore > rightFacetScore ? leftCode : rightCode
+      reason = 'facet'
+      break
+    }
+
+    if (tieBreakRule === 'default') {
+      resolvedTo = defaultCode
+      reason = 'default'
+      break
+    }
   }
-]
 
-const questionMap = new Map<number, Question>(questions.map(question => [question.id, question]))
-
-const emptyFacetScores = (): Record<FacetTag, number> => ({
-  抢口: 0,
-  复盘: 0,
-  随缘: 0,
-  组局: 0,
-  搭子: 0,
-  守界: 0,
-  调校: 0,
-  配装: 0,
-  省事: 0,
-  胜负: 0,
-  舒服: 0,
-  氛围: 0
-})
-
-const emptyAxisStrongCounts = (): Record<Axis, { left: number; right: number }> => ({
-  I: { left: 0, right: 0 },
-  S: { left: 0, right: 0 },
-  T: { left: 0, right: 0 },
-  R: { left: 0, right: 0 }
-})
-
-const emptyScores = (): Record<ScoreKey, number> => ({
-  H: 0,
-  C: 0,
-  S: 0,
-  O: 0,
-  T: 0,
-  G: 0,
-  R: 0,
-  E: 0
-})
+  return { resolvedTo, reason }
+}
 
 export function calculatePersonality(answers: QuizAnswer[]): CalculatedPersonalityResult {
-  const scores = emptyScores()
-  const facetScores = emptyFacetScores()
-  const strongCounts = emptyAxisStrongCounts()
+  const scores = getEmptyScoreTotals()
+  const facetScores = getEmptyFacetTotals()
+  const strongCounts = getEmptyStrongCounts()
 
   answers.forEach((answer) => {
     const question = questionMap.get(answer.questionId)
@@ -150,7 +112,7 @@ export function calculatePersonality(answers: QuizAnswer[]): CalculatedPersonali
     }
   })
 
-  const axisBreakdown = axisMetaList.map((axisMeta) => {
+  const axisBreakdown = quizConfig.axes.map((axisMeta) => {
     const leftScore = scores[axisMeta.leftCode]
     const rightScore = scores[axisMeta.rightCode]
     const leftStrongCount = strongCounts[axisMeta.axis].left
@@ -158,20 +120,17 @@ export function calculatePersonality(answers: QuizAnswer[]): CalculatedPersonali
     const axisFacets = axisFacetTags[axisMeta.axis]
     const leftFacetScore = facetScores[axisFacets.left]
     const rightFacetScore = facetScores[axisFacets.right]
-
-    let resolvedTo: ScoreKey = axisMeta.defaultCode
-    let reason: TieBreakerReason = 'default'
-
-    if (leftScore !== rightScore) {
-      resolvedTo = leftScore > rightScore ? axisMeta.leftCode : axisMeta.rightCode
-      reason = 'score'
-    } else if (leftStrongCount !== rightStrongCount) {
-      resolvedTo = leftStrongCount > rightStrongCount ? axisMeta.leftCode : axisMeta.rightCode
-      reason = 'strong'
-    } else if (leftFacetScore !== rightFacetScore) {
-      resolvedTo = leftFacetScore > rightFacetScore ? axisMeta.leftCode : axisMeta.rightCode
-      reason = 'facet'
-    }
+    const { resolvedTo, reason } = resolveAxisByRule(
+      leftScore,
+      rightScore,
+      leftStrongCount,
+      rightStrongCount,
+      leftFacetScore,
+      rightFacetScore,
+      axisMeta.leftCode,
+      axisMeta.rightCode,
+      axisMeta.defaultCode
+    )
 
     return {
       axis: axisMeta.axis,
@@ -192,7 +151,9 @@ export function calculatePersonality(answers: QuizAnswer[]): CalculatedPersonali
     }
   })
 
-  const personalityId = axisBreakdown.map(axis => axis.resolvedTo).join('')
+  const personalityId = quizConfig.rules.resultIdAxisOrder
+    .map(axis => axisBreakdown.find(item => item.axis === axis)?.resolvedTo ?? axisMap[axis].defaultCode)
+    .join('')
   const personality = personalities.find(candidate => candidate.id === personalityId) ?? personalities[0]
 
   const topFacetTags = (Object.entries(facetScores) as [FacetTag, number][])
