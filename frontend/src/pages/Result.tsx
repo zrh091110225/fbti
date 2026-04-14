@@ -22,7 +22,6 @@ function Result({ answers, onRestart }: ResultProps) {
   const { personality, axisBreakdown, topFacetTags } = result
   const dynamicTags = topFacetTags.length ? topFacetTags : personality.traits.slice(0, 3)
   const artwork = getPersonalityArtwork(personality.id)
-  const resultLead = `这份画像由「${personality.dimensions.join(' / ')}」组成，这次更明显的行为标签是${dynamicTags.join('、')}。`
 
   const profileRows = [
     { label: '人格代码', value: personality.id },
@@ -63,7 +62,7 @@ function Result({ answers, onRestart }: ResultProps) {
                 />
               </div>
               <figcaption className="result-artwork-caption">
-                这类人格最像的状态，不是高声解释自己，而是整个人坐进水边的气氛里。
+                你的人格状态，不是高声解释自己，而是整个人坐进水边的气氛里。
               </figcaption>
             </m.figure>
 
@@ -80,8 +79,6 @@ function Result({ answers, onRestart }: ResultProps) {
                   <p className="personality-title">{personality.title}</p>
                 </div>
               </div>
-
-              <p className="result-summary">{resultLead}</p>
 
               <blockquote className="result-signature">
                 “{personality.signature}”

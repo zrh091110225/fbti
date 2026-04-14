@@ -250,7 +250,7 @@ questions:
         facetScores: { 守界: 2 }
   - id: 11
     axis: T
-    text: 在陌生水域下杆半小时没动静，你会？
+    text: 下杆半小时没动静，你会？
     options:
       - id: 1
         position: left

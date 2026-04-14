@@ -53,6 +53,8 @@ function ShareCard({ personality }: ShareCardProps) {
     }
 
     const titleY = 474
+    ctx.textAlign = 'left'
+    ctx.textBaseline = 'alphabetic'
     ctx.fillStyle = '#24302b'
     const fittedNameFont = fitFontSize(ctx, personality.name, 48, 32, 380, 700)
     ctx.font = `700 ${fittedNameFont}px sans-serif`
@@ -213,6 +215,7 @@ function drawPaperShell(
 }
 
 function drawStamp(ctx: CanvasRenderingContext2D, x: number, y: number, code: string) {
+  ctx.save()
   ctx.beginPath()
   ctx.arc(x, y, 36, 0, Math.PI * 2)
   ctx.fillStyle = 'rgba(255, 255, 255, 0.44)'
@@ -226,6 +229,7 @@ function drawStamp(ctx: CanvasRenderingContext2D, x: number, y: number, code: st
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
   ctx.fillText(code, x, y + 1)
+  ctx.restore()
 }
 
 function drawArtworkFrame(
@@ -250,6 +254,7 @@ function drawArtworkFallback(
   width: number,
   height: number
 ) {
+  ctx.save()
   roundRect(ctx, x, y, width, height, 24)
   ctx.fillStyle = 'rgba(169, 193, 154, 0.14)'
   ctx.fill()
@@ -259,12 +264,14 @@ function drawArtworkFallback(
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
   ctx.fillText('FBTI', x + width / 2, y + height / 2)
+  ctx.restore()
 }
 
 function drawLeadCard(
   ctx: CanvasRenderingContext2D,
   options: { x: number; y: number; width: number; height: number }
 ) {
+  ctx.save()
   roundRect(ctx, options.x, options.y, options.width, options.height, 24)
   ctx.fillStyle = 'rgba(255, 255, 255, 0.34)'
   ctx.fill()
@@ -277,12 +284,14 @@ function drawLeadCard(
   ctx.textAlign = 'left'
   ctx.textBaseline = 'alphabetic'
   ctx.fillText('结果导语', options.x + 24, options.y + 26)
+  ctx.restore()
 }
 
 function drawSignatureCard(
   ctx: CanvasRenderingContext2D,
   options: { x: number; y: number; width: number; height: number }
 ) {
+  ctx.save()
   roundRect(ctx, options.x, options.y, options.width, options.height, 22)
   ctx.fillStyle = 'rgba(255, 255, 255, 0.28)'
   ctx.fill()
@@ -292,6 +301,7 @@ function drawSignatureCard(
 
   ctx.fillStyle = 'rgba(93, 111, 102, 0.22)'
   ctx.fillRect(options.x + 20, options.y + 18, 2, options.height - 36)
+  ctx.restore()
 }
 
 function drawInfoCard(
@@ -308,6 +318,7 @@ function drawInfoCard(
     maxLines: number
   }
 ) {
+  ctx.save()
   roundRect(ctx, options.x, options.y, options.width, options.height, 20)
   ctx.fillStyle = 'rgba(255, 251, 246, 0.7)'
   ctx.fill()
@@ -334,6 +345,7 @@ function drawInfoCard(
   lines.forEach((line, index) => {
     ctx.fillText(line, options.x + 18, options.y + 56 + index * options.valueLineHeight)
   })
+  ctx.restore()
 }
 
 function loadImage(src: string): Promise<HTMLImageElement> {

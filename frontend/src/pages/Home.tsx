@@ -126,7 +126,7 @@ function Home({ onStart }: HomeProps) {
 
               <p className="home-description">
                 用 {questions.length} 道问题，从投入强度、相处方式、偏好路径和价值取向四个维度，
-                识别你在水边最稳定的行为模式，最后生成一份 16 型钓鱼人格画像。
+                识别你是 16 型钓鱼人格画像中的哪一种。
               </p>
 
               <div className="home-actions">

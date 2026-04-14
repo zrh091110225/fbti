@@ -23,8 +23,6 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
   const timeoutRefs = useRef<number[]>([])
   const [isExitPromptOpen, setIsExitPromptOpen] = useState(false)
   const [motionState, setMotionState] = useState<QuizMotionState>({
-    castOptionId: null,
-    castToken: 0,
     isReeling: false,
     isLanding: false,
     reelToken: 0
@@ -78,13 +76,11 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
 
   useEffect(() => {
     setMotionState({
-      castOptionId: selectedAnswer?.answerId ?? null,
-      castToken: 0,
       isReeling: false,
       isLanding: false,
       reelToken: 0
     })
-  }, [question.id, selectedAnswer?.answerId])
+  }, [question.id])
 
   useEffect(() => {
     return () => {
@@ -98,11 +94,6 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
     }
 
     onAnswer(question.id, optionId)
-    setMotionState(prev => ({
-      ...prev,
-      castOptionId: optionId,
-      castToken: prev.castToken + 1
-    }))
 
     timeoutRefs.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
     timeoutRefs.current = []
@@ -230,7 +221,6 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
               <div className="options">
                 {question.options.map((option, index) => {
                   const isSelected = selectedAnswer?.answerId === option.id
-                  const showCastEffect = isSelected && motionState.castOptionId === option.id
 
                   return (
                     <m.button
@@ -251,49 +241,7 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
                       <span className="option-letter">
                         {String.fromCharCode(65 + option.id - 1)}
                       </span>
-                      <span className="option-copy">
-                        <span className="option-text">{option.text}</span>
-                        <span className="option-hint">
-                          {isSelected ? '已中鱼讯，准备收线' : '选中后触发咬口反馈'}
-                        </span>
-                      </span>
-
-                      <AnimatePresence>
-                        {showCastEffect && (
-                          <m.span
-                            key={`${option.id}-${motionState.castToken}`}
-                            className="option-cast-effect"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: prefersReducedMotion ? 0.12 : 0.18 }}
-                          >
-                            <svg className="option-cast-line" viewBox="0 0 320 120" preserveAspectRatio="none">
-                              <m.path
-                                d="M18 92C96 30 168 16 278 68"
-                                fill="none"
-                                stroke="rgba(197, 238, 211, 0.82)"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                initial={{ pathLength: 0 }}
-                                animate={{ pathLength: 1 }}
-                                exit={{ pathLength: 0 }}
-                                transition={{
-                                  duration: prefersReducedMotion ? 0.12 : 0.34,
-                                  ease: 'easeOut'
-                                }}
-                              />
-                            </svg>
-                            <m.span
-                              className="option-ripple"
-                              initial={{ scale: 0.55, opacity: 0.6 }}
-                              animate={{ scale: prefersReducedMotion ? 1 : 1.45, opacity: 0 }}
-                              exit={{ opacity: 0 }}
-                              transition={{ duration: prefersReducedMotion ? 0.12 : 0.42, ease: 'easeOut' }}
-                            />
-                          </m.span>
-                        )}
-                      </AnimatePresence>
+                      <span className="option-text">{option.text}</span>
                     </m.button>
                   )
                 })}
