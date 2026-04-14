@@ -60,40 +60,40 @@ rules:
 questions:
   - id: 1
     axis: I
-    text: 周末只有半天空着，你前一晚通常会怎么准备？
+    text: 钓鱼前一晚会干嘛？
     options:
       - id: 1
         position: left
-        text: 前一晚就把闹钟、钓位和装备全安排好，最好一睁眼就能走。
+        text: 把装备整理好，设置闹钟，一睁眼就出发。
         scores: { H: 2 }
         facetScores: { 抢口: 2 }
       - id: 2
         position: middle
-        text: 大方向先想好，真出门前再看天气和精神状态决定细节。
+        text: 看看明天天气和精神状态再决定去哪。
         scores: { H: 1, C: 1 }
         facetScores: { 复盘: 2 }
       - id: 3
         position: right
-        text: 先睡饱再说，醒来有感觉就去，没感觉就改天。
+        text: 睡到自然醒再说。
         scores: { C: 2 }
         facetScores: { 随缘: 2 }
   - id: 2
     axis: I
-    text: 工作日突然出现一个傍晚黄金鱼口，你更像哪种人？
+    text: 突然出现一个傍晚黄金鱼口，你会？
     options:
       - id: 1
         position: left
-        text: 能推的局就推，饭也能晚点吃，先去占这个窗口。
+        text: 推掉一切，去赶这个黄金窗口。
         scores: { H: 2 }
         facetScores: { 抢口: 2 }
       - id: 2
         position: middle
-        text: 如果本来没硬安排，我会去；真有事也不会为了鱼口硬改。
+        text: 如果本来没特殊安排会去，真有事就不去了。
         scores: { H: 1, C: 1 }
         facetScores: { 复盘: 2 }
       - id: 3
         position: right
-        text: 算了，今天就按原计划走，钓鱼留给更从容的时候。
+        text: 算了，按原计划安排。
         scores: { C: 2 }
         facetScores: { 随缘: 2 }
   - id: 3
@@ -102,112 +102,112 @@ questions:
     options:
       - id: 1
         position: left
-        text: 越想越上头，回去就开始查天气、水情和别人怎么打的。
+        text: 越想越上头，开始复盘原因：位置、天气、鱼情、技巧。
         scores: { H: 2 }
         facetScores: { 抢口: 2 }
       - id: 2
         position: middle
-        text: 会回想一下哪里不对，但不会立刻把自己拧进复盘模式。
+        text: 回偶尔想一下哪里不对，不会刻意复盘。
         scores: { H: 1, C: 1 }
         facetScores: { 复盘: 2 }
       - id: 3
         position: right
-        text: 先放着，空军就空军，过两天想去了再说。
+        text: 空军就空军，过两天想去了再去。
         scores: { C: 2 }
         facetScores: { 随缘: 2 }
   - id: 4
     axis: I
-    text: 明知第二天可能降温走水，但有人说清晨会有短口，你会：
+    text: 明天清晨会有短口，但可能降温走水，你会：
     options:
       - id: 1
         position: left
-        text: 还是去，哪怕只赌那一小段时间，也值得试。
+        text: 果断去，值得一试。
         scores: { H: 2 }
         facetScores: { 抢口: 2 }
       - id: 2
         position: middle
-        text: 看起床状态，起来了就去，不起来也不强求自己。
+        text: 起来了就去，不起来也不强求自己。
         scores: { H: 1, C: 1 }
         facetScores: { 复盘: 2 }
       - id: 3
         position: right
-        text: 直接不折腾，天气都这样了，不如等更稳的天。
+        text: 天气这样，不折腾了。
         scores: { C: 2 }
         facetScores: { 随缘: 2 }
   - id: 5
     axis: I
-    text: 一场钓完回到家，什么最容易让你忍不住继续想着这件事？
+    text: 好不容易搞了一条大鱼脱钩了，你会？
     options:
       - id: 1
         position: left
-        text: 哪个环节差一点就能更好，我会反复琢磨。
+        text: 夜不能寐，反复琢磨哪个环节出问题了，
         scores: { H: 2 }
         facetScores: { 抢口: 2 }
       - id: 2
         position: middle
-        text: 会顺手记一下感受，但不会让它占满后半天。
+        text: 拍大腿，继续干。
         scores: { H: 1, C: 1 }
         facetScores: { 复盘: 2 }
       - id: 3
         position: right
-        text: 洗完装备这事基本就翻篇了，今天过去就过去。
+        text: 说明和这条鱼没缘分。
         scores: { C: 2 }
         facetScores: { 随缘: 2 }
   - id: 6
     axis: S
-    text: 你到钓点刚把车停好，第一反应通常是：
+    text: 到钓点第一件事：
     options:
       - id: 1
         position: left
-        text: 先看看熟人都在哪，顺便打个招呼，场子热起来再说。
+        text: 先看看有没有钓友，顺便去聊聊，兄弟口咋样啊。
         scores: { S: 2 }
         facetScores: { 组局: 2 }
       - id: 2
         position: middle
-        text: 跟认识的人点个头，聊两句，但还是先把自己位置安顿好。
+        text: 跟认识的人聊两句，不认识的就算了。
         scores: { S: 1, O: 1 }
         facetScores: { 搭子: 2 }
       - id: 3
         position: right
-        text: 先找个安静钓位把自己放进去，不太想一到场就社交。
+        text: 先找个安静钓位，抓紧时间下杆
         scores: { O: 2 }
         facetScores: { 守界: 2 }
   - id: 7
     axis: S
-    text: 朋友说“明天一起钓，我跟着你走”，你一般会：
+    text: 有朋友约你一起去一个地方钓鱼
     options:
       - id: 1
         position: left
-        text: 直接开始张罗时间、地点、谁带什么，顺手把局组起来。
+        text: 直接开始张罗时间、地点、谁带什么，把局组起来。
         scores: { S: 2 }
         facetScores: { 组局: 2 }
       - id: 2
         position: middle
-        text: 可以一起，但更像各钓各的，路上和收杆后再慢慢聊。
+        text: 看情况，一般会看熟悉程度和钓点位置。
         scores: { S: 1, O: 1 }
         facetScores: { 搭子: 2 }
       - id: 3
         position: right
-        text: 更想分开行动，到点见或者各玩各的都行。
+        text: 还是一个人自己钓爽。
         scores: { O: 2 }
         facetScores: { 守界: 2 }
   - id: 8
     axis: S
-    text: 你发现自己这边有口，旁边朋友一直没动静，你会：
+    text: 你自己这边狂口，旁边钓友一直没动静，你会：
     options:
       - id: 1
         position: left
-        text: 马上喊他过来，顺手把漂深、饵料和点位都讲给他。
+        text: 和他分享下调漂方案和饵料和鱼获
         scores: { S: 2 }
         facetScores: { 组局: 2 }
       - id: 2
         position: middle
-        text: 会提醒一句关键变化，剩下让他自己判断怎么接。
+        text: 偶尔会提醒一句关键技巧。
         scores: { S: 1, O: 1 }
         facetScores: { 搭子: 2 }
       - id: 3
         position: right
-        text: 大多时候先不打断彼此节奏，除非他主动来问。
+        text: 大多时候各钓各的，除非他主动来问。
         scores: { O: 2 }
         facetScores: { 守界: 2 }
   - id: 9
@@ -216,17 +216,17 @@ questions:
     options:
       - id: 1
         position: left
-        text: 挺好，边聊边钓更有感觉，气氛起来了口差点也无所谓。
+        text: 挺好，边聊边钓更有感觉。
         scores: { S: 2 }
         facetScores: { 组局: 2 }
       - id: 2
         position: middle
-        text: 短聊没问题，但真到关键窗口我还是会把注意力收回来。
+        text: 短聊没问题，注意力都在漂上。
         scores: { S: 1, O: 1 }
         facetScores: { 搭子: 2 }
       - id: 3
         position: right
-        text: 会有点烦，我来水边就是想安静待着，不想一直接话。
+        text: 会有点烦，不想接话。
         scores: { O: 2 }
         facetScores: { 守界: 2 }
   - id: 10
@@ -250,192 +250,192 @@ questions:
         facetScores: { 守界: 2 }
   - id: 11
     axis: T
-    text: 陌生水域下杆半小时没动静，你最先会动哪一块？
+    text: 陌生水域下杆半小时没动静，你会？
     options:
       - id: 1
         position: left
-        text: 先从线组、饵料、层次和手法一点点试，找问题在哪。
+        text: 从位置、饵料、水层和手法一点点试，找问题在哪。
         scores: { T: 2 }
         facetScores: { 调校: 2 }
       - id: 2
         position: middle
-        text: 先做最省事的微调，能不大拆就不大拆，边钓边试。
+        text: 先不调整，说不定下一杆就中鱼了。
         scores: { T: 1, G: 1 }
         facetScores: { 省事: 2 }
       - id: 3
         position: right
-        text: 先检查是不是装备配置不对，必要时直接换更合适的家伙。
+        text: 拿探鱼器看看鱼有没有进窝，或者再支一根鱼竿。
         scores: { G: 2 }
         facetScores: { 配装: 2 }
   - id: 12
     axis: T
-    text: 手里突然多出一笔钓鱼预算，你第一反应是：
+    text: 手里有米，你会：
     options:
       - id: 1
         position: left
-        text: 买些能帮我练判断和提升打法的东西，最好直接作用在技术上。
+        text: 买些能帮我练判断和提升打法的东西，最好直接作用在技术上。（待改）
         scores: { T: 2 }
         facetScores: { 调校: 2 }
       - id: 2
         position: middle
-        text: 先补最缺的那点，别让装备和打法哪边拖后腿。
+        text: 只要不影响上鱼，装备够用就行。
         scores: { T: 1, G: 1 }
         facetScores: { 省事: 2 }
       - id: 3
         position: right
-        text: 终于可以升级一直想换的竿轮箱包了，配置先到位再说。
+        text: 终于可以升级一直想换的竿、轮、箱、包了。
         scores: { G: 2 }
         facetScores: { 配装: 2 }
   - id: 13
     axis: T
-    text: 你平时最愿意反复刷的内容，更像是：
+    text: 你平时爱刷的视频内容：
     options:
       - id: 1
         position: left
-        text: 拆鱼情、讲思路、教怎么判断的内容。
+        text: 钓位选择、鱼情分析、调漂技巧、饵料搭配等。
         scores: { T: 2 }
         facetScores: { 调校: 2 }
       - id: 2
         position: middle
-        text: 那种既讲打法也讲配置，能直接抄回去用的内容。
+        text: 钓鱼独居，荒野钓鱼挑战，钓鱼比赛。
         scores: { T: 1, G: 1 }
         facetScores: { 省事: 2 }
       - id: 3
         position: right
-        text: 开箱、评测、器材搭配和 setup 展示。
+        text: 钓鱼装备评测、开箱、对比等。
         scores: { G: 2 }
         facetScores: { 配装: 2 }
   - id: 14
     axis: T
-    text: 第一次去新钓点，你开局更像哪种人？
+    text: 到了一个新钓点，你是？
     options:
       - id: 1
         position: left
-        text: 先观察水色、风向、深浅和别人节奏，再决定怎么打。
+        text: 先观察钓位，水深，障碍物等
         scores: { T: 2 }
         facetScores: { 调校: 2 }
       - id: 2
         position: middle
-        text: 先用自己最熟的一套开局，感觉不对再逐步调整。
+        text: 看看旁边有没有钓友，去问问了解一下情况。
         scores: { T: 1, G: 1 }
         facetScores: { 省事: 2 }
       - id: 3
         position: right
-        text: 先把最适合这个场子的装备方案上齐，别一开始就吃配置亏。
+        text: 拿设备看看有没有鱼。
         scores: { G: 2 }
         facetScores: { 配装: 2 }
   - id: 15
     axis: T
-    text: 一趟钓完收拾装备时，你更容易把注意力放在：
+    text: 平常不钓鱼的时候你会：
     options:
       - id: 1
         position: left
-        text: 今天哪些判断是对的，哪些动作还要修。
+        text: 心里一直想着下次去哪儿钓。
         scores: { T: 2 }
         facetScores: { 调校: 2 }
       - id: 2
         position: middle
-        text: 先把东西收顺手，能复用的经验记住就够了，不用过度上纲。
+        text: 专心干正经事。
         scores: { T: 1, G: 1 }
         facetScores: { 省事: 2 }
       - id: 3
         position: right
-        text: 哪件装备顺不顺手、哪里该升级，下一次怎么搭更舒服。
+        text: 总感觉自己的装备不够用，好想剁手。
         scores: { G: 2 }
         facetScores: { 配装: 2 }
   - id: 16
     axis: R
-    text: 天色开始暗了，今天鱼获一般，你决定收不收杆时最看重：
+    text: 什么决定你收不收杆：
     options:
       - id: 1
         position: left
-        text: 再守一会儿，说不定最后还能把结果拉回来。
+        text: 没搞大大鱼，再守一会儿。
         scores: { R: 2 }
         facetScores: { 胜负: 2 }
       - id: 2
         position: middle
-        text: 看当下感觉，今天要是已经尽兴了，早点收也没什么。
+        text: 看当下感觉，尽兴了就收。
         scores: { R: 1, E: 1 }
         facetScores: { 氛围: 2 }
       - id: 3
         position: right
-        text: 差不多就行，别把自己耗得太累，舒服收工更重要。
+        text: 差不多就行，别太累。
         scores: { E: 2 }
         facetScores: { 舒服: 2 }
   - id: 17
     axis: R
-    text: 旁边钓友突然连杆，你心里第一反应更像：
+    text: 旁边钓友突然连杆，你心里反应是：
     options:
       - id: 1
         position: left
-        text: 我会立刻紧起来，想知道问题出在哪，最好把差距追回来。
+        text: 我会立刻躁动起来，心里想问题出在哪里。
         scores: { R: 2 }
         facetScores: { 胜负: 2 }
       - id: 2
         position: middle
-        text: 会看看他在干嘛，也会调一调，但不至于马上进入较劲状态。
+        text: 哥们，你用的啥饵料？
         scores: { R: 1, E: 1 }
         facetScores: { 氛围: 2 }
       - id: 3
         position: right
-        text: 替他开心一下就行，各有各的节奏，没必要把自己搞紧。
+        text: 他上他的，我钓我的
         scores: { E: 2 }
         facetScores: { 舒服: 2 }
   - id: 18
     axis: R
-    text: 今天一直没什么口，但天气、风和人都挺舒服，你会：
+    text: 今天天气温度都挺舒服，但是一直没什么口，你会：
     options:
       - id: 1
         position: left
-        text: 舒服归舒服，没结果还是不甘心，想再咬牙试一阵。
+        text: 舒服归舒服，没上鱼还是不甘心，再守守看。
         scores: { R: 2 }
         facetScores: { 胜负: 2 }
       - id: 2
         position: middle
-        text: 如果同行的人状态也不错，我可能就顺着这份氛围慢慢收尾。
+        text: 钓到差不多时候了，就回去吧。
         scores: { R: 1, E: 1 }
         facetScores: { 氛围: 2 }
       - id: 3
         position: right
-        text: 那就当出来放空了，今天待得舒服本身就算赚到。
+        text: 享受在那一坐，整个人舒服的感觉。
         scores: { E: 2 }
         facetScores: { 舒服: 2 }
   - id: 19
     axis: R
-    text: 回想一场“不错的出钓”，你最容易先记住的是：
+    text: 让你印象深刻的一个画面：
     options:
       - id: 1
         position: left
-        text: 最后到底钓了多少、有没有把目标打出来。
+        text: 一次爆护，成为了最靓的仔。
         scores: { R: 2 }
         facetScores: { 胜负: 2 }
       - id: 2
         position: middle
-        text: 那天整体节奏很顺，人和场子都对，回想起来很完整。
+        text: 和几个钓友一起钓鱼，大家都很开心。
         scores: { R: 1, E: 1 }
         facetScores: { 氛围: 2 }
       - id: 3
         position: right
-        text: 那天人很松、风景很对、待着就是舒服，鱼反而没那么关键。
+        text: 在一个风景如画，景色绝佳的地方钓鱼。
         scores: { E: 2 }
         facetScores: { 舒服: 2 }
   - id: 20
     axis: R
-    text: 如果问你“下次还想不想来这个钓点”，最影响答案的是：
+    text: 什么决定你下次还来这个钓点：
     options:
       - id: 1
         position: left
-        text: 这里有没有机会让我把成绩再往上拉。
+        text: 这里有没有机会让我爆护
         scores: { R: 2 }
         facetScores: { 胜负: 2 }
       - id: 2
         position: middle
-        text: 今天这趟整体状态是不是在线，值不值得再来一次类似的局。
+        text: 今天这趟整体状态是不是在线，值不值得再来一次类似的局。（待改）
         scores: { R: 1, E: 1 }
         facetScores: { 氛围: 2 }
       - id: 3
         position: right
-        text: 这里待着舒不舒服、顺不顺手，愿不愿意再来放松一天。
+        text: 这里待着舒不舒服、顺不顺手，愿不愿意再来放松一天。（待改）
         scores: { E: 2 }
         facetScores: { 舒服: 2 }
 
