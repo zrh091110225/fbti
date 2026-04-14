@@ -98,7 +98,7 @@ questions:
         facetScores: { 随缘: 2 }
   - id: 3
     axis: I
-    text: 连续两次空军回来，你回家后的状态更像：
+    text: 连续两次空军回来，你回家后：
     options:
       - id: 1
         position: left
@@ -117,7 +117,7 @@ questions:
         facetScores: { 随缘: 2 }
   - id: 4
     axis: I
-    text: 明天清晨会有短口，但可能降温走水，你会：
+    text: 明早有短口，但可能降温，你会？
     options:
       - id: 1
         position: left
@@ -136,7 +136,7 @@ questions:
         facetScores: { 随缘: 2 }
   - id: 5
     axis: I
-    text: 好不容易搞了一条大鱼脱钩了，你会？
+    text: 好不容易搞了一条大鱼脱钩了：
     options:
       - id: 1
         position: left
@@ -174,7 +174,7 @@ questions:
         facetScores: { 守界: 2 }
   - id: 7
     axis: S
-    text: 有朋友约你一起去一个地方钓鱼
+    text: 有朋友约你一起去一个地方钓鱼：
     options:
       - id: 1
         position: left
@@ -193,7 +193,7 @@ questions:
         facetScores: { 守界: 2 }
   - id: 8
     axis: S
-    text: 你自己这边狂口，旁边钓友一直没动静，你会：
+    text: 你自己狂口，旁边钓友一直没动静，你会？
     options:
       - id: 1
         position: left
@@ -212,7 +212,7 @@ questions:
         facetScores: { 守界: 2 }
   - id: 9
     axis: S
-    text: 钓着钓着，旁边人开始一直跟你聊天，你的真实反应更像：
+    text: 钓着钓着，旁边人开始一直跟你聊天：
     options:
       - id: 1
         position: left
@@ -231,21 +231,21 @@ questions:
         facetScores: { 守界: 2 }
   - id: 10
     axis: S
-    text: 收杆之后，如果大家说找地方坐坐继续聊，你通常会：
+    text: 你偶然发现一个很好的私藏钓点
     options:
       - id: 1
         position: left
-        text: 大概率加入，钓完再聊一轮，整天才算完整。
+        text: 第一时间发给朋友，最好还能组个局一起去。
         scores: { S: 2 }
         facetScores: { 组局: 2 }
       - id: 2
         position: middle
-        text: 看当天状态，有兴致就坐一会儿，没兴致就先撤。
+        text: 只告诉一两个熟人。
         scores: { S: 1, O: 1 }
         facetScores: { 搭子: 2 }
       - id: 3
         position: right
-        text: 更想直接回家，今天的社交额度在水边差不多已经用完了。
+        text: 先自己留着，不太想让太多人知道
         scores: { O: 2 }
         facetScores: { 守界: 2 }
   - id: 11
@@ -269,7 +269,7 @@ questions:
         facetScores: { 配装: 2 }
   - id: 12
     axis: T
-    text: 手里有米，你会：
+    text: 手里有米，你会？
     options:
       - id: 1
         position: left
@@ -307,11 +307,11 @@ questions:
         facetScores: { 配装: 2 }
   - id: 14
     axis: T
-    text: 到了一个新钓点，你是？
+    text: 到了一个新钓点你会：
     options:
       - id: 1
         position: left
-        text: 先观察钓位，水深，障碍物等
+        text: 先观察钓位，水深，障碍物。
         scores: { T: 2 }
         facetScores: { 调校: 2 }
       - id: 2
@@ -421,7 +421,7 @@ questions:
         facetScores: { 舒服: 2 }
   - id: 20
     axis: R
-    text: 群里或朋友圈你会发什么内容：
+    text: 朋友圈或者群里你会发：
     options:
       - id: 1
         position: left
@@ -430,7 +430,7 @@ questions:
         facetScores: { 胜负: 2 }
       - id: 2
         position: middle
-        text: 美好的瞬间
+        text: 钓鱼的美好瞬间
         scores: { R: 1, E: 1 }
         facetScores: { 氛围: 2 }
       - id: 3
