@@ -265,8 +265,11 @@ function Home({ onStart }: HomeProps) {
               {personalities.map(personality => (
                 <article key={personality.id} className="personality-card">
                   <div className="personality-card-head">
-                    <div>
+                    <div className="personality-card-title-row">
                       <h3>{personality.name}</h3>
+                      <span className="personality-code">{personality.id}</span>
+                    </div>
+                    <div>
                       <p>{personality.title}</p>
                     </div>
                   </div>

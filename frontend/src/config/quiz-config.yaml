@@ -442,7 +442,7 @@ questions:
 resultTypes:
   - id: HOTR
     name: 钓帝
-    image: /results/sample-personality-result.png
+    image: /results/钓帝.png
     emoji: "🎯"
     title: 狂热 × 独处 × 技术 × 结果
     description: 你对钓鱼有很强的掌控欲，喜欢把鱼情、节奏和手法拆成一套能复盘的系统。你愿意投入时间独自打磨细节，目标很明确，就是把结果握在自己手里。
@@ -452,7 +452,7 @@ resultTypes:
     scene: 清晨黑坑边，你把装备一字排开，低头调漂、抬头盯水，像在指挥一场只属于自己的战斗。
   - id: HOTE
     name: 守钓宗师
-    image: /results/sample-personality-result.png
+    image: /results/守钓宗师.png
     emoji: "🌫️"
     title: 狂热 × 独处 × 技术 × 体验
     description: 你对钓鱼同样认真，但认真并不一定指向爆护。你更在意观察水、理解鱼情、感受节奏，技术是你和环境建立连接的方式。
@@ -462,7 +462,7 @@ resultTypes:
     scene: 山间溪流薄雾未散，你一个人坐在石头上守着浮漂，周围安静得只剩水声和呼吸。
   - id: HOGR
     name: 钓位终结者
-    image: /results/sample-personality-result.png
+    image: /results/钓位终结者.png
     emoji: "🧰"
     title: 狂热 × 独处 × 装备 × 结果
     description: 你相信好结果不是等来的，而是靠整套装备体系一点点堆出来的。器材、配件、线组和细节优化都服务于同一件事，那就是提高胜率。
@@ -472,7 +472,7 @@ resultTypes:
     scene: 钓位前高端装备整齐展开，鱼护满满，你站在中间，像把一整套战斗体系铺在水边。
   - id: HOGE
     name: 孤钓收藏家
-    image: /results/sample-personality-result.png
+    image: /results/孤钓收藏家.png
     emoji: "🪞"
     title: 狂热 × 独处 × 装备 × 体验
     description: 你迷恋的不只是鱼口，更是器材、搭配和氛围组成的完整 setup。对你来说，钓鱼是一种精致的个人秩序，鱼获只是这套秩序里的附加奖励。
@@ -512,7 +512,7 @@ resultTypes:
     scene: 你给朋友分装备、配线组、盯细节，最后一群人鱼护都满了，你笑得比谁都早。
   - id: HSGE
     name: 海王
-    image: /results/sample-personality-result.png
+    image: /results/海王.png
     emoji: "🔥"
     title: 狂热 × 社交 × 装备 × 体验
     description: 你对一场局的投入一点不轻，只是你最在意的不是鱼，而是气氛、排面和参与感。对你来说，钓鱼是载体，把人聚舒服才是正事。
@@ -522,7 +522,7 @@ resultTypes:
     scene: 夕阳下，一群人围坐笑个不停，鱼竿只是道具，真正被你撑起来的是整场气氛。
   - id: COTR
     name: 独钓连竿手
-    image: /results/sample-personality-result.png
+    image: /results/独钓连竿手.png
     emoji: "⚡"
     title: 松弛 × 独处 × 技术 × 结果
     description: 你不一定天天钓，但只要出手就讲究效率。你会用最短的时间判断鱼情、做出调整，然后把有限的时间尽量换成清晰的结果。
@@ -532,7 +532,7 @@ resultTypes:
     scene: 城市河道边，你快速选点、下杆、收杆，动作利落得像在跑一套高效流程。
   - id: COTE
     name: 随缘钓客
-    image: /results/sample-personality-result.png
+    image: /results/随缘钓客.png
     emoji: "🍃"
     title: 松弛 × 独处 × 技术 × 体验
     description: 你并不是不会钓，相反，你懂得不少，只是不会把每次出钓都变成成绩考核。你喜欢松一点、慢一点，让技术服务于放松，而不是服务于压力。
@@ -542,7 +542,7 @@ resultTypes:
     scene: 午后野河边，你半躺着看水面，偶尔收杆，更多时候只是把时间慢慢过掉。
   - id: COGR
     name: 爆护独行侠
-    image: /results/sample-personality-result.png
+    image: /results/爆护独行侠.png
     emoji: "🎒"
     title: 松弛 × 独处 × 装备 × 结果
     description: 你对装备有要求，但不会让它变成负担。你更偏爱轻便、顺手、稳定那一套，希望用刚刚好的配置换来刚刚好的成果。
@@ -552,7 +552,7 @@ resultTypes:
     scene: 简单装备、一人一竿、收纳干净，整套配置不夸张，却处处顺手。
   - id: COGE
     name: 精致钓人
-    image: /results/sample-personality-result.png
+    image: /results/精致钓鱼人.png
     emoji: "📷"
     title: 松弛 × 独处 × 装备 × 体验
     description: 你会把钓鱼过成一种生活方式。环境、光线、器材、穿着和当下的状态一样重要，你要的不是任务完成，而是这一刻足够好看也足够舒服。
@@ -562,7 +562,7 @@ resultTypes:
     scene: 溪流、光影、鱼竿与自然构成一幅画面，你时不时拿起手机，把这一刻留住。
   - id: CSTR
     name: 钓场军师
-    image: /results/sample-personality-result.png
+    image: /results/钓场军师.png
     emoji: "🧭"
     title: 松弛 × 社交 × 技术 × 结果
     description: 你平时节奏不算重，但真到周末就会迅速进入带队模式。你擅长安排位置、分配节奏、盯关键节点，是那种能把一群人拉成战队的人。
@@ -572,7 +572,7 @@ resultTypes:
     scene: 周末钓场，一群人统一时间到达，你负责安排位置、节奏和整场行动顺序。
   - id: CSTE
     name: 摸鱼老炮
-    image: /results/sample-personality-result.png
+    image: /results/摸鱼老炮.png
     emoji: "💬"
     title: 松弛 × 社交 × 技术 × 体验
     description: 你并不排斥技术，甚至还挺懂，但你真正喜欢的是这件事让人自然聚在一起。钓鱼对你来说是一张门票，让聊天、放松和陪伴都变得很成立。
@@ -592,7 +592,7 @@ resultTypes:
     scene: 你打开装备箱，一件件展示给朋友看，语气克制，眼里的兴奋却藏不住。
   - id: CSGE
     name: 岸边搭子
-    image: /results/sample-personality-result.png
+    image: /results/岸边搭子.png
     emoji: "😄"
     title: 松弛 × 社交 × 装备 × 体验
     description: 你是最轻松也最有陪伴感的一类。对你来说，钓鱼不是任务，而是一个把朋友、零食、天气和好心情装进同一天的理由。
