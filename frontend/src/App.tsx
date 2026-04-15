@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, LazyMotion, domAnimation, m } from 'framer-motion'
+import { Analytics } from '@vercel/analytics/react'
 import Home from './pages/Home'
 import Quiz from './pages/Quiz'
 import Result from './pages/Result'
@@ -112,38 +113,41 @@ function App() {
 
   return (
     <LazyMotion features={domAnimation}>
-      <div className="app-shell">
-        <AnimatePresence mode="wait">
-          <m.div
-            key={screen}
-            className={`app-screen app-screen-${screen}`}
-            variants={pageTransition}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-          >
-            {screen === 'home' && <Home onStart={handleStart} />}
-            {screen === 'quiz' && (
-              <Quiz
-                questions={orderedQuestions}
-                currentQuestion={currentQuestion}
-                answers={answers}
-                onAnswer={handleAnswer}
-                onExit={handleExitQuiz}
-                onPrevious={handlePreviousQuestion}
-                onNext={handleNextQuestion}
-                onFinish={handleFinish}
-              />
-            )}
-            {screen === 'result' && (
-              <Result
-                answers={answers}
-                onRestart={handleRestart}
-              />
-            )}
-          </m.div>
-        </AnimatePresence>
-      </div>
+      <>
+        <div className="app-shell">
+          <AnimatePresence mode="wait">
+            <m.div
+              key={screen}
+              className={`app-screen app-screen-${screen}`}
+              variants={pageTransition}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              {screen === 'home' && <Home onStart={handleStart} />}
+              {screen === 'quiz' && (
+                <Quiz
+                  questions={orderedQuestions}
+                  currentQuestion={currentQuestion}
+                  answers={answers}
+                  onAnswer={handleAnswer}
+                  onExit={handleExitQuiz}
+                  onPrevious={handlePreviousQuestion}
+                  onNext={handleNextQuestion}
+                  onFinish={handleFinish}
+                />
+              )}
+              {screen === 'result' && (
+                <Result
+                  answers={answers}
+                  onRestart={handleRestart}
+                />
+              )}
+            </m.div>
+          </AnimatePresence>
+        </div>
+        <Analytics />
+      </>
     </LazyMotion>
   )
 }

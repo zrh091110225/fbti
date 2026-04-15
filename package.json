@@ -11,5 +11,8 @@
     "build": "npm run build --workspace frontend",
     "typecheck": "npm run typecheck --workspace frontend",
     "start:backend": "npm run start --workspace backend"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
   }
 }
