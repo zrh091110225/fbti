@@ -187,31 +187,6 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
 
           <div className="quiz-layout">
             <div className="quiz-card surface">
-              <AnimatePresence>
-                {motionState.isReeling && (
-                  <m.div
-                    className="quiz-reel-overlay"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: prefersReducedMotion ? 0.12 : 0.24 }}
-                  >
-                    <svg className="quiz-reel-line" viewBox="0 0 420 240" preserveAspectRatio="none">
-                      <m.path
-                        d="M18 202C84 162 176 134 252 116C319 99 364 73 402 32"
-                        fill="none"
-                        stroke="rgba(197, 238, 211, 0.9)"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        exit={{ pathLength: 0 }}
-                        transition={{ duration: prefersReducedMotion ? 0.12 : 0.42, ease: 'easeOut' }}
-                      />
-                    </svg>
-                  </m.div>
-                )}
-              </AnimatePresence>
 
               <span className="question-label">
                 第 {currentQuestion + 1} 题

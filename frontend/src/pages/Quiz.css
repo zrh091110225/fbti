@@ -553,20 +553,6 @@
   margin-top: 22px;
 }
 
-.quiz-reel-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-}
-
-.quiz-reel-line {
-  position: absolute;
-  inset: auto 0 72px auto;
-  width: 44%;
-  height: 42%;
-}
-
 .quiz-frame.is-reeling .quiz-card,
 .quiz-frame.is-reeling .reel-progress {
   transform: translateY(-8px);
