@@ -9,7 +9,21 @@ const DEFAULT_STATE: PersistedQuizState = {
   questionOrder: []
 }
 
+function isStorageAvailable(): boolean {
+  try {
+    const testKey = '__storage_test__'
+    localStorage.setItem(testKey, testKey)
+    localStorage.removeItem(testKey)
+    return true
+  } catch {
+    return false
+  }
+}
+
 export function loadQuizState(): PersistedQuizState {
+  if (!isStorageAvailable()) {
+    return DEFAULT_STATE
+  }
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) {
@@ -41,6 +55,9 @@ export function loadQuizState(): PersistedQuizState {
 }
 
 export function saveQuizState(state: PersistedQuizState) {
+  if (!isStorageAvailable()) {
+    return
+  }
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
   } catch (error) {
@@ -49,6 +66,9 @@ export function saveQuizState(state: PersistedQuizState) {
 }
 
 export function clearQuizState() {
+  if (!isStorageAvailable()) {
+    return
+  }
   try {
     localStorage.removeItem(STORAGE_KEY)
   } catch (error) {

@@ -311,8 +311,8 @@ function Home({ onStart }: HomeProps) {
 
           <footer className="home-footer surface">
             <div>
-              <strong>FBTI 钓鱼人大性格测试</strong>
-              <p>先看清测试逻辑，再开始作答，你会更容易理解结果为什么会落在这个人格上。</p>
+              <strong>FBTI 钓鱼人格测试</strong>
+              <p>准备好就开始测试吧~</p>
             </div>
 
             <div className="home-footer-links">
