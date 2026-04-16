@@ -279,7 +279,35 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
                       : { duration: 0.42, ease: 'easeInOut', repeat: motionState.isLanding ? 0 : 1 }
                   }
                 >
-                  收线(下一题)
+                  <m.span
+                    className="quiz-nav-button__reel-icon"
+                    animate={
+                      motionState.isReeling
+                        ? { rotate: prefersReducedMotion ? 0 : 360 }
+                        : motionState.isLanding
+                          ? { rotate: prefersReducedMotion ? 0 : 180 }
+                          : { rotate: 0 }
+                    }
+                    transition={
+                      prefersReducedMotion
+                        ? { duration: 0.01 }
+                        : {
+                            duration: motionState.isLanding ? 0.5 : 0.7,
+                            ease: 'linear'
+                          }
+                    }
+                  >
+                    {/* Reel icon SVG */}
+                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                      <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
+                      <circle cx="10" cy="10" r="4" stroke="currentColor" strokeWidth="1.5" />
+                      <line x1="10" y1="2" x2="10" y2="6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <line x1="10" y1="14" x2="10" y2="18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <line x1="2" y1="10" x2="6" y2="10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                      <line x1="14" y1="10" x2="18" y2="10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                  </m.span>
+                  收线
                 </m.span>
               </button>
 
