@@ -98,7 +98,7 @@ questions:
         facetScores: { 随缘: 2 }
   - id: 3
     axis: I
-    text: 连续两次空军回来，你回家后：
+    text: 连续两次空军回家后：
     options:
       - id: 1
         position: left
@@ -174,7 +174,7 @@ questions:
         facetScores: { 守界: 2 }
   - id: 7
     axis: S
-    text: 有朋友约你一起去一个地方钓鱼：
+    text: 有钓友约你一起去钓鱼：
     options:
       - id: 1
         position: left
@@ -472,10 +472,10 @@ resultTypes:
     scene: 钓位前高端装备整齐展开，鱼护满满，你站在中间，像把一整套战斗体系铺在水边。
   - id: HOGE
     name: 孤钓收藏家
-    image: /results/孤钓收藏家.png
+    image: /results/收藏家.png
     emoji: "🪞"
     title: 狂热 × 独处 × 装备 × 体验
-    description: 你迷恋的不只是鱼口，更是器材、搭配和氛围组成的完整 setup。对你来说，钓鱼是一种精致的个人秩序，鱼获只是这套秩序里的附加奖励。
+    description: 你迷恋的不只是鱼口，更是器材、搭配和氛围组成的完整。对你来说，钓鱼是一种精致的个人秩序，鱼获只是这套秩序里的附加奖励。
     traits: [审美控, 收藏欲, 独处沉迷, 氛围优先]
     dimensions: [狂热型, 独处型, 装备流, 体验派]
     signature: 鱼只是背景，这套装备才是主角。
@@ -521,8 +521,8 @@ resultTypes:
     signature: 鱼可以空，局不能垮。
     scene: 夕阳下，一群人围坐笑个不停，鱼竿只是道具，真正被你撑起来的是整场气氛。
   - id: COTR
-    name: 独钓连竿手
-    image: /results/独钓连竿手.png
+    name: 连竿手
+    image: /results/连竿手.png
     emoji: "⚡"
     title: 松弛 × 独处 × 技术 × 结果
     description: 你不一定天天钓，但只要出手就讲究效率。你会用最短的时间判断鱼情、做出调整，然后把有限的时间尽量换成清晰的结果。
@@ -531,7 +531,7 @@ resultTypes:
     signature: 我不常卷，但出手就得见效。
     scene: 城市河道边，你快速选点、下杆、收杆，动作利落得像在跑一套高效流程。
   - id: COTE
-    name: 随缘钓客
+    name: 佛系钓客
     image: /results/随缘钓客.png
     emoji: "🍃"
     title: 松弛 × 独处 × 技术 × 体验
