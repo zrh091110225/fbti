@@ -2,12 +2,10 @@
   "name": "fbti",
   "private": true,
   "workspaces": [
-    "frontend",
-    "backend"
+    "frontend"
   ],
   "scripts": {
     "dev:frontend": "npm run dev --workspace frontend",
-    "dev:backend": "npm run dev --workspace backend",
     "build": "npm run build --workspace frontend",
     "typecheck": "npm run typecheck --workspace frontend",
     "start:backend": "npm run start --workspace backend"
