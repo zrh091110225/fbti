@@ -253,14 +253,6 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
           <div className="quiz-footer">
             <div className="quiz-action-group">
               <button
-                className="quiz-nav-button quiz-nav-button-home"
-                onClick={handleOpenExitPrompt}
-                disabled={motionState.isReeling || motionState.isLanding}
-              >
-                回到首页
-              </button>
-
-              <button
                 className="quiz-nav-button quiz-nav-button-secondary"
                 onClick={handlePrevious}
                 disabled={currentQuestion <= 0 || motionState.isReeling || motionState.isLanding}
@@ -290,6 +282,15 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
                   收线(下一题)
                 </m.span>
               </button>
+
+              <button
+                  className="quiz-nav-button quiz-nav-button-home"
+                  onClick={handleOpenExitPrompt}
+                  disabled={motionState.isReeling || motionState.isLanding}
+              >
+                回到首页
+              </button>
+
             </div>
           </div>
         </section>
