@@ -122,11 +122,10 @@ function Home({ onStart }: HomeProps) {
             <div className="home-hero-copy">
               <span className="section-label">Fishing Behavior Type Indicator</span>
 
-              <h1 className="home-title">FBTI 钓鱼人格测试，你是哪一型钓鱼人？</h1>
+              <h1 className="home-title">FBTI 专为钓鱼人打造的人格测试</h1>
 
               <p className="home-description">
-                用 {questions.length} 道问题，从投入强度、相处方式、偏好路径和价值取向四个维度，
-                识别你是 16 型钓鱼人格画像中的哪一种。
+                钓了这么久的鱼，想不想知道你是哪种钓鱼佬？用 {questions.length} 道问题，准确识别你是 16 中钓鱼人格中的哪一种，快试试吧。
               </p>
 
               <div className="home-actions">
@@ -144,7 +143,7 @@ function Home({ onStart }: HomeProps) {
                 </button>
               </div>
 
-              <p className="home-footnote">仅供娱乐，建议按第一直觉作答，结果会更稳定。</p>
+              <p className="home-footnote">建议按第一直觉作答，结果会更准确。</p>
             </div>
 
             <div className="home-hero-panel">
@@ -166,9 +165,10 @@ function Home({ onStart }: HomeProps) {
               <div className="hero-note-card">
                 <span className="content-label">你会得到什么</span>
                 <ul>
-                  <li>你的核心人格标签与一句话总结</li>
-                  <li>四轴落点和这次最明显的 3 个行为标签</li>
+                  <li>专属的人格标签与一句话总结</li>
+                  <li>四个维度得分和三个行为标签</li>
                   <li>可直接分享给钓友的测试结果海报</li>
+                  <li>加入社群寻找志同道合的钓友</li>
                 </ul>
               </div>
             </div>
@@ -183,10 +183,10 @@ function Home({ onStart }: HomeProps) {
             transition={{ duration: 0.5 }}
           >
             <div className="section-heading">
-              <span className="section-label">四大维度</span>
-              <h2>一个专门针对钓鱼人的人格测试</h2>
+              {/*<span className="section-label">四大维度</span>*/}
+              <h2>四大维度全面分析</h2>
               <p>
-                系统会从投入强度/相处方式/偏好路径/价值取向了解你钓鱼行为里识别你的稳定倾向，测试结果一定会让你更了解你是那种钓鱼佬。
+                系统会从投入强度/相处方式/偏好路径/价值取向了解你钓鱼行为里识别你的稳定倾向，测试结果一定会让你更了解你是哪种钓鱼佬。
               </p>
             </div>
 
@@ -211,8 +211,8 @@ function Home({ onStart }: HomeProps) {
             transition={{ duration: 0.5 }}
           >
             <div className="section-heading">
-              <span className="section-label">关于测试</span>
-              <h2>包含：玩法 & 耗时 & 结果形式</h2>
+              {/*<span className="section-label">关于测试</span>*/}
+              <h2>关于测试</h2>
             </div>
 
             <div className="overview-grid">
@@ -255,7 +255,7 @@ function Home({ onStart }: HomeProps) {
             transition={{ duration: 0.5 }}
           >
             <div className="section-heading">
-              <span className="section-label">人格图谱</span>
+              {/*<span className="section-label">人格图谱</span>*/}
               <h2>钓鱼人格图鉴</h2>
               <p>下面是{personalities.length} 种人图鉴预览，先猜猜你自己属于哪种？</p>
             </div>
@@ -295,8 +295,8 @@ function Home({ onStart }: HomeProps) {
             transition={{ duration: 0.5 }}
           >
             <div className="section-heading">
-              <span className="section-label">常见问题</span>
-              <h2>最常问的几件事</h2>
+              {/*<span className="section-label">常见问题</span>*/}
+              <h2>常见问题</h2>
             </div>
 
             <div className="faq-list">
