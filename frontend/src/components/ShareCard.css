@@ -15,29 +15,35 @@
 
 .share-card-copy {
   display: flex;
-  flex: 1 1 320px;
+  flex: 1 1 240px;
   flex-direction: column;
-  gap: 10px;
-  max-width: 36rem;
+  gap: 8px;
+  min-width: 0;
 }
 
 .share-card-copy h3 {
   margin: 0;
   color: #24302b;
-  font-size: clamp(22px, 3vw, 28px);
-  line-height: 1.18;
-  letter-spacing: -0.04em;
+  font-size: clamp(18px, 4.5vw, 26px);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  word-break: break-word;
 }
 
 .share-card-copy p {
   margin: 0;
   color: rgba(41, 53, 47, 0.72);
-  font-size: 15px;
-  line-height: 1.8;
+  font-size: 14px;
+  line-height: 1.65;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .generate-btn {
-  min-width: 180px;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 @media (max-width: 640px) {
@@ -45,5 +51,94 @@
     align-items: stretch;
     padding: 20px;
     border-radius: 20px;
+    gap: 16px;
   }
+
+  .share-card-copy {
+    flex: 1 1 auto;
+  }
+}
+
+/* --- Share Preview Modal --- */
+.share-preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(9, 18, 24, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.share-preview-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  max-width: 360px;
+  border-radius: 24px;
+  background: rgba(11, 20, 29, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.48);
+}
+
+.share-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 15px;
+  font-weight: 600;
+  color: rgba(243, 248, 245, 0.88);
+}
+
+.share-preview-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(243, 248, 245, 0.64);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.share-preview-close:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(243, 248, 245, 0.96);
+}
+
+.share-preview-image-wrap {
+  padding: 20px;
+}
+
+.share-preview-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.share-preview-actions {
+  display: flex;
+  gap: 12px;
+  padding: 0 20px 20px;
+}
+
+.share-preview-actions .secondary-button {
+  flex: 1;
+}
+
+.share-preview-actions .primary-button {
+  flex: 2;
 }

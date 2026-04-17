@@ -25,8 +25,10 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
   const [isExitPromptOpen, setIsExitPromptOpen] = useState(false)
   const [motionState, setMotionState] = useState<QuizMotionState>({
     isReeling: false,
+    isReleasing: false,
     isLanding: false,
-    reelToken: 0
+    reelToken: 0,
+    releaseToken: 0
   })
 
   if (!question) {
@@ -78,8 +80,10 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
   useEffect(() => {
     setMotionState({
       isReeling: false,
+      isReleasing: false,
       isLanding: false,
-      reelToken: 0
+      reelToken: 0,
+      releaseToken: 0
     })
   }, [question.id])
 
@@ -90,7 +94,7 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
   }, [])
 
   const handleOptionClick = (optionId: number) => {
-    if (motionState.isReeling || motionState.isLanding) {
+    if (motionState.isReeling || motionState.isReleasing || motionState.isLanding) {
       return
     }
 
@@ -104,20 +108,29 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
   }
 
   const handleNext = () => {
-    if (!isAnswered || motionState.isReeling || motionState.isLanding) {
+    if (!isAnswered || motionState.isReeling || motionState.isReleasing || motionState.isLanding) {
       return
     }
     triggerAdvance()
   }
 
   const handlePrevious = () => {
-    if (currentQuestion <= 0 || motionState.isReeling || motionState.isLanding) {
+    if (currentQuestion <= 0 || motionState.isReeling || motionState.isReleasing || motionState.isLanding) {
       return
     }
 
     timeoutRefs.current.forEach((timeoutId) => window.clearTimeout(timeoutId))
     timeoutRefs.current = []
-    onPrevious()
+
+    setMotionState(prev => ({
+      ...prev,
+      isReleasing: true,
+      releaseToken: prev.releaseToken + 1
+    }))
+
+    timeoutRefs.current.push(window.setTimeout(() => {
+      onPrevious()
+    }, prefersReducedMotion ? 120 : 420))
   }
 
   const handleOpenExitPrompt = () => {
@@ -228,17 +241,47 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
           <div className="quiz-footer">
             <div className="quiz-action-group">
               <button
-                className="quiz-nav-button quiz-nav-button-secondary"
+                className={`quiz-nav-button quiz-nav-button-secondary ${motionState.isReleasing ? 'is-active' : ''}`}
                 onClick={handlePrevious}
-                disabled={currentQuestion <= 0 || motionState.isReeling || motionState.isLanding}
+                disabled={currentQuestion <= 0 || motionState.isReeling || motionState.isReleasing || motionState.isLanding}
               >
-                放线(上一题)
+                <m.span
+                  className="quiz-nav-button__label"
+                  aria-hidden="true"
+                  animate={
+                    motionState.isReleasing
+                      ? { scale: prefersReducedMotion ? 1 : [1, 1.03, 1], opacity: [0.88, 1, 0.92] }
+                      : { scale: 1, opacity: 1 }
+                  }
+                  transition={
+                    prefersReducedMotion
+                      ? { duration: 0.01 }
+                      : { duration: 0.42, ease: 'easeInOut', repeat: 0 }
+                  }
+                >
+                  <m.span
+                    key={motionState.releaseToken}
+                    className="quiz-nav-button__reel-icon"
+                    animate={motionState.isReleasing ? { rotate: prefersReducedMotion ? 0 : -360 } : { rotate: 0 }}
+                    transition={
+                      prefersReducedMotion
+                        ? { duration: 0.01 }
+                        : {
+                            duration: 0.7,
+                            ease: 'linear'
+                          }
+                    }
+                  >
+                    <ReelIcon />
+                  </m.span>
+                  放线(上一题)
+                </m.span>
               </button>
 
               <button
                 className={`quiz-nav-button quiz-nav-button-primary ${motionState.isReeling || motionState.isLanding ? 'is-active' : ''}`}
                 onClick={handleNext}
-                disabled={!isAnswered || motionState.isReeling || motionState.isLanding}
+                disabled={!isAnswered || motionState.isReeling || motionState.isReleasing || motionState.isLanding}
               >
                 <m.span
                   className="quiz-nav-button__label"
@@ -272,24 +315,16 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
                           }
                     }
                   >
-                    {/* Reel icon SVG */}
-                    <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                      <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
-                      <circle cx="10" cy="10" r="4" stroke="currentColor" strokeWidth="1.5" />
-                      <line x1="10" y1="2" x2="10" y2="6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                      <line x1="10" y1="14" x2="10" y2="18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                      <line x1="2" y1="10" x2="6" y2="10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                      <line x1="14" y1="10" x2="18" y2="10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
+                    <ReelIcon />
                   </m.span>
-                  收线
+                  收线(下一题)
                 </m.span>
               </button>
 
               <button
                   className="quiz-nav-button quiz-nav-button-home"
                   onClick={handleOpenExitPrompt}
-                  disabled={motionState.isReeling || motionState.isLanding}
+                  disabled={motionState.isReeling || motionState.isReleasing || motionState.isLanding}
               >
                 回到首页
               </button>
@@ -299,6 +334,19 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
         </section>
       </div>
     </div>
+  )
+}
+
+function ReelIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+      <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5" opacity="0.5" />
+      <circle cx="10" cy="10" r="4" stroke="currentColor" strokeWidth="1.5" />
+      <line x1="10" y1="2" x2="10" y2="6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="10" y1="14" x2="10" y2="18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="2" y1="10" x2="6" y2="10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <line x1="14" y1="10" x2="18" y2="10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
   )
 }
 

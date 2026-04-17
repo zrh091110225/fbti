@@ -435,6 +435,11 @@
   color: rgba(223, 231, 239, 0.82);
 }
 
+.quiz-nav-button-secondary.is-active {
+  border-color: rgba(150, 210, 236, 0.32);
+  color: rgba(233, 243, 249, 0.94);
+}
+
 .quiz-nav-button-home {
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
@@ -480,6 +485,10 @@
 
 .quiz-nav-button-primary.is-active .quiz-nav-button__reel-icon {
   color: var(--accent);
+}
+
+.quiz-nav-button-secondary.is-active .quiz-nav-button__reel-icon {
+  color: #8fcde2;
 }
 
 .quiz-dialog-backdrop {

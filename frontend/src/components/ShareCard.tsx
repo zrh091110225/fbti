@@ -1,4 +1,5 @@
-import { useCallback, useRef } from 'react'
+import { useCallback, useRef, useState } from 'react'
+import { m, AnimatePresence } from 'framer-motion'
 import { PersonalityType } from '../data/personalities'
 import './ShareCard.css'
 
@@ -8,13 +9,15 @@ interface ShareCardProps {
 
 function ShareCard({ personality }: ShareCardProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [isGenerating, setIsGenerating] = useState(false)
 
-  const generateShareImage = useCallback(async () => {
+  const generateShareImage = useCallback(async (): Promise<string | null> => {
     const canvas = canvasRef.current
-    if (!canvas) return
+    if (!canvas) return null
 
     const ctx = canvas.getContext('2d')
-    if (!ctx) return
+    if (!ctx) return null
 
     const width = 540
     const height = 960
@@ -39,24 +42,39 @@ function ShareCard({ personality }: ShareCardProps) {
 
     drawStamp(ctx, width - 118, 74, personality.id)
 
-    const artworkX = 56
+    const artworkX = 118
     const artworkY = 112
-    const artworkWidth = 428
-    const artworkHeight = 304
+    const artworkWidth = 304
+    const artworkHeight = 372
+    const artworkPadding = 16
     drawArtworkFrame(ctx, artworkX, artworkY, artworkWidth, artworkHeight)
 
     try {
       const artwork = await loadImage(personality.image)
-      drawCoverImage(ctx, artwork, artworkX + 14, artworkY + 14, artworkWidth - 28, artworkHeight - 28, 24)
+      drawCoverImage(
+        ctx,
+        artwork,
+        artworkX + artworkPadding,
+        artworkY + artworkPadding,
+        artworkWidth - artworkPadding * 2,
+        artworkHeight - artworkPadding * 2,
+        24
+      )
     } catch {
-      drawArtworkFallback(ctx, artworkX + 14, artworkY + 14, artworkWidth - 28, artworkHeight - 28)
+      drawArtworkFallback(
+        ctx,
+        artworkX + artworkPadding,
+        artworkY + artworkPadding,
+        artworkWidth - artworkPadding * 2,
+        artworkHeight - artworkPadding * 2
+      )
     }
 
-    const titleY = 474
+    const titleY = 542
     ctx.textAlign = 'left'
     ctx.textBaseline = 'alphabetic'
     ctx.fillStyle = '#24302b'
-    const fittedNameFont = fitFontSize(ctx, personality.name, 48, 32, 380, 700)
+    const fittedNameFont = fitFontSize(ctx, personality.name, 48, 32, 428, 700)
     ctx.font = `700 ${fittedNameFont}px sans-serif`
     ctx.fillText(personality.name, 56, titleY)
 
@@ -69,34 +87,34 @@ function ShareCard({ personality }: ShareCardProps) {
       ellipsis: true
     })
     titleLines.forEach((line, index) => {
-      ctx.fillText(line, 56, 514 + index * 30)
+      ctx.fillText(line, 56, 582 + index * 30)
     })
 
     drawLeadCard(ctx, {
       x: 56,
-      y: 578,
+      y: 654,
       width: 428,
-      height: 106
+      height: 92
     })
 
     const summary = `这份画像由「${personality.dimensions.join(' / ')}」组成，关键词是${personality.traits.slice(0, 3).join('、')}。`
     ctx.fillStyle = 'rgba(41, 53, 47, 0.82)'
     const leadLines = wrapText(ctx, summary, 380, {
       fontSize: 18,
-      maxLines: 3,
-      lineHeight: 30,
+      maxLines: 2,
+      lineHeight: 28,
       fontWeight: 400,
       ellipsis: true
     })
     leadLines.forEach((line, index) => {
-      ctx.fillText(line, 80, 620 + index * 30)
+      ctx.fillText(line, 80, 696 + index * 28)
     })
 
     drawSignatureCard(ctx, {
       x: 56,
-      y: 706,
+      y: 766,
       width: 428,
-      height: 82
+      height: 76
     })
     ctx.fillStyle = '#4d6358'
     const signatureLines = wrapText(ctx, `“${personality.signature}”`, 372, {
@@ -107,30 +125,30 @@ function ShareCard({ personality }: ShareCardProps) {
       ellipsis: true
     })
     signatureLines.forEach((line, index) => {
-      ctx.fillText(line, 84, 742 + index * 28)
+      ctx.fillText(line, 84, 800 + index * 28)
     })
 
     drawInfoCard(ctx, {
       x: 56,
-      y: 812,
+      y: 860,
       width: 202,
-      height: 90,
+      height: 70,
       label: '人格代码',
       value: personality.id,
-      valueFontSize: 28,
-      valueLineHeight: 30,
+      valueFontSize: 24,
+      valueLineHeight: 26,
       maxLines: 1
     })
 
     drawInfoCard(ctx, {
       x: 282,
-      y: 812,
+      y: 860,
       width: 202,
-      height: 90,
+      height: 70,
       label: '核心标签',
       value: personality.traits.slice(0, 2).join(' / '),
-      valueFontSize: 18,
-      valueLineHeight: 24,
+      valueFontSize: 16,
+      valueLineHeight: 22,
       maxLines: 2
     })
 
@@ -142,14 +160,26 @@ function ShareCard({ personality }: ShareCardProps) {
     return canvas.toDataURL('image/png')
   }, [personality])
 
-  const handleGenerate = async () => {
+  const handlePreview = async () => {
+    setIsGenerating(true)
     const dataUrl = await generateShareImage()
     if (dataUrl) {
-      const link = document.createElement('a')
-      link.download = `fbti-${personality.id}.png`
-      link.href = dataUrl
-      link.click()
+      setPreviewUrl(dataUrl)
     }
+    setIsGenerating(false)
+  }
+
+  const handleDownload = () => {
+    if (!previewUrl) return
+    const link = document.createElement('a')
+    link.download = `fbti-${personality.id}.png`
+    link.href = previewUrl
+    link.click()
+    setPreviewUrl(null)
+  }
+
+  const handleClose = () => {
+    setPreviewUrl(null)
   }
 
   return (
@@ -160,9 +190,55 @@ function ShareCard({ personality }: ShareCardProps) {
         <h3>导出一张和结果页同源的竖版人格海报</h3>
         <p>会保留插画、人格名、短导语和金句，适合直接发给朋友或贴进钓友群。</p>
       </div>
-      <button className="primary-button generate-btn" onClick={handleGenerate}>
-        保存分享图
+      <button className="primary-button generate-btn" onClick={handlePreview} disabled={isGenerating}>
+        {isGenerating ? '生成中...' : '查看分享图'}
       </button>
+
+      <AnimatePresence>
+        {previewUrl && (
+          <m.div
+            className="share-preview-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={handleClose}
+          >
+            <m.div
+              className="share-preview-modal"
+              initial={{ scale: 0.88, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="share-preview-header">
+                <span>分享图预览</span>
+                <button className="share-preview-close" onClick={handleClose} aria-label="关闭">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <line x1="4" y1="4" x2="16" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    <line x1="16" y1="4" x2="4" y2="16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="share-preview-image-wrap">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={previewUrl} alt="分享图预览" className="share-preview-image" />
+              </div>
+
+              <div className="share-preview-actions">
+                <button className="secondary-button" onClick={handleClose}>
+                  取消
+                </button>
+                <button className="primary-button" onClick={handleDownload}>
+                  下载图片
+                </button>
+              </div>
+            </m.div>
+          </m.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

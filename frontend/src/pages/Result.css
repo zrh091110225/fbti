@@ -461,8 +461,33 @@
 
   .result-note,
   .share-section {
-    padding: 22px;
-    border-radius: 22px;
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .result-actions {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .result-actions-button {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    text-align: left;
+  }
+
+  .result-actions-button-icon {
+    font-size: 22px;
+  }
+
+  .result-actions-button-label {
+    font-size: 15px;
+  }
+
+  .result-actions-button-hint {
+    display: none;
   }
 
   .result-profile-row strong {
