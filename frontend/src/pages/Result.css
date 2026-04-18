@@ -100,13 +100,18 @@
   min-width: 76px;
   min-height: 76px;
   padding: 0 18px;
-  border-radius: 50%;
-  border: 1px solid rgba(93, 111, 102, 0.2);
-  background: rgba(255, 255, 255, 0.36);
-  color: #4d6358;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  border-radius: 22px;
+  border: 1px solid rgba(36, 48, 43, 0.18);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(233, 225, 209, 0.96)),
+    #efe4d1;
+  color: #1f2a25;
+  box-shadow:
+    0 10px 24px rgba(44, 56, 51, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
 }
 
 .result-hero {
@@ -540,7 +545,8 @@
   .result-stamp {
     min-width: 62px;
     min-height: 62px;
-    font-size: 15px;
+    border-radius: 18px;
+    font-size: 16px;
   }
 
   .result-hero {

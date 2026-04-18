@@ -29,9 +29,9 @@ function Result({ answers, onRestart }: ResultProps) {
   const artwork = getPersonalityArtwork(personality.id)
 
   const profileRows = [
-    { label: '人格代码', value: personality.id },
-    { label: '四轴落点', value: axisBreakdown.map((axis) => axis.resolvedLabel).join(' · ') },
-    { label: '本次标签', value: dynamicTags.join(' / ') }
+    { label: '人格', value: personality.id },
+    { label: '四轴', value: axisBreakdown.map((axis) => axis.resolvedLabel).join(' · ') },
+    { label: '标签', value: dynamicTags.join(' / ') }
   ]
 
   const openExternalLink = (url: string) => {
@@ -84,9 +84,9 @@ function Result({ answers, onRestart }: ResultProps) {
                   className="result-artwork-image"
                 />
               </div>
-              <figcaption className="result-artwork-caption">
-                你的人格状态，不是高声解释自己，而是整个人坐进水边的气氛里。
-              </figcaption>
+              {/*<figcaption className="result-artwork-caption">*/}
+              {/*  你的人格状态：不是高声解释自己而是整个人坐进水边的气氛里。*/}
+              {/*</figcaption>*/}
             </m.figure>
 
             <m.div
@@ -95,7 +95,7 @@ function Result({ answers, onRestart }: ResultProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.58, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
             >
-              <span className="result-overline">你的钓鱼人格</span>
+              <span className="result-overline">钓鱼人格</span>
               <div className="result-name-row">
                 <div>
                   <h1 className="personality-type">{personality.name}</h1>
@@ -165,8 +165,8 @@ function Result({ answers, onRestart }: ResultProps) {
             <section className="community-section" aria-label="入群方式" ref={communitySectionRef}>
               <div className="community-section__header">
                 <span className="content-label">找到组织</span>
-                <h2>测完直接进群，继续聊鱼情和战绩</h2>
-                <p>微信群适合扫码加入，Telegram 群适合直接跳转。</p>
+                <h2>直接进群，聊鱼情和战绩</h2>
+                <p>微信扫码加入，Telegram 点击跳转</p>
               </div>
 
               <div className="community-grid">
