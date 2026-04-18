@@ -74,5 +74,11 @@ rsync -avz --progress \
     --exclude '.DS_Store' \
     ./public/results/ ubuntu@$SERVER_IP:$DEPLOY_DIR/results/
 
+# 5. 修复服务器目录权限，确保 Nginx 可读取
+echo -e "\n${YELLOW}正在设置服务器目录权限...${NC}"
+ssh $SSH_OPTS ubuntu@$SERVER_IP "\
+    sudo chown -R ubuntu:ubuntu $DEPLOY_DIR && \
+    sudo chmod -R a+rX $DEPLOY_DIR"
+
 echo -e "\n${GREEN}=== 部署完成 ===${NC}"
 echo "（Nginx 配置已由 aiecho-fbti 站点接管，无需重复配置）"
