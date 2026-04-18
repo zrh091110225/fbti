@@ -1,5 +1,6 @@
 import { m } from 'framer-motion'
 import { useMemo, useRef, useState } from 'react'
+import wechatGroupQr from '../assets/community/wechat-group-qr.jpg'
 import ShareCard, { ShareCardHandle } from '../components/ShareCard'
 import { getPersonalityArtwork } from '../data/personalityArtworks'
 import { QuizAnswer } from '../types/quiz'
@@ -13,8 +14,11 @@ interface ResultProps {
 
 function Result({ answers, onRestart }: ResultProps) {
   const [isShareGenerating, setIsShareGenerating] = useState(false)
+  const [isCommunityOpen, setIsCommunityOpen] = useState(false)
   const shareCardRef = useRef<ShareCardHandle>(null)
-  const communityUrl = import.meta.env.VITE_COMMUNITY_URL?.trim()
+  const communitySectionRef = useRef<HTMLElement>(null)
+  const telegramGroupUrl = 'https://t.me/+I8zUibGR0FswMTQ5'
+  const wechatGroupName = 'FBIT 钓友群'
 
   const result = useMemo(() => {
     return calculatePersonality(answers)
@@ -30,13 +34,20 @@ function Result({ answers, onRestart }: ResultProps) {
     { label: '本次标签', value: dynamicTags.join(' / ') }
   ]
 
-  const handleGroupClick = () => {
-    if (!communityUrl) {
-      window.alert('暂未配置入群链接，请先设置 VITE_COMMUNITY_URL。')
-      return
-    }
+  const openExternalLink = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer')
+  }
 
-    window.open(communityUrl, '_blank', 'noopener,noreferrer')
+  const handleCommunityToggle = () => {
+    setIsCommunityOpen((prev) => {
+      const next = !prev
+      if (next) {
+        window.requestAnimationFrame(() => {
+          communitySectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        })
+      }
+      return next
+    })
   }
 
   const handleSharePreview = async () => {
@@ -96,11 +107,11 @@ function Result({ answers, onRestart }: ResultProps) {
                 “{personality.signature}”
               </blockquote>
 
-              <div className="result-chip-group">
-                {dynamicTags.map((trait) => (
-                  <span key={trait} className="trait">{trait}</span>
-                ))}
-              </div>
+              {/*<div className="result-chip-group">*/}
+              {/*  {dynamicTags.map((trait) => (*/}
+              {/*    <span key={trait} className="trait">{trait}</span>*/}
+              {/*  ))}*/}
+              {/*</div>*/}
 
               <div className="result-chip-group result-chip-group-secondary">
                 {personality.traits.map((trait) => (
@@ -113,13 +124,13 @@ function Result({ answers, onRestart }: ResultProps) {
           <div className="result-detail-grid">
             <article className="result-note result-note-reading">
               <span className="content-label">性格解读</span>
-              <h2>你在水边最稳定的状态</h2>
+              {/*<h2>你在水边最稳定的状态</h2>*/}
               <p>{personality.description}</p>
             </article>
 
             <article className="result-note result-note-scene">
               <span className="content-label">代表场景</span>
-              <h2>最像你的那一幕</h2>
+              {/*<h2>最像你的那一幕</h2>*/}
               <p>{personality.scene}</p>
             </article>
 
@@ -150,6 +161,56 @@ function Result({ answers, onRestart }: ResultProps) {
             </article>
           </div>
 
+          {isCommunityOpen ? (
+            <section className="community-section" aria-label="入群方式" ref={communitySectionRef}>
+              <div className="community-section__header">
+                <span className="content-label">找到组织</span>
+                <h2>测完直接进群，继续聊鱼情和战绩</h2>
+                <p>微信群适合扫码加入，Telegram 群适合直接跳转。</p>
+              </div>
+
+              <div className="community-grid">
+                <article className="community-card community-card-wechat">
+                  <div className="community-card__body">
+                    <span className="community-card__eyebrow">微信群</span>
+                    <h3>{wechatGroupName}</h3>
+                    <p>长按或截图保存二维码，用微信扫一扫加入鱼友群。</p>
+                    <button
+                      className="ghost-button community-card__button"
+                      onClick={() => openExternalLink(wechatGroupQr)}
+                    >
+                      查看二维码大图
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="community-qr-button"
+                    onClick={() => openExternalLink(wechatGroupQr)}
+                    aria-label={`查看 ${wechatGroupName} 二维码大图`}
+                  >
+                    <img src={wechatGroupQr} alt={`${wechatGroupName}微信群二维码`} className="community-qr-image" />
+                  </button>
+                </article>
+
+                <article className="community-card community-card-telegram">
+                  <div className="community-card__body">
+                    <span className="community-card__eyebrow">Telegram</span>
+                    <h3>FBIT Telegram 群组</h3>
+                    <p>适合直接点击加入，也方便把结果页转给海外或常用 Telegram 的朋友。</p>
+                  </div>
+
+                  <button
+                    className="primary-button community-card__button"
+                    onClick={() => openExternalLink(telegramGroupUrl)}
+                  >
+                    打开 Telegram 群组
+                  </button>
+                </article>
+              </div>
+            </section>
+          ) : null}
+
           <div className="result-actions">
             <button className="primary-button" onClick={handleSharePreview} disabled={isShareGenerating}>
               {isShareGenerating ? '生成中...' : '查看分享图'}
@@ -157,8 +218,8 @@ function Result({ answers, onRestart }: ResultProps) {
             <button className="secondary-button" onClick={onRestart}>
               重新测试
             </button>
-            <button className="ghost-button" onClick={handleGroupClick}>
-              {communityUrl ? '打开入群链接' : '入群链接待配置'}
+            <button className="ghost-button" onClick={handleCommunityToggle}>
+              {isCommunityOpen ? '收起钓友组织' : '寻找钓友组织'}
             </button>
           </div>
 

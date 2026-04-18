@@ -71,6 +71,7 @@
 .result-header,
 .result-hero,
 .result-detail-grid,
+.community-section,
 .share-section,
 .result-actions {
   position: relative;
@@ -356,6 +357,123 @@
   border: 1px solid rgba(93, 111, 102, 0.12);
 }
 
+.community-section {
+  margin-top: 18px;
+  padding: 28px;
+  border-radius: 30px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.24)),
+    rgba(248, 244, 234, 0.58);
+  border: 1px solid rgba(93, 111, 102, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.78),
+    0 20px 40px rgba(66, 84, 76, 0.08);
+}
+
+.community-section__header h2 {
+  margin: 12px 0 0;
+  color: #24302b;
+  font-size: clamp(28px, 3vw, 36px);
+  line-height: 1.14;
+  letter-spacing: -0.04em;
+}
+
+.community-section__header p {
+  margin: 14px 0 0;
+  max-width: 38rem;
+  color: rgba(41, 53, 47, 0.72);
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.community-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr);
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.community-card {
+  display: grid;
+  gap: 20px;
+  align-items: center;
+  padding: 20px;
+  border-radius: 24px;
+  border: 1px solid rgba(93, 111, 102, 0.12);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.52), rgba(255, 255, 255, 0.28)),
+    rgba(255, 255, 255, 0.38);
+}
+
+.community-card-wechat {
+  grid-template-columns: minmax(0, 0.95fr) minmax(180px, 220px);
+}
+
+.community-card-telegram {
+  grid-template-columns: 1fr;
+  align-content: space-between;
+}
+
+.community-card__body h3 {
+  margin: 8px 0 0;
+  color: #24302b;
+  font-size: 26px;
+  line-height: 1.18;
+  letter-spacing: -0.04em;
+}
+
+.community-card__body p {
+  margin: 12px 0 0;
+  color: rgba(41, 53, 47, 0.74);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.community-card__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  color: rgba(41, 53, 47, 0.56);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.community-card__button {
+  width: fit-content;
+  margin-top: 18px;
+}
+
+.community-qr-button {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.community-qr-image {
+  display: block;
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow:
+    0 18px 30px rgba(45, 58, 52, 0.14),
+    0 0 0 8px rgba(255, 255, 255, 0.72);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.community-qr-button:hover .community-qr-image {
+  transform: translateY(-2px);
+  box-shadow:
+    0 24px 40px rgba(45, 58, 52, 0.18),
+    0 0 0 8px rgba(255, 255, 255, 0.84);
+}
+
 .result-actions {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -386,6 +504,7 @@
 @media (max-width: 960px) {
   .result-hero,
   .result-detail-grid,
+  .community-grid,
   .result-actions {
     grid-template-columns: 1fr;
   }
@@ -395,6 +514,10 @@
       "reading"
       "scene"
       "profile";
+  }
+
+  .community-card-wechat {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -460,7 +583,8 @@
   }
 
   .result-note,
-  .share-section {
+  .share-section,
+  .community-section {
     padding: 16px;
     border-radius: 20px;
   }
@@ -492,5 +616,23 @@
 
   .result-profile-row strong {
     font-size: 18px;
+  }
+
+  .community-card {
+    gap: 16px;
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .community-card__body h3 {
+    font-size: 22px;
+  }
+
+  .community-card__button {
+    width: 100%;
+  }
+
+  .community-qr-image {
+    max-width: 100%;
   }
 }
