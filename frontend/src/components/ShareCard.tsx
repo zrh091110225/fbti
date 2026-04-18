@@ -1,13 +1,21 @@
-import { useCallback, useRef, useState } from 'react'
+import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react'
 import { m, AnimatePresence } from 'framer-motion'
 import { PersonalityType } from '../data/personalities'
 import './ShareCard.css'
 
 interface ShareCardProps {
   personality: PersonalityType
+  showLauncher?: boolean
 }
 
-function ShareCard({ personality }: ShareCardProps) {
+export interface ShareCardHandle {
+  openPreview: () => Promise<void>
+}
+
+const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard(
+  { personality, showLauncher = true },
+  ref
+) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -160,14 +168,18 @@ function ShareCard({ personality }: ShareCardProps) {
     return canvas.toDataURL('image/png')
   }, [personality])
 
-  const handlePreview = async () => {
+  const handlePreview = useCallback(async () => {
     setIsGenerating(true)
     const dataUrl = await generateShareImage()
     if (dataUrl) {
       setPreviewUrl(dataUrl)
     }
     setIsGenerating(false)
-  }
+  }, [generateShareImage])
+
+  useImperativeHandle(ref, () => ({
+    openPreview: handlePreview
+  }), [handlePreview])
 
   const handleDownload = () => {
     if (!previewUrl) return
@@ -183,16 +195,20 @@ function ShareCard({ personality }: ShareCardProps) {
   }
 
   return (
-    <div className="share-card-container">
+    <>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
-      <div className="share-card-copy">
-        <span className="content-label">分享图</span>
-        <h3>导出一张和结果页同源的竖版人格海报</h3>
-        <p>会保留插画、人格名、短导语和金句，适合直接发给朋友或贴进钓友群。</p>
-      </div>
-      <button className="primary-button generate-btn" onClick={handlePreview} disabled={isGenerating}>
-        {isGenerating ? '生成中...' : '查看分享图'}
-      </button>
+      {showLauncher && (
+        <div className="share-card-container">
+          <div className="share-card-copy">
+            <span className="content-label">分享图</span>
+            <h3>导出一张和结果页同源的竖版人格海报</h3>
+            <p>会保留插画、人格名、短导语和金句，适合直接发给朋友或贴进钓友群。</p>
+          </div>
+          <button className="primary-button generate-btn" onClick={handlePreview} disabled={isGenerating}>
+            {isGenerating ? '生成中...' : '查看分享图'}
+          </button>
+        </div>
+      )}
 
       <AnimatePresence>
         {previewUrl && (
@@ -239,9 +255,9 @@ function ShareCard({ personality }: ShareCardProps) {
           </m.div>
         )}
       </AnimatePresence>
-    </div>
+    </>
   )
-}
+})
 
 function drawBackground(ctx: CanvasRenderingContext2D, width: number, height: number) {
   const background = ctx.createLinearGradient(0, 0, width, height)

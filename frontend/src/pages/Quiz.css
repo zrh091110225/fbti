@@ -590,16 +590,18 @@
 .landing-catch__fish {
   position: absolute;
   left: 48%;
-  bottom: 88px;
-  width: 112px;
-  height: 68px;
-  margin-left: -56px;
+  bottom: 58px;
+  width: 132px;
+  height: 134px;
+  margin-left: -66px;
   filter: drop-shadow(0 24px 42px rgba(0, 0, 0, 0.28));
 }
 
 .landing-catch__fish-icon {
-  width: 112px;
-  height: 68px;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .landing-catch__splash {

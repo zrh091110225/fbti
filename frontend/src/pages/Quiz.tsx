@@ -1,6 +1,7 @@
 import { AnimatePresence, m, useReducedMotion } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import processFish from '../assets/process-fish.png'
+import landingFish from '../assets/process-fish.png'
 import ScenicBackdrop from '../components/ScenicBackdrop'
 import { Question } from '../data/questions'
 import { QuizMotionState } from '../types/motion'
@@ -538,11 +539,7 @@ function LandingCatchOverlay({ prefersReducedMotion }: { prefersReducedMotion: b
         }
         transition={{ duration: prefersReducedMotion ? 0.24 : 0.84, ease: [0.22, 1, 0.36, 1] }}
       >
-        <svg viewBox="0 0 112 68" className="landing-catch__fish-icon">
-          <path d="M10 34C21 21 39 12 58 12C72 12 84 16 96 25L104 20V48L96 43C84 52 72 56 58 56C39 56 21 47 10 34Z" fill="#C7F0D2" />
-          <path d="M34 34C41 28 49 25 58 25C65 25 74 27 81 31C74 38 66 43 58 43C49 43 41 40 34 34Z" fill="#71BC91" />
-          <circle cx="76" cy="30" r="4" fill="#0C1C24" />
-        </svg>
+        <img src={landingFish} alt="" className="landing-catch__fish-icon" draggable={false} />
       </m.div>
 
       <m.div

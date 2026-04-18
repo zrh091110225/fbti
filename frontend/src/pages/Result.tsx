@@ -1,6 +1,6 @@
 import { m } from 'framer-motion'
-import { useMemo, useState } from 'react'
-import ShareCard from '../components/ShareCard'
+import { useMemo, useRef, useState } from 'react'
+import ShareCard, { ShareCardHandle } from '../components/ShareCard'
 import { getPersonalityArtwork } from '../data/personalityArtworks'
 import { QuizAnswer } from '../types/quiz'
 import { calculatePersonality } from '../utils/calculate'
@@ -12,7 +12,8 @@ interface ResultProps {
 }
 
 function Result({ answers, onRestart }: ResultProps) {
-  const [showShare, setShowShare] = useState(false)
+  const [isShareGenerating, setIsShareGenerating] = useState(false)
+  const shareCardRef = useRef<ShareCardHandle>(null)
   const communityUrl = import.meta.env.VITE_COMMUNITY_URL?.trim()
 
   const result = useMemo(() => {
@@ -36,6 +37,17 @@ function Result({ answers, onRestart }: ResultProps) {
     }
 
     window.open(communityUrl, '_blank', 'noopener,noreferrer')
+  }
+
+  const handleSharePreview = async () => {
+    if (!shareCardRef.current || isShareGenerating) return
+
+    setIsShareGenerating(true)
+    try {
+      await shareCardRef.current.openPreview()
+    } finally {
+      setIsShareGenerating(false)
+    }
   }
 
   return (
@@ -138,15 +150,9 @@ function Result({ answers, onRestart }: ResultProps) {
             </article>
           </div>
 
-          {showShare && (
-            <section className="share-section">
-              <ShareCard personality={personality} />
-            </section>
-          )}
-
           <div className="result-actions">
-            <button className="primary-button" onClick={() => setShowShare(prev => !prev)}>
-              {showShare ? '收起分享区' : '生成分享图'}
+            <button className="primary-button" onClick={handleSharePreview} disabled={isShareGenerating}>
+              {isShareGenerating ? '生成中...' : '查看分享图'}
             </button>
             <button className="secondary-button" onClick={onRestart}>
               重新测试
@@ -155,6 +161,8 @@ function Result({ answers, onRestart }: ResultProps) {
               {communityUrl ? '打开入群链接' : '入群链接待配置'}
             </button>
           </div>
+
+          <ShareCard ref={shareCardRef} personality={personality} showLauncher={false} />
         </section>
       </div>
     </div>
