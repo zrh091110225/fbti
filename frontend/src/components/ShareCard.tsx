@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import { AnimatePresence, m } from 'framer-motion'
-import { toPng } from 'html-to-image'
+import { toBlob } from 'html-to-image'
 import { PersonalityType } from '../data/personalities'
 import { AxisBreakdown } from '../utils/calculate'
 import ResultPageContent from './ResultPageContent'
@@ -17,6 +17,30 @@ export interface ShareCardHandle {
   openPreview: () => Promise<void>
 }
 
+function isIosLikeBrowser() {
+  const ua = window.navigator.userAgent
+  const platform = window.navigator.platform
+  const isTouchMac = platform === 'MacIntel' && window.navigator.maxTouchPoints > 1
+
+  return /iPad|iPhone|iPod/.test(ua) || isTouchMac
+}
+
+function isWechatBrowser() {
+  return /MicroMessenger/i.test(window.navigator.userAgent)
+}
+
+function canShareFile(file: File) {
+  if (typeof navigator.share !== 'function') {
+    return false
+  }
+
+  if (typeof navigator.canShare === 'function') {
+    return navigator.canShare({ files: [file] })
+  }
+
+  return false
+}
+
 const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard(
   { personality, axisBreakdown, dynamicTags, showLauncher = true },
   ref
@@ -24,6 +48,7 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
   const exportRef = useRef<HTMLDivElement>(null)
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const [isDownloading, setIsDownloading] = useState(false)
+  const prefersManualSave = isIosLikeBrowser() || isWechatBrowser()
 
   const openPreview = async () => {
     setIsPreviewOpen(true)
@@ -37,18 +62,57 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
     if (!exportRef.current || isDownloading) return
 
     setIsDownloading(true)
+    const fileName = `fbti-${personality.id}.png`
+    const manualSaveWindow = prefersManualSave ? window.open('', '_blank') : null
+
+    if (manualSaveWindow) {
+      manualSaveWindow.document.write('<title>正在生成分享图</title><p style="font-family:-apple-system,BlinkMacSystemFont,\'PingFang SC\',sans-serif;padding:24px;">正在生成分享图，请稍候...</p>')
+      manualSaveWindow.document.close()
+    }
+
     try {
-      const dataUrl = await toPng(exportRef.current, {
+      const blob = await toBlob(exportRef.current, {
         cacheBust: true,
         pixelRatio: 2
       })
 
-      const link = document.createElement('a')
-      link.download = `fbti-${personality.id}.png`
-      link.href = dataUrl
-      link.click()
+      if (!blob) {
+        throw new Error('Share image blob is empty')
+      }
+
+      const file = new File([blob], fileName, { type: 'image/png' })
+
+      if (canShareFile(file)) {
+        await navigator.share({
+          title: `FBTI ${personality.name}分享图`,
+          files: [file]
+        })
+
+        manualSaveWindow?.close()
+        setIsPreviewOpen(false)
+        return
+      }
+
+      const objectUrl = URL.createObjectURL(blob)
+
+      if (manualSaveWindow) {
+        manualSaveWindow.location.href = objectUrl
+        window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000)
+        window.alert('分享图已在新页面打开，请长按图片保存到手机。')
+      } else {
+        const link = document.createElement('a')
+        link.download = fileName
+        link.href = objectUrl
+        link.rel = 'noopener'
+        document.body.append(link)
+        link.click()
+        link.remove()
+        window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000)
+      }
+
       setIsPreviewOpen(false)
     } catch (error) {
+      manualSaveWindow?.close()
       console.error('Failed to export share image', error)
       window.alert('生成分享图失败，请稍后重试。')
     } finally {
@@ -123,7 +187,7 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
                   取消
                 </button>
                 <button className="primary-button" onClick={handleDownload} disabled={isDownloading}>
-                  {isDownloading ? '下载中...' : '下载图片'}
+                  {isDownloading ? '生成中...' : (prefersManualSave ? '保存图片' : '下载图片')}
                 </button>
               </div>
             </m.div>
