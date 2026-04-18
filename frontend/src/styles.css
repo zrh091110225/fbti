@@ -184,7 +184,7 @@ button {
 .ghost-button {
   background: transparent;
   color: var(--muted);
-  border-color: transparent;
+  border-color: var(--border);
   font-weight: 600;
 }
 
@@ -206,6 +206,7 @@ button {
 .ghost-button:hover {
   color: var(--text);
   background: rgba(255, 255, 255, 0.04);
+  border-color: var(--border-strong);
 }
 
 .primary-button:disabled,
