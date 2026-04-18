@@ -173,9 +173,9 @@
 
 .reel-progress__fish {
   position: absolute;
-  top: 3px;
-  width: 88px;
-  height: 60px;
+  top: -1px;
+  width: 104px;
+  height: 72px;
 }
 
 .reel-progress__fish.is-hidden {
@@ -184,18 +184,18 @@
 
 .reel-progress__fish-body {
   position: relative;
-  width: 88px;
-  height: 60px;
+  width: 104px;
+  height: 72px;
   transform-origin: 52% 62%;
 }
 
 .reel-progress__fish-body::after {
   content: "";
   position: absolute;
-  left: 18px;
-  right: 10px;
-  bottom: 6px;
-  height: 10px;
+  left: 22px;
+  right: 12px;
+  bottom: 8px;
+  height: 12px;
   border-radius: 999px;
   background: radial-gradient(ellipse at center, rgba(148, 206, 187, 0.26), rgba(148, 206, 187, 0));
   filter: blur(4px);
@@ -205,8 +205,8 @@
 .reel-progress__fish-icon {
   position: relative;
   z-index: 1;
-  width: 88px;
-  height: 60px;
+  width: 104px;
+  height: 72px;
   object-fit: contain;
   filter:
     drop-shadow(0 5px 10px rgba(80, 121, 74, 0.12))
@@ -215,10 +215,10 @@
 
 .reel-progress__wake {
   position: absolute;
-  top: 26px;
-  left: -10px;
-  width: 26px;
-  height: 8px;
+  top: 31px;
+  left: -12px;
+  width: 30px;
+  height: 9px;
   border-radius: 999px;
   background: linear-gradient(90deg, rgba(197, 238, 211, 0.16), rgba(197, 238, 211, 0.04), transparent);
   filter: blur(3px);

@@ -246,13 +246,9 @@ function Home({ onStart }: HomeProps) {
             </div>
           </m.section>
 
-          <m.section
+          <section
             id="atlas"
             className="home-section surface"
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.5 }}
           >
             <div className="section-heading">
               {/*<span className="section-label">人格图谱</span>*/}
@@ -278,13 +274,15 @@ function Home({ onStart }: HomeProps) {
                       src={getPersonalityArtwork(personality.id)}
                       alt={`${personality.name}的人格插画`}
                       className="personality-visual-image"
+                      loading="lazy"
+                      decoding="async"
                     />
                     <p className="personality-signature">{personality.signature}</p>
                   </div>
                 </article>
               ))}
             </div>
-          </m.section>
+          </section>
 
           <m.section
             id="faq"
