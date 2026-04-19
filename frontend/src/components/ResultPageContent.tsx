@@ -72,7 +72,7 @@ function ResultPageContent({
     <div className="page-shell result-shell">
       <section className="result-canvas">
         <div className="result-header">
-          <span className="result-kicker">FBTI Result</span>
+          <span className="result-kicker">FBTI 钓鱼人格测试结果</span>
           <span className="result-stamp">{personality.id}</span>
         </div>
 

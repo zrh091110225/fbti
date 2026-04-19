@@ -29,18 +29,6 @@ function isWechatBrowser() {
   return /MicroMessenger/i.test(window.navigator.userAgent)
 }
 
-function canShareFile(file: File) {
-  if (typeof navigator.share !== 'function') {
-    return false
-  }
-
-  if (typeof navigator.canShare === 'function') {
-    return navigator.canShare({ files: [file] })
-  }
-
-  return false
-}
-
 function withTimeout<T>(promise: Promise<T>, timeoutMs: number, message: string) {
   return new Promise<T>((resolve, reject) => {
     const timer = window.setTimeout(() => {
@@ -89,12 +77,6 @@ async function waitForImagesReady(root: HTMLElement) {
   )
 }
 
-async function dataUrlToFile(dataUrl: string, fileName: string) {
-  const response = await fetch(dataUrl)
-  const blob = await response.blob()
-  return new File([blob], fileName, { type: 'image/png' })
-}
-
 const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard(
   { personality, axisBreakdown, dynamicTags, showLauncher = true },
   ref
@@ -102,10 +84,11 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
   const exportRef = useRef<HTMLDivElement>(null)
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const [isDownloading, setIsDownloading] = useState(false)
+  const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null)
   const prefersManualSave = isIosLikeBrowser() || isWechatBrowser()
-  const shouldUseNativeShare = prefersManualSave
 
   const openPreview = async () => {
+    setGeneratedImageUrl(null)
     setIsPreviewOpen(true)
   }
 
@@ -117,14 +100,9 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
     if (!exportRef.current || isDownloading) return
 
     setIsDownloading(true)
+    setGeneratedImageUrl(null)
     const fileName = `fbti-${personality.id}.png`
-    const manualSaveWindow = prefersManualSave ? window.open('', '_blank') : null
     const exportNode = exportRef.current
-
-    if (manualSaveWindow) {
-      manualSaveWindow.document.write('<title>正在生成分享图</title><p style="font-family:-apple-system,BlinkMacSystemFont,\'PingFang SC\',sans-serif;padding:24px;">正在生成分享图，请稍候...</p>')
-      manualSaveWindow.document.close()
-    }
 
     try {
       await waitForImagesReady(exportNode)
@@ -140,28 +118,7 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
           'Export timed out on mobile Safari'
         )
 
-        if (shouldUseNativeShare) {
-          const file = await dataUrlToFile(dataUrl, fileName)
-
-          if (canShareFile(file)) {
-            await navigator.share({
-              title: `FBTI ${personality.name}分享图`,
-              files: [file]
-            })
-
-            manualSaveWindow?.close()
-            setIsPreviewOpen(false)
-            return
-          }
-        }
-
-        if (!manualSaveWindow) {
-          throw new Error('Manual save window was blocked')
-        }
-
-        manualSaveWindow.location.href = dataUrl
-        window.alert('分享图已在新页面打开，请长按图片保存到手机。')
-        setIsPreviewOpen(false)
+        setGeneratedImageUrl(dataUrl)
         return
       }
 
@@ -180,24 +137,17 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
 
       const objectUrl = URL.createObjectURL(blob)
 
-      if (manualSaveWindow) {
-        manualSaveWindow.location.href = objectUrl
-        window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000)
-        window.alert('分享图已在新页面打开，请长按图片保存到手机。')
-      } else {
-        const link = document.createElement('a')
-        link.download = fileName
-        link.href = objectUrl
-        link.rel = 'noopener'
-        document.body.append(link)
-        link.click()
-        link.remove()
-        window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000)
-      }
+      const link = document.createElement('a')
+      link.download = fileName
+      link.href = objectUrl
+      link.rel = 'noopener'
+      document.body.append(link)
+      link.click()
+      link.remove()
+      window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000)
 
       setIsPreviewOpen(false)
     } catch (error) {
-      manualSaveWindow?.close()
       console.error('Failed to export share image', error)
       window.alert(prefersManualSave ? '生成分享图失败。请重试；若仍失败，可长按预览图或使用截图保存。' : '生成分享图失败，请稍后重试。')
     } finally {
@@ -207,7 +157,18 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
 
   const handleClose = () => {
     if (isDownloading) return
+    setGeneratedImageUrl(null)
     setIsPreviewOpen(false)
+  }
+
+  const handleOpenGeneratedImage = () => {
+    if (!generatedImageUrl) return
+
+    const openedWindow = window.open(generatedImageUrl, '_blank', 'noopener,noreferrer')
+
+    if (!openedWindow) {
+      window.alert('浏览器拦截了新页面打开。你也可以直接长按当前图片保存。')
+    }
   }
 
   return (
@@ -256,24 +217,51 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
                 </button>
               </div>
 
-              <div className="share-preview-stage">
-                <div className="page page-result share-preview-page">
-                  <ResultPageContent
-                    personality={personality}
-                    axisBreakdown={axisBreakdown}
-                    dynamicTags={dynamicTags}
-                    enableMotion={false}
-                  />
-                </div>
+              <div className={`share-preview-stage${generatedImageUrl ? ' share-preview-stage--generated' : ''}`}>
+                {generatedImageUrl ? (
+                  <div className="share-generated-card">
+                    <div className="share-generated-copy">
+                      <strong>分享图已生成</strong>
+                      <p>直接长按下方图片即可保存到相册。若长按不方便，再点右下角“打开原图”。</p>
+                    </div>
+                    <img
+                      className="share-generated-image"
+                      src={generatedImageUrl}
+                      alt={`${personality.name}分享图成品`}
+                    />
+                  </div>
+                ) : (
+                  <div className="page page-result share-preview-page">
+                    <ResultPageContent
+                      personality={personality}
+                      axisBreakdown={axisBreakdown}
+                      dynamicTags={dynamicTags}
+                      enableMotion={false}
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="share-preview-actions">
-                <button className="secondary-button" onClick={handleClose} disabled={isDownloading}>
-                  取消
-                </button>
-                <button className="primary-button" onClick={handleDownload} disabled={isDownloading}>
-                  {isDownloading ? '生成中...' : (prefersManualSave ? '保存图片' : '下载图片')}
-                </button>
+                {generatedImageUrl ? (
+                  <>
+                    <button className="secondary-button" onClick={handleClose} disabled={isDownloading}>
+                      关闭
+                    </button>
+                    <button className="primary-button" onClick={handleOpenGeneratedImage} disabled={isDownloading}>
+                      打开原图
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button className="secondary-button" onClick={handleClose} disabled={isDownloading}>
+                      取消
+                    </button>
+                    <button className="primary-button" onClick={handleDownload} disabled={isDownloading}>
+                      {isDownloading ? '生成中...' : (prefersManualSave ? '保存图片' : '下载图片')}
+                    </button>
+                  </>
+                )}
               </div>
             </m.div>
           </m.div>

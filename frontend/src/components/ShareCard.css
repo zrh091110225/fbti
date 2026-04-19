@@ -124,6 +124,11 @@
   padding: 20px;
 }
 
+.share-preview-stage--generated {
+  display: flex;
+  justify-content: center;
+}
+
 .share-preview-page {
   min-height: auto;
   padding: 0;
@@ -151,6 +156,51 @@
 
 .share-preview-actions .primary-button {
   flex: 2;
+}
+
+.share-generated-card {
+  display: flex;
+  width: min(720px, 100%);
+  flex-direction: column;
+  gap: 16px;
+  margin: 0 auto;
+}
+
+.share-generated-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.68), rgba(255, 255, 255, 0.4)),
+    rgba(255, 255, 255, 0.34);
+  border: 1px solid rgba(93, 111, 102, 0.12);
+  color: #24302b;
+}
+
+.share-generated-copy strong {
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.share-generated-copy p {
+  margin: 0;
+  color: rgba(41, 53, 47, 0.72);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.share-generated-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 24px;
+  background: #f5f0e6;
+  border: 1px solid rgba(93, 111, 102, 0.14);
+  box-shadow:
+    0 20px 44px rgba(44, 57, 52, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
 }
 
 .share-export-root {
@@ -300,6 +350,19 @@
 
   .share-preview-stage {
     padding: 12px;
+  }
+
+  .share-generated-card {
+    gap: 12px;
+  }
+
+  .share-generated-copy {
+    padding: 14px 16px;
+    border-radius: 18px;
+  }
+
+  .share-generated-image {
+    border-radius: 20px;
   }
 
   .share-preview-actions {
