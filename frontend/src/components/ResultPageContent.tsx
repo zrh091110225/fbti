@@ -17,7 +17,6 @@ interface ResultPageContentProps {
 function ResultPageContent({
   personality,
   axisBreakdown,
-  dynamicTags,
   extraContent,
   actions,
   enableMotion = true
@@ -27,7 +26,6 @@ function ResultPageContent({
   const profileRows = [
     { label: '人格', value: personality.id },
     { label: '四轴', value: axisBreakdown.map((axis) => axis.resolvedLabel).join(' · ') },
-    { label: '标签', value: dynamicTags.join(' / ') }
   ]
 
   const artworkCard = (
