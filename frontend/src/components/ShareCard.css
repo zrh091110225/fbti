@@ -200,7 +200,17 @@
 }
 
 .share-export-page .trait {
-  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  min-height: 0;
+  max-width: 132px;
+  font-size: 14px;
+  line-height: 1.35;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .share-export-page .result-note p,
@@ -214,25 +224,57 @@
 }
 
 .share-export-page .axis-chart-stage {
-  width: min(100%, 520px);
-  padding: 64px 78px;
+  width: min(100%, 500px);
+  padding: 52px 64px;
 }
 
 .share-export-page .axis-chart-label {
-  width: 108px;
+  width: 96px;
 }
 
 .share-export-page .axis-chart-detail-table th {
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .share-export-page .axis-chart-label-type {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
 }
 
 .share-export-page .axis-chart-detail-table td {
-  font-size: 17px;
+  font-size: 15px;
+}
+
+.share-export-page .axis-chart-detail-table-wrap {
+  overflow: visible;
+}
+
+.share-export-page .axis-chart-detail-table {
+  table-layout: fixed;
+}
+
+.share-export-page .axis-chart-detail-table th,
+.share-export-page .axis-chart-detail-table td {
+  padding: 12px 10px;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.share-export-page .axis-chart-detail-table th:nth-child(1),
+.share-export-page .axis-chart-detail-table td:nth-child(1) {
+  width: 34%;
+}
+
+.share-export-page .axis-chart-detail-table th:nth-child(2),
+.share-export-page .axis-chart-detail-table td:nth-child(2) {
+  width: 26%;
+}
+
+.share-export-page .axis-chart-detail-table th:nth-child(3),
+.share-export-page .axis-chart-detail-table td:nth-child(3),
+.share-export-page .axis-chart-detail-table th:nth-child(4),
+.share-export-page .axis-chart-detail-table td:nth-child(4) {
+  width: 20%;
 }
 
 @media (max-width: 640px) {

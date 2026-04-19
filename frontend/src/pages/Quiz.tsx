@@ -28,7 +28,6 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
     isReeling: false,
     isReleasing: false,
     isLanding: false,
-    reelToken: 0,
     releaseToken: 0
   })
 
@@ -51,8 +50,7 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
 
     setMotionState(prev => ({
       ...prev,
-      isReeling: true,
-      reelToken: prev.reelToken + 1
+      isReeling: true
     }))
 
     if (isLastQuestion) {
@@ -83,7 +81,6 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
       isReeling: false,
       isReleasing: false,
       isLanding: false,
-      reelToken: 0,
       releaseToken: 0
     })
   }, [question.id])
@@ -196,7 +193,6 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
             prefersReducedMotion={prefersReducedMotion}
             isReeling={motionState.isReeling}
             isLanding={motionState.isLanding}
-            reelToken={motionState.reelToken}
           />
 
           <div className="quiz-layout">
@@ -423,15 +419,13 @@ function ProgressFish({
   nextProgress,
   prefersReducedMotion,
   isReeling,
-  isLanding,
-  reelToken
+  isLanding
 }: {
   progress: number
   nextProgress: number
   prefersReducedMotion: boolean
   isReeling: boolean
   isLanding: boolean
-  reelToken: number
 }) {
   const renderedProgress = isLanding || isReeling ? nextProgress : progress
 
@@ -483,26 +477,6 @@ function ProgressFish({
         </m.div>
       </div>
 
-      <div className={`reel-progress__reel ${isReeling || isLanding ? 'is-active' : ''}`}>
-        <m.div
-          key={reelToken}
-          className="reel-progress__spool"
-          animate={
-            isReeling || isLanding
-              ? { rotate: prefersReducedMotion ? 0 : [0, 120, 240, 360, 480] }
-              : { rotate: 0 }
-          }
-          transition={
-            prefersReducedMotion
-              ? { duration: 0.01 }
-              : { duration: isLanding ? 1.1 : 0.62, ease: 'linear', repeat: isLanding ? 0 : 1 }
-          }
-        >
-          <span className="reel-progress__spoke reel-progress__spoke--one" />
-          <span className="reel-progress__spoke reel-progress__spoke--two" />
-        </m.div>
-        <span className="reel-progress__handle" />
-      </div>
     </div>
   )
 }

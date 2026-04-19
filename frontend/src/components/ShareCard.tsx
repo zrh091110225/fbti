@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import { AnimatePresence, m } from 'framer-motion'
-import { toBlob } from 'html-to-image'
+import { toBlob, toPng } from 'html-to-image'
 import { PersonalityType } from '../data/personalities'
 import { AxisBreakdown } from '../utils/calculate'
 import ResultPageContent from './ResultPageContent'
@@ -41,6 +41,60 @@ function canShareFile(file: File) {
   return false
 }
 
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number, message: string) {
+  return new Promise<T>((resolve, reject) => {
+    const timer = window.setTimeout(() => {
+      reject(new Error(message))
+    }, timeoutMs)
+
+    promise
+      .then((value) => {
+        window.clearTimeout(timer)
+        resolve(value)
+      })
+      .catch((error) => {
+        window.clearTimeout(timer)
+        reject(error)
+      })
+  })
+}
+
+async function waitForImagesReady(root: HTMLElement) {
+  const images = Array.from(root.querySelectorAll('img'))
+
+  await Promise.all(
+    images.map(async (image) => {
+      if (image.complete && image.naturalWidth > 0) {
+        if (typeof image.decode === 'function') {
+          try {
+            await image.decode()
+          } catch {
+            // ignore decode failures and let export try anyway
+          }
+        }
+        return
+      }
+
+      await new Promise<void>((resolve) => {
+        const cleanup = () => {
+          image.removeEventListener('load', cleanup)
+          image.removeEventListener('error', cleanup)
+          resolve()
+        }
+
+        image.addEventListener('load', cleanup, { once: true })
+        image.addEventListener('error', cleanup, { once: true })
+      })
+    })
+  )
+}
+
+async function dataUrlToFile(dataUrl: string, fileName: string) {
+  const response = await fetch(dataUrl)
+  const blob = await response.blob()
+  return new File([blob], fileName, { type: 'image/png' })
+}
+
 const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard(
   { personality, axisBreakdown, dynamicTags, showLauncher = true },
   ref
@@ -65,6 +119,7 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
     setIsDownloading(true)
     const fileName = `fbti-${personality.id}.png`
     const manualSaveWindow = prefersManualSave ? window.open('', '_blank') : null
+    const exportNode = exportRef.current
 
     if (manualSaveWindow) {
       manualSaveWindow.document.write('<title>正在生成分享图</title><p style="font-family:-apple-system,BlinkMacSystemFont,\'PingFang SC\',sans-serif;padding:24px;">正在生成分享图，请稍候...</p>')
@@ -72,26 +127,55 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
     }
 
     try {
-      const blob = await toBlob(exportRef.current, {
-        cacheBust: true,
-        pixelRatio: 2
-      })
+      await waitForImagesReady(exportNode)
+      await new Promise<void>((resolve) => window.requestAnimationFrame(() => resolve()))
+
+      if (prefersManualSave) {
+        const dataUrl = await withTimeout(
+          toPng(exportNode, {
+            cacheBust: true,
+            pixelRatio: 1
+          }),
+          12000,
+          'Export timed out on mobile Safari'
+        )
+
+        if (shouldUseNativeShare) {
+          const file = await dataUrlToFile(dataUrl, fileName)
+
+          if (canShareFile(file)) {
+            await navigator.share({
+              title: `FBTI ${personality.name}分享图`,
+              files: [file]
+            })
+
+            manualSaveWindow?.close()
+            setIsPreviewOpen(false)
+            return
+          }
+        }
+
+        if (!manualSaveWindow) {
+          throw new Error('Manual save window was blocked')
+        }
+
+        manualSaveWindow.location.href = dataUrl
+        window.alert('分享图已在新页面打开，请长按图片保存到手机。')
+        setIsPreviewOpen(false)
+        return
+      }
+
+      const blob = await withTimeout(
+        toBlob(exportNode, {
+          cacheBust: true,
+          pixelRatio: 2
+        }),
+        12000,
+        'Export timed out'
+      )
 
       if (!blob) {
         throw new Error('Share image blob is empty')
-      }
-
-      const file = new File([blob], fileName, { type: 'image/png' })
-
-      if (shouldUseNativeShare && canShareFile(file)) {
-        await navigator.share({
-          title: `FBTI ${personality.name}分享图`,
-          files: [file]
-        })
-
-        manualSaveWindow?.close()
-        setIsPreviewOpen(false)
-        return
       }
 
       const objectUrl = URL.createObjectURL(blob)
@@ -115,7 +199,7 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
     } catch (error) {
       manualSaveWindow?.close()
       console.error('Failed to export share image', error)
-      window.alert('生成分享图失败，请稍后重试。')
+      window.alert(prefersManualSave ? '生成分享图失败。请重试；若仍失败，可长按预览图或使用截图保存。' : '生成分享图失败，请稍后重试。')
     } finally {
       setIsDownloading(false)
     }

@@ -62,88 +62,9 @@
 
 .reel-progress {
   display: grid;
-  grid-template-columns: 1fr 92px;
-  gap: 16px;
+  grid-template-columns: 1fr;
   align-items: center;
   margin-top: -2px;
-}
-
-.reel-progress__reel {
-  position: relative;
-  width: 92px;
-  height: 68px;
-  border-radius: 24px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-
-.reel-progress__reel.is-active {
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 0 24px rgba(197, 238, 211, 0.08);
-}
-
-.reel-progress__spool {
-  position: absolute;
-  top: 14px;
-  left: 16px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at center, rgba(197, 238, 211, 0.18) 0%, rgba(197, 238, 211, 0.06) 44%, rgba(255, 255, 255, 0.02) 45%),
-    rgba(7, 16, 25, 0.7);
-  border: 1px solid rgba(197, 238, 211, 0.18);
-}
-
-.reel-progress__spool::after {
-  content: "";
-  position: absolute;
-  inset: 13px;
-  border-radius: 50%;
-  background: rgba(197, 238, 211, 0.76);
-  box-shadow: 0 0 18px rgba(197, 238, 211, 0.35);
-}
-
-.reel-progress__spoke {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 24px;
-  height: 2px;
-  margin-left: -12px;
-  margin-top: -1px;
-  border-radius: 999px;
-  background: rgba(197, 238, 211, 0.56);
-}
-
-.reel-progress__spoke--two {
-  transform: rotate(90deg);
-}
-
-.reel-progress__handle {
-  position: absolute;
-  top: 19px;
-  right: 16px;
-  width: 18px;
-  height: 30px;
-  border-right: 2px solid rgba(197, 238, 211, 0.34);
-  border-top: 2px solid rgba(197, 238, 211, 0.34);
-  border-bottom: 2px solid rgba(197, 238, 211, 0.34);
-  border-top-right-radius: 16px;
-  border-bottom-right-radius: 16px;
-}
-
-.reel-progress__handle::after {
-  content: "";
-  position: absolute;
-  top: 8px;
-  right: -7px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgba(197, 238, 211, 0.8);
 }
 
 .reel-progress__lane {
@@ -649,10 +570,6 @@
 
   .reel-progress {
     grid-template-columns: 1fr;
-  }
-
-  .reel-progress__reel {
-    width: 88px;
   }
 
   .question-counter .current {
