@@ -9,6 +9,7 @@ const AXIS_ORDER: Axis[] = ['I', 'S', 'T', 'R']
 const CHART_CENTER = 100
 const CHART_RADIUS = 72
 const GRID_LEVELS = [0.25, 0.5, 0.75, 1]
+const CIRCLE_KAPPA = 0.5522847498
 
 function getAxisPoint(axis: Axis, radiusFactor: number) {
   const distance = CHART_RADIUS * radiusFactor
@@ -58,7 +59,36 @@ function buildSmoothClosedPath(points: Array<{ x: number; y: number }>, tension 
   return `${path} Z`
 }
 
+function buildCircleGridPath(level: number) {
+  const radius = CHART_RADIUS * level
+  const controlOffset = radius * CIRCLE_KAPPA
+  const top = { x: CHART_CENTER, y: CHART_CENTER - radius }
+  const right = { x: CHART_CENTER + radius, y: CHART_CENTER }
+  const bottom = { x: CHART_CENTER, y: CHART_CENTER + radius }
+  const left = { x: CHART_CENTER - radius, y: CHART_CENTER }
+
+  return [
+    `M ${top.x} ${top.y}`,
+    `C ${top.x + controlOffset} ${top.y}, ${right.x} ${right.y - controlOffset}, ${right.x} ${right.y}`,
+    `C ${right.x} ${right.y + controlOffset}, ${bottom.x + controlOffset} ${bottom.y}, ${bottom.x} ${bottom.y}`,
+    `C ${bottom.x - controlOffset} ${bottom.y}, ${left.x} ${left.y + controlOffset}, ${left.x} ${left.y}`,
+    `C ${left.x} ${left.y - controlOffset}, ${top.x - controlOffset} ${top.y}, ${top.x} ${top.y}`,
+    'Z'
+  ].join(' ')
+}
+
 function AxisRadarChart({ axisBreakdown }: AxisRadarChartProps) {
+  const svgPalette = {
+    gridFill: 'rgba(156, 181, 166, 0.08)',
+    gridStroke: 'rgba(93, 111, 102, 0.18)',
+    spokeStroke: 'rgba(93, 111, 102, 0.16)',
+    areaFill: 'rgba(106, 156, 124, 0.22)',
+    outlineStroke: '#5a8163',
+    pointFill: '#f8fbf3',
+    pointStroke: '#45684e',
+    centerFill: '#45684e'
+  }
+
   const orderedBreakdown = AXIS_ORDER
     .map((axisCode) => axisBreakdown.find((item) => item.axis === axisCode))
     .filter((item): item is AxisBreakdown => Boolean(item))
@@ -90,7 +120,10 @@ function AxisRadarChart({ axisBreakdown }: AxisRadarChartProps) {
               <path
                 key={level}
                 className="axis-chart-grid"
-                d={buildSmoothClosedPath(AXIS_ORDER.map((axis) => getAxisPoint(axis, level)), 0.9)}
+                d={buildCircleGridPath(level)}
+                fill={svgPalette.gridFill}
+                stroke={svgPalette.gridStroke}
+                strokeWidth="1"
               />
             ))}
 
@@ -104,12 +137,21 @@ function AxisRadarChart({ axisBreakdown }: AxisRadarChartProps) {
                   y1={CHART_CENTER}
                   x2={point.x}
                   y2={point.y}
+                  stroke={svgPalette.spokeStroke}
+                  strokeWidth="1"
                 />
               )
             })}
 
-            <path className="axis-chart-area" d={smoothPolygonPath} />
-            <path className="axis-chart-outline" d={smoothPolygonPath} />
+            <path className="axis-chart-area" d={smoothPolygonPath} fill={svgPalette.areaFill} />
+            <path
+              className="axis-chart-outline"
+              d={smoothPolygonPath}
+              fill="none"
+              stroke={svgPalette.outlineStroke}
+              strokeWidth="2.5"
+              strokeLinejoin="round"
+            />
 
             {chartItems.map((axis) => (
               <circle
@@ -117,11 +159,20 @@ function AxisRadarChart({ axisBreakdown }: AxisRadarChartProps) {
                 className="axis-chart-point"
                 cx={axis.point.x}
                 cy={axis.point.y}
-                r="4.5"
+                r="5.5"
+                fill={svgPalette.pointFill}
+                stroke={svgPalette.pointStroke}
+                strokeWidth="2.5"
               />
             ))}
 
-            <circle className="axis-chart-center" cx={CHART_CENTER} cy={CHART_CENTER} r="3" />
+            <circle
+              className="axis-chart-center"
+              cx={CHART_CENTER}
+              cy={CHART_CENTER}
+              r="3"
+              fill={svgPalette.centerFill}
+            />
           </svg>
 
           {chartItems.map((axis) => (

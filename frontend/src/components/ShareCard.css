@@ -227,7 +227,8 @@
 }
 
 .share-export-page .axis-chart-label-type {
-  font-size: 18px;
+  font-size: 22px;
+  font-weight: 800;
 }
 
 .share-export-page .axis-chart-detail-table td {

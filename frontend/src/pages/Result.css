@@ -418,7 +418,7 @@
   left: 50%;
   align-items: center;
   text-align: center;
-  transform: translate(-50%, calc(-100% - 8px));
+  transform: translate(-50%, calc(-100% - 4px));
 }
 
 .axis-chart-label--s {
@@ -426,7 +426,7 @@
   left: 100%;
   align-items: flex-start;
   text-align: left;
-  transform: translate(8px, -50%);
+  transform: translate(4px, -50%);
 }
 
 .axis-chart-label--t {
@@ -434,7 +434,7 @@
   left: 50%;
   align-items: center;
   text-align: center;
-  transform: translate(-50%, 8px);
+  transform: translate(-50%, 4px);
 }
 
 .axis-chart-label--r {
@@ -442,13 +442,13 @@
   left: 0;
   align-items: flex-end;
   text-align: right;
-  transform: translate(calc(-100% - 8px), -50%);
+  transform: translate(calc(-100% - 4px), -50%);
 }
 
 .axis-chart-label-type {
   color: #24302b;
-  font-size: clamp(16px, 1.8vw, 20px);
-  font-weight: 700;
+  font-size: clamp(20px, 2.2vw, 24px);
+  font-weight: 800;
   line-height: 1.2;
   letter-spacing: 0.08em;
 }
@@ -787,7 +787,7 @@
   }
 
   .axis-chart-label-type {
-    font-size: 14px;
+    font-size: 18px;
   }
 
   .axis-chart-detail-table {
