@@ -23,7 +23,7 @@ function ResultPageContent({
   enableMotion = true
 }: ResultPageContentProps) {
   const artwork = getPersonalityArtwork(personality.id)
-  
+
   const artworkCard = (
     <div className="result-artwork-frame">
       <div className="result-artwork-visual">
