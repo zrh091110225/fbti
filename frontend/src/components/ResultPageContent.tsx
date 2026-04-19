@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import { m } from 'framer-motion'
+import AxisRadarChart from './AxisRadarChart'
 import { getPersonalityArtwork } from '../data/personalityArtworks'
 import { PersonalityType } from '../data/personalities'
 import { AxisBreakdown } from '../utils/calculate'
@@ -22,12 +23,7 @@ function ResultPageContent({
   enableMotion = true
 }: ResultPageContentProps) {
   const artwork = getPersonalityArtwork(personality.id)
-
-  const profileRows = [
-    { label: '人格', value: personality.id },
-    { label: '四轴', value: axisBreakdown.map((axis) => axis.resolvedLabel).join(' · ') },
-  ]
-
+  
   const artworkCard = (
     <div className="result-artwork-frame">
       <div className="result-artwork-visual">
@@ -125,28 +121,8 @@ function ResultPageContent({
 
           <article className="result-note result-note-profile">
             <span className="content-label">人格坐标</span>
-            <div className="result-profile-list">
-              {profileRows.map((item) => (
-                <div key={item.label} className="result-profile-row">
-                  <span>{item.label}</span>
-                  <strong>{item.value}</strong>
-                </div>
-              ))}
-            </div>
 
-            <div className="axis-breakdown-list">
-              {axisBreakdown.map((axis) => (
-                <div key={axis.axis} className="axis-breakdown-row">
-                  <div className="axis-breakdown-row__header">
-                    <span>{axis.title}</span>
-                    <strong>{axis.resolvedLabel}</strong>
-                  </div>
-                  <p>
-                    {axis.leftLabel} {axis.leftScore} 分 / {axis.rightLabel} {axis.rightScore} 分
-                  </p>
-                </div>
-              ))}
-            </div>
+            <AxisRadarChart axisBreakdown={axisBreakdown} />
           </article>
         </div>
 

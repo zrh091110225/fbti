@@ -204,19 +204,34 @@
 }
 
 .share-export-page .result-note p,
-.share-export-page .result-profile-row strong,
-.share-export-page .axis-breakdown-row p {
+.share-export-page .result-profile-row strong {
   font-size: 18px;
 }
 
 .share-export-page .result-note .content-label,
-.share-export-page .result-profile-row span,
-.share-export-page .axis-breakdown-row__header span {
+.share-export-page .result-profile-row span {
   font-size: 13px;
 }
 
-.share-export-page .axis-breakdown-row__header strong {
+.share-export-page .axis-chart-stage {
+  width: min(100%, 520px);
+  padding: 64px 78px;
+}
+
+.share-export-page .axis-chart-label {
+  width: 108px;
+}
+
+.share-export-page .axis-chart-detail-table th {
+  font-size: 13px;
+}
+
+.share-export-page .axis-chart-label-type {
   font-size: 18px;
+}
+
+.share-export-page .axis-chart-detail-table td {
+  font-size: 17px;
 }
 
 @media (max-width: 640px) {
