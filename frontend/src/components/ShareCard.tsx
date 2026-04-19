@@ -49,6 +49,7 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const [isDownloading, setIsDownloading] = useState(false)
   const prefersManualSave = isIosLikeBrowser() || isWechatBrowser()
+  const shouldUseNativeShare = prefersManualSave
 
   const openPreview = async () => {
     setIsPreviewOpen(true)
@@ -82,7 +83,7 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
 
       const file = new File([blob], fileName, { type: 'image/png' })
 
-      if (canShareFile(file)) {
+      if (shouldUseNativeShare && canShareFile(file)) {
         await navigator.share({
           title: `FBTI ${personality.name}分享图`,
           files: [file]
