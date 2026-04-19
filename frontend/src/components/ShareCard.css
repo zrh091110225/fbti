@@ -212,6 +212,15 @@
   pointer-events: none;
 }
 
+.share-export-root--capture {
+  left: 50%;
+  top: 16px;
+  z-index: 90;
+  opacity: 0.015;
+  transform: translateX(-50%) scale(0.34);
+  transform-origin: top center;
+}
+
 .share-export-page {
   min-height: auto;
   width: 900px;

@@ -31,6 +31,9 @@ function ResultPageContent({
           src={artwork}
           alt={`${personality.name}的场景插画`}
           className="result-artwork-image"
+          loading="eager"
+          decoding="sync"
+          fetchPriority="high"
         />
         <p className="result-signature">{personality.signature}</p>
       </div>

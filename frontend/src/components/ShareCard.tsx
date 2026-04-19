@@ -85,6 +85,7 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
   const [isPreviewOpen, setIsPreviewOpen] = useState(false)
   const [isDownloading, setIsDownloading] = useState(false)
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null)
+  const [isRenderingCaptureNode, setIsRenderingCaptureNode] = useState(false)
   const prefersManualSave = isIosLikeBrowser() || isWechatBrowser()
 
   const openPreview = async () => {
@@ -105,6 +106,12 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
     const exportNode = exportRef.current
 
     try {
+      if (prefersManualSave) {
+        setIsRenderingCaptureNode(true)
+        await new Promise<void>((resolve) => window.requestAnimationFrame(() => resolve()))
+        await new Promise<void>((resolve) => window.requestAnimationFrame(() => resolve()))
+      }
+
       await waitForImagesReady(exportNode)
       await new Promise<void>((resolve) => window.requestAnimationFrame(() => resolve()))
 
@@ -151,6 +158,7 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
       console.error('Failed to export share image', error)
       window.alert(prefersManualSave ? '生成分享图失败。请重试；若仍失败，可长按预览图或使用截图保存。' : '生成分享图失败，请稍后重试。')
     } finally {
+      setIsRenderingCaptureNode(false)
       setIsDownloading(false)
     }
   }
@@ -268,7 +276,10 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
         )}
       </AnimatePresence>
 
-      <div className="share-export-root" aria-hidden="true">
+      <div
+        className={`share-export-root${isRenderingCaptureNode ? ' share-export-root--capture' : ''}`}
+        aria-hidden="true"
+      >
         <div ref={exportRef} className="page page-result share-export-page">
           <ResultPageContent
             personality={personality}
