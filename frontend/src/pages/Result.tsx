@@ -1,9 +1,10 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import wechatGroupQr from '../assets/community/wechat-group-qr.jpg'
 import ResultPageContent from '../components/ResultPageContent'
 import ShareCard, { ShareCardHandle } from '../components/ShareCard'
 import { QuizAnswer } from '../types/quiz'
 import { calculatePersonality } from '../utils/calculate'
+import { trackEvent } from '../utils/analytics'
 import './Result.css'
 
 interface ResultProps {
@@ -26,6 +27,13 @@ function Result({ answers, onRestart }: ResultProps) {
   const { personality, axisBreakdown, topFacetTags } = result
   const dynamicTags = topFacetTags.length ? topFacetTags : personality.traits.slice(0, 3)
 
+  useEffect(() => {
+    trackEvent('quiz_result_view', {
+      personality_id: personality.id,
+      personality_name: personality.name
+    })
+  }, [personality.id, personality.name])
+
   const openExternalLink = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer')
   }
@@ -44,6 +52,11 @@ function Result({ answers, onRestart }: ResultProps) {
 
   const handleSharePreview = async () => {
     if (!shareCardRef.current || isShareGenerating) return
+
+    trackEvent('share_result', {
+      personality_id: personality.id,
+      personality_name: personality.name
+    })
 
     setIsShareGenerating(true)
     try {

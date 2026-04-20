@@ -8,6 +8,7 @@ import { Question, questions } from './data/questions'
 import { generateQuestionOrder, normalizeQuestionOrder } from './utils/questionOrder'
 import { clearQuizState, loadQuizState, saveQuizState } from './utils/storage'
 import { AppScreen, QuizAnswer } from './types/quiz'
+import { trackPageView, trackEvent } from './utils/analytics'
 
 const pageTransition = {
   initial: { opacity: 0, y: 24, filter: 'blur(10px)' },
@@ -50,6 +51,10 @@ function App() {
   }, [screen, answers, currentQuestion, questionOrder])
 
   useEffect(() => {
+    trackPageView(screen)
+  }, [screen])
+
+  useEffect(() => {
     if (!orderedQuestions.length) {
       return
     }
@@ -60,6 +65,7 @@ function App() {
   }, [currentQuestion, orderedQuestions.length])
 
   const handleStart = () => {
+    trackEvent('quiz_start')
     const nextQuestionOrder = generateQuestionOrder(questions)
     setScreen('quiz')
     setAnswers([])
@@ -68,6 +74,11 @@ function App() {
   }
 
   const handleAnswer = (questionId: number, answerId: number) => {
+    trackEvent('quiz_answer', {
+      question_id: questionId,
+      answer_id: answerId,
+      progress: Math.round(((currentQuestion + 1) / questions.length) * 100)
+    })
     setAnswers(prev => {
       const filtered = prev.filter(a => a.questionId !== questionId)
       return [...filtered, { questionId, answerId }]
@@ -75,6 +86,7 @@ function App() {
   }
 
   const handleFinish = () => {
+    trackEvent('quiz_finish')
     setScreen('result')
   }
 
