@@ -2,6 +2,7 @@ export type Axis = 'I' | 'S' | 'T' | 'R'
 export type ScoreKey = 'H' | 'C' | 'S' | 'O' | 'T' | 'G' | 'R' | 'E'
 export type OptionPosition = 'left' | 'middle' | 'right'
 export type TieBreakRule = 'score' | 'strong' | 'facet' | 'default'
+export type QuestionType = 'scored' | 'neutral'
 
 export type FacetTag =
   | '抢口'
@@ -21,13 +22,14 @@ export interface QuestionOption {
   id: number
   position: OptionPosition
   text: string
-  scores: Partial<Record<ScoreKey, number>>
-  facetScores: Partial<Record<FacetTag, number>>
+  scores?: Partial<Record<ScoreKey, number>>
+  facetScores?: Partial<Record<FacetTag, number>>
 }
 
 export interface Question {
   id: number
-  axis: Axis
+  type?: QuestionType
+  axis?: Axis
   text: string
   options: QuestionOption[]
 }

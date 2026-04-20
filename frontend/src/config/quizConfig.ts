@@ -6,6 +6,7 @@ import {
   FacetTag,
   PersonalityType,
   Question,
+  QuestionType,
   QuizConfig,
   ScoreKey
 } from './quizTypes'
@@ -27,6 +28,10 @@ function parseQuizConfig(raw: string): QuizConfig {
   return parsed as QuizConfig
 }
 
+function getQuestionType(question: Question): QuestionType {
+  return question.type ?? 'scored'
+}
+
 function validateQuizConfig(config: QuizConfig) {
   const axisMap = new Map<Axis, AxisConfig>(config.axes.map(axis => [axis.axis, axis]))
   const scoreKeys = new Set(config.rules.allowedScoreKeys)
@@ -37,16 +42,19 @@ function validateQuizConfig(config: QuizConfig) {
   const axisCounts = buildEmptyRecord(config.axes.map(axis => axis.axis), 0)
 
   config.questions.forEach((question) => {
+    const questionType = getQuestionType(question)
+
     if (config.validation.requireUniqueQuestionIds && questionIds.has(question.id)) {
       throw new Error(`Duplicate question id: ${question.id}`)
     }
     questionIds.add(question.id)
 
-    if (!axisMap.has(question.axis)) {
-      throw new Error(`Question ${question.id} uses unsupported axis: ${question.axis}`)
+    if (questionType === 'scored') {
+      if (!question.axis || !axisMap.has(question.axis)) {
+        throw new Error(`Question ${question.id} uses unsupported axis: ${question.axis}`)
+      }
+      axisCounts[question.axis] += 1
     }
-
-    axisCounts[question.axis] += 1
 
     if (question.options.length !== config.validation.optionsPerQuestion) {
       throw new Error(
@@ -73,21 +81,26 @@ function validateQuizConfig(config: QuizConfig) {
       }
       optionIds.add(option.id)
 
-      if (!Object.keys(option.scores).length) {
-        throw new Error(`Question ${question.id} option ${option.id} is missing axis scores`)
+      const scoreEntries = Object.keys(option.scores ?? {})
+      const facetEntries = Object.keys(option.facetScores ?? {})
+
+      if (questionType === 'scored') {
+        if (!scoreEntries.length) {
+          throw new Error(`Question ${question.id} option ${option.id} is missing axis scores`)
+        }
+
+        if (!facetEntries.length) {
+          throw new Error(`Question ${question.id} option ${option.id} is missing facet scores`)
+        }
       }
 
-      if (!Object.keys(option.facetScores).length) {
-        throw new Error(`Question ${question.id} option ${option.id} is missing facet scores`)
-      }
-
-      Object.keys(option.scores).forEach((scoreKey) => {
+      scoreEntries.forEach((scoreKey) => {
         if (!scoreKeys.has(scoreKey as ScoreKey)) {
           throw new Error(`Question ${question.id} option ${option.id} uses invalid score key: ${scoreKey}`)
         }
       })
 
-      Object.keys(option.facetScores).forEach((facetTag) => {
+      facetEntries.forEach((facetTag) => {
         if (!facetTags.has(facetTag as FacetTag)) {
           throw new Error(`Question ${question.id} option ${option.id} uses invalid facet tag: ${facetTag}`)
         }

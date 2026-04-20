@@ -29,6 +29,18 @@ function isWechatBrowser() {
   return /MicroMessenger/i.test(window.navigator.userAgent)
 }
 
+function canShareFile(file: File) {
+  if (typeof navigator.share !== 'function') {
+    return false
+  }
+
+  if (typeof navigator.canShare === 'function') {
+    return navigator.canShare({ files: [file] })
+  }
+
+  return true
+}
+
 function withTimeout<T>(promise: Promise<T>, timeoutMs: number, message: string) {
   return new Promise<T>((resolve, reject) => {
     const timer = window.setTimeout(() => {
@@ -77,6 +89,20 @@ async function waitForImagesReady(root: HTMLElement) {
   )
 }
 
+function dataUrlToFile(dataUrl: string, fileName: string) {
+  const [header, base64Payload = ''] = dataUrl.split(',')
+  const mimeMatch = header.match(/data:(.*?);base64/)
+  const mimeType = mimeMatch?.[1] ?? 'image/png'
+  const binary = window.atob(base64Payload)
+  const bytes = new Uint8Array(binary.length)
+
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index)
+  }
+
+  return new File([bytes], fileName, { type: mimeType })
+}
+
 const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard(
   { personality, axisBreakdown, dynamicTags, showLauncher = true },
   ref
@@ -87,6 +113,7 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null)
   const [isRenderingCaptureNode, setIsRenderingCaptureNode] = useState(false)
   const prefersManualSave = isIosLikeBrowser() || isWechatBrowser()
+  const prefersNativeShare = isIosLikeBrowser() && !isWechatBrowser()
 
   const openPreview = async () => {
     setGeneratedImageUrl(null)
@@ -126,6 +153,30 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
         )
 
         setGeneratedImageUrl(dataUrl)
+
+        if (prefersNativeShare) {
+          const file = dataUrlToFile(dataUrl, fileName)
+
+          if (canShareFile(file)) {
+            try {
+              await navigator.share({
+                title: `FBTI ${personality.name}分享图`,
+                files: [file]
+              })
+
+              setGeneratedImageUrl(null)
+              setIsPreviewOpen(false)
+              return
+            } catch (error) {
+              if (error instanceof DOMException && error.name === 'AbortError') {
+                return
+              }
+
+              console.warn('Native share failed, falling back to generated preview', error)
+            }
+          }
+        }
+
         return
       }
 

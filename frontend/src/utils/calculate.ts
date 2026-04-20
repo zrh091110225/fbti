@@ -8,11 +8,15 @@ import {
   questionMap,
   quizConfig
 } from '../config/quizConfig'
-import { Axis, FacetTag, ScoreKey, TieBreakRule } from '../config/quizTypes'
+import { Axis, FacetTag, Question, ScoreKey, TieBreakRule } from '../config/quizTypes'
 import { PersonalityType } from '../data/personalities'
 import { QuizAnswer } from '../types/quiz'
 
 type TieBreakerReason = TieBreakRule
+
+function isScoredQuestion(question: Question): question is Question & { axis: Axis } {
+  return (question.type ?? 'scored') === 'scored' && typeof question.axis === 'string'
+}
 
 export interface AxisBreakdown {
   axis: Axis
@@ -90,16 +94,16 @@ export function calculatePersonality(answers: QuizAnswer[]): CalculatedPersonali
 
   answers.forEach((answer) => {
     const question = questionMap.get(answer.questionId)
-    if (!question) return
+    if (!question || !isScoredQuestion(question)) return
 
     const option = question.options.find(candidate => candidate.id === answer.answerId)
     if (!option) return
 
-    Object.entries(option.scores).forEach(([key, value]) => {
+    Object.entries(option.scores ?? {}).forEach(([key, value]) => {
       scores[key as ScoreKey] += value ?? 0
     })
 
-    Object.entries(option.facetScores).forEach(([key, value]) => {
+    Object.entries(option.facetScores ?? {}).forEach(([key, value]) => {
       facetScores[key as FacetTag] += value ?? 0
     })
 

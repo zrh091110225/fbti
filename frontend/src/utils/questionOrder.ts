@@ -1,5 +1,19 @@
 import { Axis, Question, questions } from '../data/questions'
 
+type QuestionGroup = Axis | 'neutral'
+
+function getQuestionGroup(question: Question): QuestionGroup {
+  if ((question.type ?? 'scored') === 'neutral') {
+    return 'neutral'
+  }
+
+  if (!question.axis) {
+    throw new Error(`Scored question ${question.id} is missing axis`)
+  }
+
+  return question.axis
+}
+
 const allQuestionIds = questions.map(question => question.id)
 
 function shuffleList<T>(items: T[]): T[] {
@@ -14,31 +28,35 @@ function shuffleList<T>(items: T[]): T[] {
 }
 
 export function generateQuestionOrder(questionBank: Question[]): number[] {
-  const grouped = questionBank.reduce<Record<Axis, Question[]>>((result, question) => {
-    result[question.axis].push(question)
+  const grouped = questionBank.reduce<Record<QuestionGroup, Question[]>>((result, question) => {
+    result[getQuestionGroup(question)].push(question)
     return result
-  }, { I: [], S: [], T: [], R: [] })
+  }, { I: [], S: [], T: [], R: [], neutral: [] })
 
-  const pools: Record<Axis, Question[]> = {
+  const pools: Record<QuestionGroup, Question[]> = {
     I: shuffleList(grouped.I),
     S: shuffleList(grouped.S),
     T: shuffleList(grouped.T),
-    R: shuffleList(grouped.R)
+    R: shuffleList(grouped.R),
+    neutral: shuffleList(grouped.neutral)
   }
 
   const ordered: Question[] = []
 
   while (ordered.length < questionBank.length) {
-    const lastAxis = ordered[ordered.length - 1]?.axis
-    const previousAxis = ordered[ordered.length - 2]?.axis
-    const blockedAxis = lastAxis && previousAxis && lastAxis === previousAxis ? lastAxis : null
+    const lastGroup = ordered[ordered.length - 1] ? getQuestionGroup(ordered[ordered.length - 1]) : null
+    const previousGroup = ordered[ordered.length - 2] ? getQuestionGroup(ordered[ordered.length - 2]) : null
+    const blockedAxis =
+      lastGroup && previousGroup && lastGroup === previousGroup && lastGroup !== 'neutral'
+        ? lastGroup
+        : null
 
-    const candidates = (Object.keys(pools) as Axis[]).filter(axis => {
-      return pools[axis].length > 0 && axis !== blockedAxis
+    const candidates = (Object.keys(pools) as QuestionGroup[]).filter(group => {
+      return pools[group].length > 0 && group !== blockedAxis
     })
 
     const nextAxisPool = shuffleList(candidates)
-      .sort((leftAxis, rightAxis) => pools[rightAxis].length - pools[leftAxis].length)
+      .sort((leftGroup, rightGroup) => pools[rightGroup].length - pools[leftGroup].length)
 
     const nextAxis = nextAxisPool[0]
 
@@ -76,11 +94,19 @@ export function normalizeQuestionOrder(questionOrder?: number[]): number[] {
   }
 
   for (let index = 2; index < uniqueOrder.length; index += 1) {
-    const currentAxis = questions.find(question => question.id === uniqueOrder[index])?.axis
-    const prevAxis = questions.find(question => question.id === uniqueOrder[index - 1])?.axis
-    const prevPrevAxis = questions.find(question => question.id === uniqueOrder[index - 2])?.axis
+    const currentQuestion = questions.find(question => question.id === uniqueOrder[index])
+    const prevQuestion = questions.find(question => question.id === uniqueOrder[index - 1])
+    const prevPrevQuestion = questions.find(question => question.id === uniqueOrder[index - 2])
 
-    if (currentAxis && currentAxis === prevAxis && currentAxis === prevPrevAxis) {
+    if (!currentQuestion || !prevQuestion || !prevPrevQuestion) {
+      return generateQuestionOrder(questions)
+    }
+
+    const currentAxis = getQuestionGroup(currentQuestion)
+    const prevAxis = getQuestionGroup(prevQuestion)
+    const prevPrevAxis = getQuestionGroup(prevPrevQuestion)
+
+    if (currentAxis !== 'neutral' && currentAxis === prevAxis && currentAxis === prevPrevAxis) {
       return generateQuestionOrder(questions)
     }
   }
