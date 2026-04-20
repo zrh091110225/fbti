@@ -9,9 +9,9 @@
 ---
 
 ## 🎯 在线体验
-
-- **国内访问**：https://fbti-frontend.vercel.app/
-- **备用地址**：https://aiecho.cc/
+这两个地址都一样，执行根据网络情况选择
+- **国内访问**：https://aiecho.cc/
+- **备用访问**：https://fbti-frontend.vercel.app/
 
 ---
 
