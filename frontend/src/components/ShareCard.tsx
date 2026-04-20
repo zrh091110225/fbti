@@ -3,6 +3,7 @@ import { toBlob, toPng } from 'html-to-image'
 import { PersonalityType } from '../data/personalities'
 import { AxisBreakdown } from '../utils/calculate'
 import ResultPageContent from './ResultPageContent'
+import ShareInviteFooter from './ShareInviteFooter'
 import './ShareCard.css'
 
 interface ShareCardProps {
@@ -15,6 +16,8 @@ interface ShareCardProps {
 export interface ShareCardHandle {
   exportAndShare: () => Promise<void>
 }
+
+const DEFAULT_SHARE_QR_URL = 'https://aiecho.cc/'
 
 function isIosLikeBrowser() {
   const ua = window.navigator.userAgent
@@ -111,6 +114,7 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
   const [isRenderingCaptureNode, setIsRenderingCaptureNode] = useState(false)
   const prefersManualSave = isIosLikeBrowser() || isWechatBrowser()
   const prefersNativeShare = isIosLikeBrowser() && !isWechatBrowser()
+  const shareQrUrl = import.meta.env.VITE_SHARE_QR_URL?.trim() || DEFAULT_SHARE_QR_URL
 
   useImperativeHandle(ref, () => ({
     exportAndShare: async () => {
@@ -231,6 +235,7 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
             personality={personality}
             axisBreakdown={axisBreakdown}
             dynamicTags={dynamicTags}
+            extraContent={<ShareInviteFooter url={shareQrUrl} />}
             enableMotion={false}
           />
         </div>
