@@ -107,6 +107,7 @@ npm run build
 ## 🤝 加入我们
 
 测试完成后，可通过结果页扫码加入 **FBTI 钓友群**，与全国钓友一起交流！
+https://t.me/+I8zUibGR0FswMTQ5
 
 ---
 
