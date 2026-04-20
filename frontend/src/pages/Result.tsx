@@ -47,7 +47,7 @@ function Result({ answers, onRestart }: ResultProps) {
 
     setIsShareGenerating(true)
     try {
-      await shareCardRef.current.openPreview()
+      await shareCardRef.current.exportAndShare()
     } finally {
       setIsShareGenerating(false)
     }
@@ -111,7 +111,7 @@ function Result({ answers, onRestart }: ResultProps) {
         actions={(
           <div className="result-actions">
             <button className="primary-button" onClick={handleSharePreview} disabled={isShareGenerating}>
-              {isShareGenerating ? '生成中...' : '查看分享图'}
+              {isShareGenerating ? '生成中...' : '结果分享'}
             </button>
             <button className="secondary-button" onClick={onRestart}>
               重新测试
