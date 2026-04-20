@@ -29,23 +29,23 @@ FBTI 基于四个维度生成 **16种独特的人格类型**：
 ### 人格分布（预估）
 
 <table>
-<tr><th style="width:60px">头像</th><th style="width:80px">人格类型</th><th style="width:60px">代码</th><th style="width:60px">占比</th></tr>
-<tr><td><img src="./frontend/public/results/随缘钓客.png" width="50"></td><td>佛系钓客</td><td>COTE</td><td>15.00%</td></tr>
-<tr><td><img src="./frontend/public/results/摸鱼老炮.png" width="50"></td><td>摸鱼老炮</td><td>CSTE</td><td>12.00%</td></tr>
-<tr><td><img src="./frontend/public/results/岸边搭子.png" width="50"></td><td>岸边搭子</td><td>CSGE</td><td>10.00%</td></tr>
-<tr><td><img src="./frontend/public/results/精致钓鱼人.png" width="50"></td><td>精致钓人</td><td>COGE</td><td>9.00%</td></tr>
-<tr><td><img src="./frontend/public/results/爆护独行侠.png" width="50"></td><td>爆护独行侠</td><td>COGR</td><td>8.50%</td></tr>
-<tr><td><img src="./frontend/public/results/连竿手.png" width="50"></td><td>连竿手</td><td>COTR</td><td>8.00%</td></tr>
-<tr><td><img src="./frontend/public/results/水边讲师.png" width="50"></td><td>水边讲师</td><td>HSTE</td><td>6.50%</td></tr>
-<tr><td><img src="./frontend/public/results/海王.png" width="50"></td><td>海王</td><td>HSGE</td><td>6.00%</td></tr>
-<tr><td><img src="./frontend/public/results/守钓宗师.png" width="50"></td><td>守钓宗师</td><td>HOTE</td><td>5.50%</td></tr>
-<tr><td><img src="./frontend/public/results/坑冠.png" width="50"></td><td>坑冠</td><td>HSTR</td><td>4.00%</td></tr>
-<tr><td><img src="./frontend/public/results/装备显眼包.png" width="50"></td><td>装备显眼包</td><td>CSGR</td><td>4.00%</td></tr>
-<tr><td><img src="./frontend/public/results/钓位终结者.png" width="50"></td><td>钓位终结者</td><td>HOGR</td><td>3.50%</td></tr>
-<tr><td><img src="./frontend/public/results/满配钓王.png" width="50"></td><td>满配钓王</td><td>HSGR</td><td>3.00%</td></tr>
-<tr><td><img src="./frontend/public/results/钓帝.png" width="50"></td><td>钓帝</td><td>HOTR</td><td>2.00%</td></tr>
-<tr><td><img src="./frontend/public/results/收藏家.png" width="50"></td><td>孤钓收藏家</td><td>HOGE</td><td>1.50%</td></tr>
-<tr><td><img src="./frontend/public/results/钓场军师.png" width="50"></td><td>钓场军师</td><td>CSTR</td><td>1.50%</td></tr>
+<tr><th style="width:90px">头像</th><th style="width:120px">人格类型</th><th style="width:60px">代码</th><th style="width:60px">占比</th></tr>
+<tr><td><img src="./frontend/public/results/随缘钓客.png" width="90"></td><td>佛系钓客</td><td>COTE</td><td>15.00%</td></tr>
+<tr><td><img src="./frontend/public/results/摸鱼老炮.png" width="90"></td><td>摸鱼老炮</td><td>CSTE</td><td>12.00%</td></tr>
+<tr><td><img src="./frontend/public/results/岸边搭子.png" width="90"></td><td>岸边搭子</td><td>CSGE</td><td>10.00%</td></tr>
+<tr><td><img src="./frontend/public/results/精致钓鱼人.png" width="90"></td><td>精致钓人</td><td>COGE</td><td>9.00%</td></tr>
+<tr><td><img src="./frontend/public/results/爆护独行侠.png" width="90"></td><td>爆护独行侠</td><td>COGR</td><td>8.50%</td></tr>
+<tr><td><img src="./frontend/public/results/连竿手.png" width="90"></td><td>连竿手</td><td>COTR</td><td>8.00%</td></tr>
+<tr><td><img src="./frontend/public/results/水边讲师.png" width="90"></td><td>水边讲师</td><td>HSTE</td><td>6.50%</td></tr>
+<tr><td><img src="./frontend/public/results/海王.png" width="90"></td><td>海王</td><td>HSGE</td><td>6.00%</td></tr>
+<tr><td><img src="./frontend/public/results/守钓宗师.png" width="90"></td><td>守钓宗师</td><td>HOTE</td><td>5.50%</td></tr>
+<tr><td><img src="./frontend/public/results/坑冠.png" width="90"></td><td>坑冠</td><td>HSTR</td><td>4.00%</td></tr>
+<tr><td><img src="./frontend/public/results/装备显眼包.png" width="90"></td><td>装备显眼包</td><td>CSGR</td><td>4.00%</td></tr>
+<tr><td><img src="./frontend/public/results/钓位终结者.png" width="90"></td><td>钓位终结者</td><td>HOGR</td><td>3.50%</td></tr>
+<tr><td><img src="./frontend/public/results/满配钓王.png" width="90"></td><td>满配钓王</td><td>HSGR</td><td>3.00%</td></tr>
+<tr><td><img src="./frontend/public/results/钓帝.png" width="90"></td><td>钓帝</td><td>HOTR</td><td>2.00%</td></tr>
+<tr><td><img src="./frontend/public/results/收藏家.png" width="90"></td><td>孤钓收藏家</td><td>HOGE</td><td>1.50%</td></tr>
+<tr><td><img src="./frontend/public/results/钓场军师.png" width="90"></td><td>钓场军师</td><td>CSTR</td><td>1.50%</td></tr>
 </table>
 
 ---
