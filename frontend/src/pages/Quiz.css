@@ -226,7 +226,7 @@
 }
 
 .question-text {
-  margin: 18px 0 0;
+  margin: 14px 0 0;
   font-size: clamp(28px, 4.5vw, 42px);
   line-height: 1.14;
   letter-spacing: -0.05em;

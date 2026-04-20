@@ -174,10 +174,9 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
 
           <div className="quiz-header">
             <div className="quiz-heading-group">
-              <span className="section-label">Question Flow</span>
-              <h1 className="quiz-heading">跟着自己内心和自觉选择</h1>
+              <h1 className="quiz-heading">跟着自己内心选择</h1>
               <p className="quiz-subtitle">
-                每题只选一个最贴且的答案，就像去钓鱼一样自然~
+                选择答案的过程就像去中鱼收线一样的自然~
               </p>
             </div>
             <div className="question-counter">
@@ -201,7 +200,7 @@ function Quiz({ questions, currentQuestion, answers, onAnswer, onExit, onPreviou
               <span className="question-label">
                 第 {currentQuestion + 1} 题
               </span>
-              <h2 className="question-text">{question.text}</h2>
+              <h3 className="question-text">{question.text}</h3>
 
 
               <div className="options">

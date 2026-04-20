@@ -120,7 +120,6 @@ function Home({ onStart }: HomeProps) {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="home-hero-copy">
-              <span className="section-label">Fishing Behavior Type Indicator</span>
 
               <h1 className="home-title">FBTI 专为钓鱼人打造的人格测试</h1>
 
