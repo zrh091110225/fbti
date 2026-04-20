@@ -103,15 +103,6 @@ npm run build
 
 ---
 
-## 📚 相关文档
-
-- [产品需求文档 (PRD)](https://feishu.cn/docx/UZjFdX2hBoqPeex85dGcg8Elnxg)
-- [技术方案](https://feishu.cn/docx/Ngs8d78ueoCEGnxbqGPcHeC7nph)
-- [UI 设计稿](https://feishu.cn/docx/AMnhdIX4MolzSlxEEozcc0vmndM)
-- [钓友群运营方案](https://feishu.cn/docx/UFbadqegBo2f2yxhoU9cmeiinvb)
-
----
-
 ## 🤝 加入我们
 
 测试完成后，可通过结果页扫码加入 **FBTI 钓友群**，与全国钓友一起交流！
