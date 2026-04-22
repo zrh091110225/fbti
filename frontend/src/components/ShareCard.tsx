@@ -230,13 +230,14 @@ const ShareCard = forwardRef<ShareCardHandle, ShareCardProps>(function ShareCard
         className={`share-export-root${isRenderingCaptureNode ? ' share-export-root--capture' : ''}`}
         aria-hidden="true"
       >
-        <div ref={exportRef} className="page page-result share-export-page">
+        <div ref={exportRef} className="page page-result share-export-page share-export-page--badge">
           <ResultPageContent
             personality={personality}
             axisBreakdown={axisBreakdown}
             dynamicTags={dynamicTags}
             extraContent={<ShareInviteFooter url={shareQrUrl} />}
             enableMotion={false}
+            badgeMode={true}
           />
         </div>
       </div>

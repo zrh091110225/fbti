@@ -13,6 +13,7 @@ interface ResultPageContentProps {
   extraContent?: ReactNode
   actions?: ReactNode
   enableMotion?: boolean
+  badgeMode?: boolean
 }
 
 function ResultPageContent({
@@ -20,10 +21,81 @@ function ResultPageContent({
   axisBreakdown,
   extraContent,
   actions,
-  enableMotion = true
+  enableMotion = true,
+  badgeMode = false
 }: ResultPageContentProps) {
   const artwork = getPersonalityArtwork(personality.id)
 
+  // ── Badge Mode: Identity Card layout ──────────────────────
+  if (badgeMode) {
+    return (
+      <div className="page-shell result-shell result-shell--badge">
+        {/* ── Header: logo + personality code badge ── */}
+        <header className="badge-header">
+          <div className="badge-header__logo">
+            <div className="badge-header__logo-icon">F</div>
+            <span>FBTI</span>
+          </div>
+          <div className="badge-header__code">{personality.id}</div>
+        </header>
+
+        {/* ── Artwork ── */}
+        <div className="badge-artwork-section">
+          <div className="badge-artwork-frame">
+            <div className="badge-artwork-visual">
+              <img
+                src={artwork}
+                alt={`${personality.name}的场景插画`}
+                className="badge-artwork-image"
+                loading="eager"
+                decoding="sync"
+                fetchPriority="high"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* ── Identity ── */}
+        <div className="badge-identity">
+          <span className="badge-identity__overline">钓鱼人格</span>
+          <h1 className="badge-identity__name">{personality.name}</h1>
+          <p className="badge-identity__subtitle">
+            {personality.id} · {personality.title}
+          </p>
+        </div>
+
+        {/* ── Trait badges ── */}
+        <div className="badge-traits">
+          {personality.traits.map((trait, index) => {
+            const palette = getTagPalette(index)
+            return (
+              <span
+                key={trait}
+                className="badge-trait"
+                style={{
+                  background: palette.mistBg,
+                  borderColor: palette.mistBorder,
+                  color: palette.mistText
+                }}
+              >
+                {trait}
+              </span>
+            )
+          })}
+        </div>
+
+        {/* ── Signature ── */}
+        <div className="badge-signature">
+          <p className="badge-signature__text">{personality.signature}</p>
+        </div>
+
+        {/* ── Footer (QR + link) passed via extraContent ── */}
+        {extraContent}
+      </div>
+    )
+  }
+
+  // ── Normal Mode: Full result page ─────────────────────────
   const artworkCard = (
     <div className="result-artwork-frame">
       <div className="result-artwork-visual">
