@@ -2,14 +2,18 @@ export const GA_MEASUREMENT_ID = import.meta.env.VITE_GA_MEASUREMENT_ID;
 
 export const initGA = () => {
   if (typeof window !== 'undefined' && GA_MEASUREMENT_ID) {
-    // Inject the script
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
-    document.head.appendChild(script);
+    const scriptSrc = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+    const existingScript = document.querySelector(`script[src="${scriptSrc}"]`);
+
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = scriptSrc;
+      document.head.appendChild(script);
+    }
 
     window.dataLayer = window.dataLayer || [];
-    window.gtag = function gtag() {
+    window.gtag = window.gtag || function gtag() {
       window.dataLayer.push(arguments);
     };
     window.gtag('js', new Date());
